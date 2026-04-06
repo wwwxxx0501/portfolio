@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCA+SVM 人脸识别系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">基于 PCA + SVM 的人脸识别系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span>
+            <span>2024</span>
+        </div>
+        <p class="article-abstract">
+            本项目在 ORL 人脸数据库（40 人 × 10 张 = 400 张灰度图像）上，
+            实现了基于主成分分析（PCA）降维与支持向量机（SVM）分类的人脸识别系统。
+            系统使用 MATLAB 开发，并通过 App Designer 构建了图形化交互界面，
+            支持从摄像头实时拍照识别与数据库图片批量测试两种模式。
+        </p>
+        <div class="article-keywords">
+            <strong>关键词：</strong>PCA, SVM, ORL 数据库, 特征脸, MATLAB App Designer
+        </div>
+    </div>
+
+    <!-- 1 数据集 -->
+    <h2>1 &nbsp; ORL 人脸数据库</h2>
+    <p>
+        ORL（AT&T）数据库包含 40 个受试者、每人 10 张 92×112 灰度图像。
+        图像在不同时间、不同光照条件、不同面部表情（睁眼/闭眼、微笑/不笑）
+        及是否佩戴眼镜的条件下采集，具有一定的类内变异性。
+    </p>
+    <div class="figure">
+        <div class="figure-grid-4">
+            <img src="../assets/images/face/z1_1.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z5_3.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z10_2.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z20_5.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z25_1.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z30_4.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z35_2.jpg" alt="人脸样本" onclick="openLightbox(this)">
+            <img src="../assets/images/face/z40_7.jpg" alt="人脸样本" onclick="openLightbox(this)">
+        </div>
+        <div class="figure-caption">Fig. 1 &nbsp; ORL 数据库样本（8 个不同受试者）</div>
+    </div>
+
+    <!-- 2 PCA -->
+    <h2>2 &nbsp; PCA 降维</h2>
+
+    <h3>2.1 &nbsp; 原理</h3>
+    <p>
+        每张 92×112 图像展平为 10304 维向量。直接在此高维空间中分类计算量过大且易过拟合。
+        PCA 通过对数据协方差矩阵进行特征分解，提取方差最大的前 k 个主成分方向（特征脸），
+        将原始数据投影到低维子空间。
+    </p>
+
+    <h3>2.2 &nbsp; 实现步骤</h3>
+    <ol>
+        <li><strong>中心化</strong>：计算训练集均值脸 μ，所有图像减去 μ</li>
+        <li><strong>协方差矩阵</strong>：C = (1/N) · X<sup>T</sup>X（利用 SVD 分解避免计算 10304×10304 矩阵）</li>
+        <li><strong>选取主成分</strong>：按特征值从大到小排序，取前 k 个特征向量（累计方差贡献率 ≥ 95%）</li>
+        <li><strong>投影</strong>：w = V<sub>k</sub><sup>T</sup> · (x − μ)，得到 k 维特征向量</li>
+    </ol>
+    <p>
+        在 ORL 数据库上，k 取 80–120 即可保留 95% 以上的方差信息，
+        维度从 10304 降至约百维，降幅超过 99%。
+    </p>
+
+    <!-- 3 SVM -->
+    <h2>3 &nbsp; SVM 多分类</h2>
+
+    <h3>3.1 &nbsp; 二分类 SVM</h3>
+    <p>
+        SVM 通过寻找最大间隔超平面将两类数据分开。对于非线性可分情况，
+        使用核函数（本项目采用 RBF 高斯核）将数据隐式映射至高维空间后再分类。
+    </p>
+
+    <h3>3.2 &nbsp; One-vs-One 多分类策略</h3>
+    <p>
+        ORL 数据库有 40 类，采用 OvO（One-vs-One）策略构建 C(40, 2) = 780 个二分类 SVM。
+        预测时每个分类器投票，得票最多的类别作为最终结果。
+        MATLAB 中通过 <code>fitcecoc()</code> 函数封装多分类 SVM 训练。
+    </p>
+
+    <h3>3.3 &nbsp; 训练与测试划分</h3>
+    <p>
+        每人前 5 张作为训练集（共 200 张），后 5 张作为测试集（共 200 张）。
+        PCA 降维后的特征向量送入 SVM 训练。测试集识别准确率达 <strong>95%+</strong>。
+    </p>
+
+    <!-- 4 GUI -->
+    <h2>4 &nbsp; MATLAB App Designer GUI</h2>
+    <p>
+        使用 MATLAB App Designer 开发图形界面（<code>xtw.mlapp</code>），支持：
+    </p>
+    <ul>
+        <li><strong>摄像头拍照模式</strong>：通过 <code>webcam</code> 对象采集图像，灰度化并缩放至 92×112 后识别</li>
+        <li><strong>文件选择模式</strong>：从磁盘加载图片进行识别</li>
+        <li><strong>结果展示</strong>：显示输入图像、匹配的数据库图像及置信度</li>
+    </ul>
+
+    <!-- 5 成果 -->
+    <h2>5 &nbsp; 项目成果</h2>
+    <ul>
+        <li>实现 PCA 降维（10304 维 → ~100 维），保留 ≥ 95% 方差</li>
+        <li>实现 OvO 多分类 SVM（780 个二分类器），测试准确率 95%+</li>
+        <li>MATLAB App Designer 构建 GUI，支持摄像头实时识别</li>
+        <li>完整代码模块化：ReadFace / PCA / multiSVMtrain / multiSVM / PredictImg</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

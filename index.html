@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薛雅文 — 项目作品集</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links">
+            <a href="index.html" class="active">首页</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="index-header">
+        <h1>薛雅文</h1>
+        <div class="subtitle">重庆大学 · 国家卓越工程师学院 · 明月科创实验班</div>
+        <div class="info">
+            CET-6: 521 &nbsp;|&nbsp; C/C++, Python, MATLAB &nbsp;|&nbsp; OpenCV, ROS2, STM32, ESP32
+        </div>
+        <p class="article-abstract" style="max-width:680px; margin:1rem auto 0;">
+            本科期间围绕嵌入式系统、机器视觉、电力电子与机器人控制等方向完成了多项工程实践。
+            以下按类别汇总各项目的技术方案与实现细节。
+        </p>
+    </div>
+
+    <!-- 竞赛与科研项目 -->
+    <div class="section-heading">竞赛与科研项目</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/robomaster.html">RoboMaster 机械臂视觉伺服系统</a>
+                <div class="project-desc">基于传统视觉的边缘设备实时机械臂抓取系统，13.5 ms/帧（~74 FPS）</div>
+            </div>
+            <div class="project-meta-right">
+                省二等奖 / 国三等奖<br>2024 – 2025
+            </div>
+        </li>
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/fsbb.html">基于 FSBB 的尖峰补能系统</a>
+                <div class="project-desc">四开关 Buck-Boost + 超级电容，三环并联增量式 PID 协同控制</div>
+            </div>
+            <div class="project-meta-right">
+                市级良好结题<br>2024 – 2025
+            </div>
+        </li>
+    </ul>
+
+    <!-- 信号处理与检测 -->
+    <div class="section-heading">信号处理与传感</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/heart-rate.html">心电信号采集与处理系统</a>
+                <div class="project-desc">ADS1292R + STM32 SPI 采集，MATLAB/嵌入式双路径 FIR 滤波与心率分析</div>
+            </div>
+            <div class="project-meta-right">2025</div>
+        </li>
+    </ul>
+
+    <!-- 机器人与控制 -->
+    <div class="section-heading">机器人与运动控制</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/desk-lamp.html">仿生多模态智能台灯</a>
+                <div class="project-desc">Raspberry Pi CM5 + 3-DOF 机械臂 + MediaPipe 手势跟随 + Buck PI 控制</div>
+            </div>
+            <div class="project-meta-right">2025 – 2026</div>
+        </li>
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/sweeping-robot.html">SpeedyBot 自主建图导航扫地机器人</a>
+                <div class="project-desc">ESP32-S3 + ROS2 + Cartographer SLAM + Nav2 导航栈，自研 PCB</div>
+            </div>
+            <div class="project-meta-right">2025 – 2026</div>
+        </li>
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/tracking-car.html">FPGA/51 双核自动循迹小车</a>
+                <div class="project-desc">自制八路红外模块，FPGA (VHDL) 与 51 单片机双方案对比实现</div>
+            </div>
+            <div class="project-meta-right">2024</div>
+        </li>
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/pathplan.html">激光雷达路径规划避障小车</a>
+                <div class="project-desc">N10 LiDAR + RANSAC 圆检测 + 光强-距离数据融合</div>
+            </div>
+            <div class="project-meta-right">2024</div>
+        </li>
+    </ul>
+
+    <!-- 电路与硬件 -->
+    <div class="section-heading">电路与硬件设计</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/motor-driver.html">电机驱动控制系统（有刷/无刷/FOC）</a>
+                <div class="project-desc">Altium Designer 多版 PCB 设计，PI 速度闭环，有刷 → 无刷 → FOC 递进</div>
+            </div>
+            <div class="project-meta-right">2024 – 2025</div>
+        </li>
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/boat.html">QEA 电动遥控船设计与仿真</a>
+                <div class="project-desc">SolidWorks 建模 + MATLAB 浮心/质心/扶正力矩仿真，三代迭代</div>
+            </div>
+            <div class="project-meta-right">2024</div>
+        </li>
+    </ul>
+
+    <!-- 计算机视觉与算法 -->
+    <div class="section-heading">计算机视觉与算法</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/face-recognition.html">PCA + SVM 人脸识别系统</a>
+                <div class="project-desc">ORL 数据集 + 特征脸降维 + 多分类 SVM，MATLAB App Designer GUI</div>
+            </div>
+            <div class="project-meta-right">2024</div>
+        </li>
+    </ul>
+
+    <!-- 数字逻辑 -->
+    <div class="section-heading">数字逻辑设计</div>
+    <ul class="project-list">
+        <li class="project-item">
+            <div>
+                <a class="project-title-link" href="projects/digital-logic.html">VHDL 数字逻辑器件设计与仿真</a>
+                <div class="project-desc">五种触发器 + 移位寄存器 + 可逆计数器，ModelSim 仿真验证</div>
+            </div>
+            <div class="project-meta-right">2024</div>
+        </li>
+    </ul>
+
+
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => {
+    document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
+});
+</script>
+</body>
+</html>

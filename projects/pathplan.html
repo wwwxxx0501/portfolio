@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>激光雷达路径规划小车</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">激光雷达路径规划小车</h1>
+        <div class="article-meta">
+            <span>薛雅文</span>
+            <span>2024</span>
+        </div>
+        <p class="article-abstract">
+            本项目以 Ackermann 转向结构小车为载体，搭载 N10 激光雷达（TOF 测距原理）实现室内环境感知。
+            设计了静态全局路径规划（多帧扫描建图 + 人工势场法）与动态目标检测（RANSAC 圆拟合）两种工作模式。
+            创新性地提出了距离—光强融合检测方法，解决黑色目标物距离数据不可靠的工程难题。
+        </p>
+        <div class="article-keywords">
+            <strong>关键词：</strong>N10 激光雷达, TOF, RANSAC, 人工势场法, Ackermann 转向, 距离-光强融合
+        </div>
+    </div>
+
+    <!-- 1 硬件平台 -->
+    <h2>1 &nbsp; 硬件平台</h2>
+    <table>
+        <thead><tr><th>组件</th><th>型号/参数</th><th>功能</th></tr></thead>
+        <tbody>
+            <tr><td>激光雷达</td><td>N10（TOF，360° 扫描，6000 rpm）</td><td>距离+光强数据采集</td></tr>
+            <tr><td>主控 MCU</td><td>STM32F103</td><td>数据处理与电机控制</td></tr>
+            <tr><td>电机驱动</td><td>AT8236 双 H 桥</td><td>后轮驱动</td></tr>
+            <tr><td>转向舵机</td><td>SG90</td><td>Ackermann 前轮转向</td></tr>
+            <tr><td>通信</td><td>UART（115200 baud）</td><td>雷达→MCU 串行传输</td></tr>
+        </tbody>
+    </table>
+
+    <h3>1.1 &nbsp; N10 激光雷达数据帧格式</h3>
+    <p>
+        N10 以固定帧格式通过 UART 输出数据。每帧包含帧头（0x54）、数据类型（0x2C）、
+        测量点数（12 点/帧）、起始角度、结束角度以及 12 组（距离 + 光强）数据，
+        末尾附 CRC 校验。每次旋转输出约 30 帧，合计约 360 个角度采样点。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/pathplan/pathplan_8.png" alt="数据帧格式" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; N10 激光雷达数据帧格式定义</div>
+    </div>
+
+    <!-- 2 静态路径规划 -->
+    <h2>2 &nbsp; 静态路径规划</h2>
+
+    <h3>2.1 &nbsp; 环境建图</h3>
+    <p>
+        小车在原地旋转采集多帧 LiDAR 数据，将极坐标 (r, θ) 转换为笛卡尔坐标 (x, y)，
+        拼合为二维散点地图。MATLAB 中对地图进行栅格化（分辨率 20 mm/格），
+        标记为"空闲"（free）、"占据"（occupied）或"未知"（unknown）三类。
+    </p>
+
+    <h3>2.2 &nbsp; 人工势场法</h3>
+    <p>
+        在栅格地图上构建人工势场：目标点产生引力场，障碍物产生斥力场。
+        合力方向即为期望运动方向。势场函数定义为：
+    </p>
+    <div class="formula">
+        U<sub>att</sub>(q) = ½ · ξ · ‖q − q<sub>goal</sub>‖²  <br>
+        U<sub>rep</sub>(q) = ½ · η · (1/ρ(q) − 1/ρ₀)²  &nbsp;&nbsp; if ρ(q) ≤ ρ₀
+    </div>
+    <p>
+        从起点沿负梯度方向迭代搜索，步长自适应缩小，直至到达目标点。
+        为避免局部极小值，引入随机扰动与回溯机制。
+    </p>
+
+    <h3>2.3 &nbsp; 路径跟踪</h3>
+    <p>
+        规划路径离散化为一系列路径点，MCU 按序跟踪。
+        Ackermann 转向模型下，根据当前位姿与目标路径点的偏差计算舵机转角 δ：
+    </p>
+    <div class="formula">
+        δ = atan(L · sin(α) / (l<sub>d</sub>/2 + L · cos(α)))
+    </div>
+    <p>
+        其中 L 为轴距，l<sub>d</sub> 为前视距离，α 为目标点相对航向角。
+    </p>
+
+    <!-- 3 动态目标检测 -->
+    <h2>3 &nbsp; 动态目标检测：RANSAC 圆拟合</h2>
+
+    <h3>3.1 &nbsp; 算法原理</h3>
+    <p>
+        目标检测场景中，圆柱形目标物（直径已知）出现在雷达视野内。
+        传统最小二乘拟合对离群点敏感，故采用 RANSAC（Random Sample Consensus）：
+    </p>
+    <ol>
+        <li>从 LiDAR 点云中随机抽取 3 个点</li>
+        <li>由 3 点确定唯一圆（圆心 + 半径）</li>
+        <li>统计距拟合圆距离小于阈值 ε 的内点（inlier）数量</li>
+        <li>重复 N 次迭代（N 由置信概率与内点比例估算），选择内点最多的模型</li>
+        <li>用所有内点重新最小二乘拟合，得到精确的圆心坐标与半径</li>
+    </ol>
+
+    <h3>3.2 &nbsp; 三点定圆公式</h3>
+    <p>
+        给定三点 (x₁,y₁), (x₂,y₂), (x₃,y₃)，圆心 (a,b) 与半径 r 的解析解：
+    </p>
+    <div class="formula">
+        a = [(x₁²+y₁²)(y₂−y₃) + (x₂²+y₂²)(y₃−y₁) + (x₃²+y₃²)(y₁−y₂)] / D <br>
+        b = [(x₁²+y₁²)(x₃−x₂) + (x₂²+y₂²)(x₁−x₃) + (x₃²+y₃²)(x₂−x₁)] / D <br>
+        D = 2[x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)]
+    </div>
+
+    <!-- 4 融合检测 -->
+    <h2>4 &nbsp; 距离—光强融合检测</h2>
+    <p>
+        N10 雷达基于 TOF 原理测距，同时输出每个角度的光强（intensity）值。
+        在实际测试中发现：黑色目标物表面对 905 nm 激光反射率极低，
+        导致 TOF 测距结果不稳定（距离跳变或置零）。
+    </p>
+    <p>
+        <strong>关键创新</strong>：利用光强数据弥补距离数据的缺陷。
+        黑色表面虽距离不可靠，但其光强值显著低于白色背景——
+        可用光强阈值初步判定"疑似黑色目标"所在角度区间，
+        再结合相邻角度的有效距离数据插值估算目标距离。
+        融合策略：
+    </p>
+    <ol>
+        <li>遍历一圈扫描数据，标记光强低于阈值 I<sub>th</sub> 的角度段</li>
+        <li>对标记段两端的有效距离进行线性插值，得到该方向的估计距离</li>
+        <li>将估计坐标输入 RANSAC 圆拟合，验证是否符合目标直径</li>
+    </ol>
+    <p>
+        该方法在黑色圆柱目标上的检测成功率由单纯 TOF 距离模式的约 40% 提升至 85% 以上。
+    </p>
+
+    <!-- 5 成果 -->
+    <h2>5 &nbsp; 项目成果</h2>
+    <ul>
+        <li>搭建 Ackermann 转向小车 + N10 LiDAR 硬件平台</li>
+        <li>实现多帧 LiDAR 扫描建图 + 人工势场法全局路径规划</li>
+        <li>实现 RANSAC 圆拟合动态目标检测（3 点定圆 + 迭代优化）</li>
+        <li>提出距离—光强融合检测方法，将黑色目标检测率从 ~40% 提升至 &gt;85%</li>
+        <li>Ackermann 路径跟踪控制，舵机转角自适应计算</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

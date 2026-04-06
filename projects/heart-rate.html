@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心电信号采集与处理系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">心电信号采集与处理系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span>
+            <span>2025</span>
+        </div>
+        <p class="article-abstract">
+            本项目设计并实现了一套完整的心电（ECG）信号采集与处理系统。硬件端采用 ADS1292R 模拟前端芯片
+            通过 SPI 总线与 STM32 通信，完成心电信号的高精度采集；软件端分别在 MATLAB 与 STM32 嵌入式平台上
+            实现了直流限波、FIR 低通滤波、FFT 频谱分析以及心率特征提取，最终将处理后的波形与心率参数
+            显示在 LCD 屏幕上，并可采集真实人体心电信号。
+        </p>
+        <div class="article-keywords">
+            <strong>关键词：</strong>ADS1292R, SPI 通信, FIR 滤波器, FFT, 心电信号, 嵌入式信号处理
+        </div>
+    </div>
+
+    <!-- 1 需求分析 -->
+    <h2>1 &nbsp; 项目需求分析</h2>
+    <ul>
+        <li>ADS1292R 芯片通过 SPI 读取心电信号，验证 SPI 通信正确性</li>
+        <li>能够调用内部测试信号，确认 MCU 正常读取与数据解析</li>
+        <li>设计滤波函数：通带截止频率 40 Hz（衰减 3 dB），阻带截止频率 50 Hz（衰减 40 dB），采样频率 500 Hz</li>
+        <li>分析滤波后信号的峰峰值、心率等特征</li>
+        <li>处理后的信号及特征参数显示在 LCD 屏幕上</li>
+        <li>能够采集并显示真实人体心电信号</li>
+    </ul>
+
+    <!-- 2 SPI 通信 -->
+    <h2>2 &nbsp; ADS1292R 与 SPI 通信</h2>
+
+    <h3>2.1 &nbsp; SPI 协议概述</h3>
+    <p>
+        SPI（Serial Peripheral Interface）是一种全双工、同步通信总线，由 Motorola 定义。
+        使用四根信号线：MISO（主入从出）、MOSI（主出从入）、SCLK（时钟）、CS（片选）。
+        SPI 以主-从模式工作，主设备提供时钟，读/写操作同步进行——发一个字节必然收到一个字节。
+    </p>
+    <p>
+        SPI 的四种工作模式由 CPOL（时钟极性）与 CPHA（时钟相位）组合决定：
+        CPOL 定义空闲态电平，CPHA 定义数据采样边沿。ADS1292R 使用 Mode 1（CPOL=0, CPHA=1）。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_0.png" alt="SPI时序" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; SPI 通信时序图（CPOL=1, CPHA=1 模式示例）</div>
+    </div>
+
+    <h3>2.2 &nbsp; 硬件接线</h3>
+    <p>ADS1292R 模块共 12 个输出引脚，关键接线如下：</p>
+    <table>
+        <thead><tr><th>引脚</th><th>连接</th><th>功能</th></tr></thead>
+        <tbody>
+            <tr><td>SPI_SCK</td><td>STM32 SPI CLK</td><td>SPI 时钟信号</td></tr>
+            <tr><td>SPI_MISO</td><td>STM32 SPI MISO</td><td>ADS→STM32 数据</td></tr>
+            <tr><td>SPI_MOSI</td><td>STM32 SPI MOSI</td><td>STM32→ADS 命令</td></tr>
+            <tr><td>SPI_CS0</td><td>STM32 GPIO</td><td>片选信号</td></tr>
+            <tr><td>ADS_DRDY</td><td>STM32 EXTI</td><td>数据就绪中断</td></tr>
+            <tr><td>ADS_START</td><td>STM32 GPIO</td><td>采集启动</td></tr>
+            <tr><td>ADS_PWDN</td><td>STM32 GPIO</td><td>复位/掉电</td></tr>
+            <tr><td>VDD ↔ 3.3V</td><td>跳线帽</td><td>电压转换（5V→3.3V 逻辑）</td></tr>
+        </tbody>
+    </table>
+
+    <h3>2.3 &nbsp; 数据读取与解码</h3>
+    <p>
+        发送 <code>CMD_RDATA (0x12)</code> 命令后，ADS1292R 回传 9 字节数据：
+        状态字节（3B）+ 通道 1 数据（3B）+ 通道 2 数据（3B）。
+        通道数据为 24 位有符号补码，需拼接为 int32 并处理符号位扩展：
+    </p>
+    <div class="code-block">
+        <div class="code-block-header">ads1292.c — 24-bit 解码</div>
+        <pre>int32_t raw = (buff[4] << 16) | (buff[5] << 8) | buff[6];
+if (raw & 0x800000)        // bit23 为符号位
+    raw |= 0xFF000000;     // 扩展为 32 位有符号数
+float voltage_mV = raw * Vref / (gain * 8388607.0f) * 6.0f;</pre>
+    </div>
+    <p>
+        其中 <code>Vref</code> 为内部参考电压，<code>gain</code> 为可编程增益，乘以 6 倍
+        为按芯片手册恢复实际采集电压值（单位 mV）。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_3.png" alt="滤波器指标" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; 滤波器设计指标要求</div>
+    </div>
+
+    <!-- 3 MATLAB 滤波 -->
+    <h2>3 &nbsp; MATLAB 信号处理验证</h2>
+
+    <h3>3.1 &nbsp; 原始信号与频谱分析</h3>
+    <p>
+        将 SPI 读取的原始信号通过串口保存为 <code>CH1.txt</code>，导入 MATLAB 显示波形。
+        对原始信号进行 FFT 变换绘制频谱图，可观察到直流分量（0 Hz）、心电有效频段（1–40 Hz）
+        以及工频干扰（50 Hz 及谐波）。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_30.png" alt="频谱图" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 原始心电信号频谱（含直流分量与 50 Hz 工频干扰）</div>
+    </div>
+
+    <h3>3.2 &nbsp; 直流限波</h3>
+    <p>
+        设计陷波器滤除 0 Hz 直流分量。利用传递函数 <code>H(z) = (1 − z⁻¹) / (1 − αz⁻¹)</code>，
+        其中 α 接近 1（典型值 0.995），在 0 Hz 处产生深度衰减。
+        调用 MATLAB <code>filter()</code> 函数完成滤波。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_29.png" alt="直流限波对比" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; 直流限波前后频谱对比（左：直流限波后，右：原始频谱）</div>
+    </div>
+
+    <h3>3.3 &nbsp; FIR 低通滤波器</h3>
+    <p>
+        根据阻带衰减不低于 40 dB 且过渡带不超过 10 Hz 的要求，
+        利用 MATLAB <code>filterDesigner</code> 设计 FIR 低通滤波器。
+        选择 Chebyshev 窗（在给定窗口长度下提供最小主瓣宽度），滤波器阶数为 160。
+        滤波器通过对当前点及其前 160 个点的加权求和计算输出。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_26.png" alt="FIR滤波" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; FIR 低通滤波前后频谱对比（左：限波后，右：FIR 滤波后）</div>
+    </div>
+
+    <!-- 4 嵌入式实现 -->
+    <h2>4 &nbsp; STM32 嵌入式实现</h2>
+
+    <h3>4.1 &nbsp; 嵌入式 FIR 滤波</h3>
+    <p>
+        将 MATLAB 设计的 FIR 滤波器系数（81 阶 Chebyshev 窗，针对嵌入式精简）
+        导出为 C 数组，在 STM32 上利用 CMSIS-DSP 库的 <code>arm_fir_f32</code> 函数实现实时滤波。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/heart/heart_20.png" alt="FIR系数" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 6 &nbsp; 嵌入式 FIR 滤波器系数数组与 FFT 结构定义</div>
+    </div>
+
+    <h3>4.2 &nbsp; 嵌入式 FFT 频谱分析</h3>
+    <p>
+        采用 CMSIS-DSP 的 <code>arm_cfft_f32</code> 函数在 STM32 上进行 1024 点复数 FFT，
+        计算幅度谱并在 LCD（240×320）上实时绘制。FFT 长度选择 1024 以在频率分辨率（约 0.49 Hz）
+        与计算时间之间取平衡。
+    </p>
+
+    <h3>4.3 &nbsp; 心率提取</h3>
+    <p>
+        对滤波后信号进行峰值检测（自适应阈值），计算相邻 R 波间隔（RR interval），
+        取其倒数乘以 60 得到 BPM。同时计算峰峰值（max − min）作为信号质量指标。
+        所有参数实时更新并显示在 LCD 屏幕上。
+    </p>
+
+    <!-- 5 演示视频 -->
+    <h2>5 &nbsp; 演示视频</h2>
+    <div class="figure-row">
+        <div class="video-container">
+            <video controls preload="metadata" style="max-width:100%">
+                <source src="../assets/videos/heart-rate-1.mp4" type="video/mp4">
+            </video>
+            <div class="video-caption">Video 1 &nbsp; 内部测试信号采集与滤波演示</div>
+        </div>
+        <div class="video-container">
+            <video controls preload="metadata" style="max-width:100%">
+                <source src="../assets/videos/heart-rate-2.mp4" type="video/mp4">
+            </video>
+            <div class="video-caption">Video 2 &nbsp; 真实人体心电信号采集</div>
+        </div>
+    </div>
+
+    <!-- 6 结果 -->
+    <h2>6 &nbsp; 项目成果</h2>
+    <ul>
+        <li>完成 ADS1292R 的 SPI 通信驱动与 24-bit 数据解码</li>
+        <li>MATLAB 实现直流限波 + 160 阶 Chebyshev 窗 FIR 低通滤波器（通带 40 Hz / 阻带 50 Hz）</li>
+        <li>STM32 上基于 CMSIS-DSP 实现实时 FIR 滤波与 1024 点 FFT</li>
+        <li>推导并实现自适应阈值 R 波检测与心率计算算法</li>
+        <li>LCD 实时显示波形、频谱、心率与峰峰值</li>
+        <li>成功采集并处理真实人体心电信号</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

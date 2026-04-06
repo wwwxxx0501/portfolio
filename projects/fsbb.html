@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于 FSBB 的尖峰补能系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">基于 FSBB 的尖峰补能系统</h1>
+        <div class="article-meta">
+            <span>严海轩（负责人）, 刘瑶瑶, <strong>薛雅文</strong>, 郑元斌</span>
+            <span>指导教师：陈爽, 刘俊良</span>
+            <span>市级大学生创新训练项目 · S202510611248</span>
+            <span>2024 – 2025</span>
+        </div>
+        <p class="article-abstract">
+            针对小功率电池在驱动大功率尖峰负载时因大电流放电与低压降额导致的设备失稳与电池寿命折损问题，
+            本项目提出并实现了一套基于四开关 Buck-Boost（FSBB）拓扑与超级电容的智能尖峰补能系统。
+            系统以 FSBB + 超级电容构成能量缓冲"弹性枢纽"，通过"锂电池功率外环 — 超级电容电压约束环 — 电容电流内环"的
+            三环并联增量式 PID 协同控制策略，实现双源功率的实时分配与平滑调制；
+            并引入高速比较器与双向功率 MOSFET 的硬件加速切换机制，降低突变工况下的切换延迟与反灌风险。
+        </p>
+        <div class="article-keywords">
+            <strong>关键词：</strong>FSBB 拓扑, 超级电容, 尖峰补能, 增量式 PID, 硬件加速切换, 动态限幅滤波, 模块化架构
+        </div>
+    </div>
+
+    <!-- 1 引言 -->
+    <h2>1 &nbsp; 引言</h2>
+    <p>
+        小型机器人、无人机、电动工具等小功率平台常呈现"平均功率不高但瞬时尖峰功率突升"的负载特征
+        （如电机启动/堵转、云台补偿、脉冲工具负载等）。传统单一锂电池直供方案在尖峰负载下
+        易因电池内阻与倍率限制导致端电压塌陷，引发系统重启或性能降级；同时大电流脉冲放电
+        会加速电池老化，降低循环寿命。为兼顾"尖峰供电稳定性"和"电池寿命保护"，
+        本项目提出基于 FSBB 与超级电容的混合储能尖峰补能系统，
+        通过智能能量管理实现负载尖峰"削峰填谷"。
+    </p>
+
+    <!-- 2 系统架构 -->
+    <h2>2 &nbsp; 系统总体设计与硬件实现</h2>
+
+    <h3>2.1 &nbsp; 模块化架构</h3>
+    <p>
+        系统采用模块化设计，分为电池模块、尖峰补能模块（FSBB + 超级电容）与控制模块三部分。
+        各模块通过标准化接口连接（XT30 电源接口、GH1.25 通信接口），支持热插拔与并联扩展。
+        整体能量流为：锂电池提供基础能量，超级电容承担尖峰功率，FSBB 负责双向能量调度与升降压匹配。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_3.png" alt="系统架构" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; FSBB 逻辑控制与系统架构框图</div>
+    </div>
+
+    <h3>2.2 &nbsp; FSBB 拓扑与双向 DCDC 模块</h3>
+    <p>
+        尖峰补能模块核心为四开关 Buck-Boost（FSBB）双向变换器，能够在输入电压（电池侧）高于、等于或低于
+        输出电压（负载/电容侧）时高效工作，并支持能量双向流动。结合超级电容组后，
+        系统形成"能量缓冲与调节的弹性枢纽"，从结构层面为尖峰功率补偿提供硬件基础。
+    </p>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/fsbb/fsbb_2.png" alt="PCB layout" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 2 &nbsp; FSBB PCB 布局（底层，CMU V3.0.1）</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/fsbb/fsbb_4.png" alt="3D渲染" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 3 &nbsp; PCB 3D 渲染（顶层视图）</div>
+        </div>
+    </div>
+
+    <!-- 3 三环 PID -->
+    <h2>3 &nbsp; 三环并联增量式 PID 协同控制</h2>
+
+    <h3>3.1 &nbsp; 双源功率分配机理</h3>
+    <p>
+        在等效拓扑中，可将"DCDC + 电容组"视作可控电压源 V<sub>cap</sub>，锂电池视作电压源 V<sub>bat</sub>。
+        由基尔霍夫方程组可得到锂电池功率对 V<sub>cap</sub> 的敏感度——即在给定内阻条件下，
+        提高可控电压源 V<sub>cap</sub> 将降低锂电池功率输出，从而实现对锂电池尖峰应力的"可控削峰"。
+        因此只要通过闭环控制精准调节 V<sub>cap</sub>，即可在尖峰工况下将更多瞬态功率转移到超级电容侧承担。
+    </p>
+
+    <h3>3.2 &nbsp; 三环控制结构</h3>
+    <p>为同时满足"电池安全功率约束"与"超级电容 SOC 边界约束"，系统提出三环并联协同控制结构：</p>
+    <ul>
+        <li><strong>外环</strong>：锂电池功率环（全局功率上限约束）</li>
+        <li><strong>约束环</strong>：超级电容高压/低压电压环（SOC 边界）</li>
+        <li><strong>内环</strong>：电容电流环（快速执行）</li>
+    </ul>
+    <p>
+        控制器通过 MIN/MAX 选择器融合功率与电压两类约束，实时生成安全的目标电流，
+        最终调节 DCDC 的广义占空比，实现双源能量协同调度与平滑过渡。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_5.png" alt="控制框图" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; 尖峰补能装置接线与控制总览</div>
+    </div>
+
+    <h3>3.3 &nbsp; 选择增量式 PID 的原因</h3>
+    <p>
+        电源领域常见反馈控制方案包括运放补偿网络、位置式 PID 与模型预测控制（MPC）等，
+        但在本系统"资源受限 + 快速突变响应"的场景中存在调参困难、积分饱和或算力开销过高等问题。
+        增量式 PID 的输出为控制量增量，计算量小、对积分饱和不敏感，
+        适用于 STM32 平台，可在保证精度的同时获得毫秒级动态响应。
+    </p>
+
+    <!-- 4 硬件快速切换 -->
+    <h2>4 &nbsp; 毫秒级响应高速供电切换</h2>
+
+    <h3>4.1 &nbsp; 硬件加速切换架构</h3>
+    <p>
+        系统采用"STM32 + 高速比较器"协同架构：STM32 负责上层状态机、能量管理策略与参数更新；
+        高速比较器实时监控关键节点阈值。当检测到突变信号时，比较器可纳秒级触发硬件中断或
+        直接驱动切换控制逻辑，绕开纯软件判断延迟，实现硬件级快速响应。
+    </p>
+
+    <h3>4.2 &nbsp; 防反灌保护</h3>
+    <p>
+        切换模块核心采用双向功率 MOSFET 阵列，配合同步整流降低导通损耗；
+        同时引入理想二极管控制与软启动逻辑抑制切换瞬间的电压尖峰与反向电流倒灌，
+        保护锂电池与超级电容安全。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_0.png" alt="防倒灌" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; 防倒灌模块原理图与 PCB 局部</div>
+    </div>
+
+    <!-- 5 滤波 -->
+    <h2>5 &nbsp; 趋势感知动态限幅滤波与负载识别</h2>
+    <p>
+        户外复杂工况下，电流采样信号常呈现"噪声与真实突变叠加"的特点。
+        传统固定参数低通滤波虽可抑制噪声，但易引入相位滞后，削弱对尖峰的快速跟踪能力。
+    </p>
+    <p>
+        系统采用趋势感知的动态限幅滤波：通过历史状态累积判断电流变化趋势，
+        当趋势平缓时收紧限幅窗口（强滤噪），当趋势陡变时放宽窗口（快跟踪），
+        实现滤噪与动态响应的自适应平衡。
+    </p>
+
+    <!-- 6 PCB -->
+    <h2>6 &nbsp; PCB 设计</h2>
+    <p>
+        本人在项目中负责部分 PCB 设计与硬件调试工作。FSBB 主板基于 STM32F334 芯片（高分辨率定时器），
+        四层板设计，集成 FSBB 功率级、栅极驱动、电流/电压采样、CAN 通信等功能。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_6.png" alt="PCB实物" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 6 &nbsp; FSBB 主控板实物（部分贴片完成）</div>
+    </div>
+
+    <!-- 7 结果 -->
+    <h2>7 &nbsp; 项目成果</h2>
+    <ul>
+        <li>完成 FSBB + 超级电容混合储能硬件平台设计与制作</li>
+        <li>实现三环并联增量式 PID 协同控制算法</li>
+        <li>设计高速比较器 + 双向 MOSFET 硬件加速切换机制</li>
+        <li>提出趋势感知动态限幅滤波方法</li>
+        <li>模块化架构支持热插拔与并联扩展</li>
+        <li>项目以<strong>市级良好</strong>等级结题（2025.12）</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

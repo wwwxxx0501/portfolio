@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动循迹小车</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">双核自动循迹小车</h1>
+        <div class="article-meta">
+            <span>薛雅文</span>
+            <span>2024</span>
+        </div>
+        <p class="article-abstract">
+            本项目设计并实现了一套自动循迹小车系统，核心创新在于自制八通道红外检测模块
+            并在两种异构处理器（STC89C52RC 51 单片机 与 EP4CE10F17C8N FPGA）上
+            分别实现循迹控制算法，对比分析两种方案的实时性与抗干扰能力。
+            小车采用 L298N 双 H 桥驱动两路直流电机，通过差速转向跟踪地面黑色引导线。
+        </p>
+        <div class="article-keywords">
+            <strong>关键词：</strong>红外循迹, 八通道检测模块, 51 单片机, FPGA, L298N, 差速转向
+        </div>
+    </div>
+
+    <!-- 1 系统 -->
+    <h2>1 &nbsp; 系统总体设计</h2>
+    <p>
+        系统由三部分组成：感知层（八通道红外模块）、决策层（MCU / FPGA）与执行层（L298N + 电机）。
+        红外模块安装于车体前方，距地面约 15 mm，等间距排列 8 个红外收发对管，
+        通过模拟比较器输出数字信号（1 = 检测到黑线，0 = 白色地面）。
+        决策层根据 8-bit 检测向量输出左右电机的 PWM 占空比与方向。
+    </p>
+
+    <!-- 2 红外模块 -->
+    <h2>2 &nbsp; 自制八通道红外检测模块</h2>
+    <p>
+        商用循迹模块通常仅提供 3–5 通道，在急弯处易丢线。
+        本项目自行设计 PCB，排列 8 路 TCRT5000 红外反射传感器，间距 10 mm，
+        检测宽度覆盖约 80 mm。每路独立配置比较器（LM393），
+        支持电位器调节阈值以适应不同地面材质。
+        外壳采用 3D 打印（PLA 材质），固定于车身前方横梁上。
+    </p>
+
+    <div class="figure">
+        <img src="../assets/images/tracking/tracking_6.jpeg" alt="八通道红外模块" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 自制八通道红外检测模块实物（含 3D 打印外壳）</div>
+    </div>
+
+    <!-- 3 MCU方案 -->
+    <h2>3 &nbsp; 方案一：51 单片机 (C 语言)</h2>
+
+    <h3>3.1 &nbsp; 硬件平台</h3>
+    <p>
+        STC89C52RC，8051 内核，11.0592 MHz 晶振，8 位 I/O 口直接读取红外模块的 8-bit 数字输出。
+        P1 口接红外模块，P2 口输出至 L298N 使能与方向引脚。
+    </p>
+
+    <h3>3.2 &nbsp; 循迹算法</h3>
+    <p>
+        将 8-bit 检测向量映射为转向动作。采用查表法：预先定义每种检测模式对应的左右电机速度。
+        例如：
+    </p>
+    <table>
+        <thead><tr><th>检测向量</th><th>含义</th><th>左电机</th><th>右电机</th></tr></thead>
+        <tbody>
+            <tr><td><code>0001_1000</code></td><td>黑线居中</td><td>100%</td><td>100%</td></tr>
+            <tr><td><code>0000_0100</code></td><td>偏右</td><td>60%</td><td>100%</td></tr>
+            <tr><td><code>0010_0000</code></td><td>偏左</td><td>100%</td><td>60%</td></tr>
+            <tr><td><code>1000_0000</code></td><td>大幅偏左</td><td>100%</td><td>0%（原地转）</td></tr>
+            <tr><td><code>0000_0001</code></td><td>大幅偏右</td><td>0%</td><td>100%</td></tr>
+            <tr><td><code>0000_0000</code></td><td>丢线</td><td colspan="2">按上次方向原地旋转</td></tr>
+        </tbody>
+    </table>
+    <p>
+        PWM 通过软件定时器（Timer0 中断）在 I/O 口模拟输出，频率约 1 kHz。
+    </p>
+    <div class="code-block">
+        <div class="code-block-header">main.c — 51 单片机循迹核心逻辑</div>
+        <pre>sbit in8=P0^0; sbit in7=P0^1; sbit in6=P0^2; sbit in5=P0^3;
+sbit in4=P0^4; sbit in3=P0^5; sbit in2=P0^6; sbit in1=P0^7;
+
+/* 电机控制：speed(0-100), angel(0-180), direction(方向) */
+void car_run(unsigned char speed, unsigned char angel,
+             unsigned char direction) {
+    switch (direction) {
+        case 1: min1=1; min2=0; min3=1; min4=0; break; // 前进
+        case 2: min1=0; min2=1; min3=0; min4=1; break; // 后退
+        case 3: min1=0; min2=0; min3=1; min4=0; break; // 左转
+        case 4: min1=1; min2=0; min3=0; min4=0; break; // 右转
+        case 0: min1=1; min2=1; min3=1; min4=1; break; // 刹车
+    }
+    compare_m   = speed % 100;        // 电机 PWM 占空比
+    compare_dir = (angel / 18) + 10;  // 舵机 PWM 占空比
+}
+
+void main() {
+    timer0_init(); timer1_init();
+    car_run(0, 90, 0);  // 初始停止
+
+    while (1) {
+        value = P0;
+        if      (in4==1 || in5==1) car_run(60, 90, 1);   // 居中 → 直行
+        else if (in3==1)           car_run(60, 75, 3);    // 微左偏 → 小左转
+        else if (in2==1)           car_run(60, 60, 3);    // 左偏 → 中左转
+        else if (in1==1)         { car_run(50, 40, 3);    // 大左偏 → 急左转
+                                   car_delay(30); }
+        else if (in6==1)           car_run(60,115, 4);    // 微右偏 → 小右转
+        else if (in7==1)           car_run(50,130, 4);    // 右偏 → 中右转
+        else if (in8==1)         { car_run(50,165, 4);    // 大右偏 → 急右转
+                                   car_delay(30); }
+        else if (value == 0x00) {                         // 丢线 → 倒车恢复
+            car_run(30, 180-last_dir, 2);
+            car_back_delay(50);
+        }
+    }
+}
+
+/* Timer0 中断: 0.1ms 周期, 模拟舵机 PWM (周期 20ms) */
+void Timer0_Routine() interrupt 1 {
+    counter_dir = (counter_dir + 1) % 200;
+    motor_dir = (counter_dir < compare_dir) ? 1 : 0;
+}
+/* Timer1 中断: 0.1ms 周期, 模拟电机 PWM (周期 10ms) */
+void Timer1_Routine() interrupt 3 {
+    counter_m = (counter_m + 1) % 100;
+    motor_m = motor_mm = (counter_m < compare_m) ? 1 : 0;
+}</pre>
+    </div>
+
+    <!-- 4 FPGA方案 -->
+    <h2>4 &nbsp; 方案二：FPGA (VHDL)</h2>
+
+    <h3>4.1 &nbsp; 硬件平台</h3>
+    <p>
+        EP4CE10F17C8N（Altera Cyclone IV），配置 50 MHz 时钟。
+        8-bit 红外输入接 GPIO，PWM 与方向信号输出至 L298N。
+    </p>
+
+    <h3>4.2 &nbsp; VHDL 实现</h3>
+    <p>
+        循迹逻辑以纯组合逻辑实现，无需中断概念。8-bit 输入经 <code>CASE-WHEN</code>
+        语句直接映射为左右电机的 PWM 占空比（8-bit 无符号数表示 0–255）
+        与方向信号。所有逻辑在一个时钟周期（20 ns）内完成——远优于 51 单片机的毫秒级响应。
+    </p>
+    <div class="code-block">
+        <div class="code-block-header">car_tracking.vhd — FPGA 循迹核心（PWM 生成与红外映射）</div>
+        <pre>entity car_tracking is
+    generic(
+        cnt_meta    : integer := 1000000;
+        ForWard     : std_logic_vector(3 downto 0) := "1001";
+        Back        : std_logic_vector(3 downto 0) := "0110";
+        dir_straight: integer := 75
+    );
+    port(
+        sys_clk, sys_rst_n : in  std_logic;
+        infrared           : in  std_logic_vector(7 downto 0);
+        en_left, en_right  : out std_logic;
+        motor              : buffer std_logic_vector(3 downto 0);
+        dir                : out std_logic
+    );
+end car_tracking;
+
+-- p2: PWM 输出进程 (电机 + 舵机)
+p2 : process(sys_clk, sys_rst_n)
+begin
+    if (sys_rst_n = '0') then
+        en_left <= '0'; en_right <= '0';
+    elsif rising_edge(sys_clk) then
+        en_left  <= '1' when cnt < (cnt_meta/100)*duty_left  else '0';
+        en_right <= '1' when cnt < (cnt_meta/100)*duty_right else '0';
+        dir      <= '1' when cnt < (cnt_meta/1000)*duty_dir  else '0';
+    end if;
+end process p2;
+
+-- p3: 红外→电机映射 (含延时防抖与丢线倒车)
+p3 : process(infrared, sys_clk)
+begin
+    if rising_edge(sys_clk) then
+      if delay > 0 then
+        if unsigned(infrared and mask) /= 0 then delay <= 0;
+        else delay <= delay - 1;
+        end if;
+      else
+        if    infrared(0)='1' then  -- 最右侧检测到 → 大右转
+            motor<=ForWard; duty_dir<=100; duty_left<=40; duty_right<=5;
+            mask<="00000111"; delay<=15000000; -- 300ms 延时屏蔽
+        elsif infrared(7)='1' then  -- 最左侧检测到 → 大左转
+            motor<=ForWard; duty_dir<=55;  duty_left<=7;  duty_right<=40;
+            mask<="11100000"; delay<=15000000;
+        elsif infrared(3)='1' or infrared(4)='1' then  -- 居中 → 直行
+            motor<=ForWard; duty_dir<=dir_straight;
+            duty_left<=50; duty_right<=50;
+        elsif unsigned(infrared)=0 then  -- 全部丢线 → 倒车
+            if back_counter > back_period then
+                motor <= Back; duty_left<=30; duty_right<=30;
+            else back_counter <= back_counter + 1;
+            end if;
+        end if;
+      end if;
+    end if;
+end process p3;</pre>
+    </div>
+
+    <h3>4.3 &nbsp; 防抖计数器</h3>
+    <p>
+        FPGA 方案的一个系统性创新是引入防抖计数器：传感器输出在黑白边界处可能产生抖动。
+        为每个通道设置一个 4-bit 计数器，仅当连续 N 个时钟周期（N=8，即 160 ns）
+        读到相同电平时才更新该通道的有效值。该方法有效抑制了因地面纹理或灯光反射引起的误触发。
+    </p>
+
+    <!-- 5 对比 -->
+    <h2>5 &nbsp; 两种方案对比</h2>
+    <table>
+        <thead><tr><th>指标</th><th>51 单片机 (C)</th><th>FPGA (VHDL)</th></tr></thead>
+        <tbody>
+            <tr><td>响应延迟</td><td>~1 ms（Timer 中断周期）</td><td>~20 ns（1 时钟周期）</td></tr>
+            <tr><td>PWM 频率</td><td>~1 kHz（软件模拟）</td><td>~20 kHz（硬件计数器）</td></tr>
+            <tr><td>抗抖动</td><td>软件延时采样</td><td>硬件防抖计数器（确定延迟）</td></tr>
+            <tr><td>开发效率</td><td>高（C 语言，调试方便）</td><td>较低（HDL 仿真周期长）</td></tr>
+            <tr><td>资源占用</td><td>ROM ~2 KB</td><td>~200 LEs（&lt;2% 容量）</td></tr>
+            <tr><td>急弯表现</td><td>偶尔丢线后恢复较慢</td><td>基本不丢线</td></tr>
+        </tbody>
+    </table>
+
+    <!-- 6 电机驱动 -->
+    <h2>6 &nbsp; L298N 电机驱动</h2>
+    <p>
+        L298N 是经典双 H 桥驱动芯片，支持双路直流电机独立控制。
+        每路通过 IN1/IN2 设置正反转方向，ENA 输入 PWM 控制转速。
+        工作电压 7–12 V，每路最大输出 2A。驱动板板载 5V 稳压器，可向单片机/FPGA 供电。
+    </p>
+
+    <!-- 7 成果 -->
+    <h2>7 &nbsp; 项目成果</h2>
+    <ul>
+        <li>自行设计并制作八通道红外检测模块 PCB（含 3D 打印外壳），检测宽度 80 mm</li>
+        <li>在 STC89C52RC 上基于 C 语言实现查表式循迹算法</li>
+        <li>在 Cyclone IV FPGA 上基于 VHDL 实现并行循迹逻辑与硬件防抖计数器</li>
+        <li>对比验证 FPGA 方案在响应延迟（20 ns vs 1 ms）与急弯表现上的优势</li>
+        <li>完成小车整车搭建，在标准循迹赛道上稳定运行</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>
