@@ -1,0 +1,3812 @@
+% !TEX program = xelatex
+\documentclass[12pt,a4paper]{ctexart}
+
+% ===================== 宏包导入 =====================
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}  % hidelinks 去除红色裱框
+\usepackage{listings}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,skins,breakable}
+
+% ===================== 修正 headheight 警告 =====================
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+% ===================== 颜色定义 =====================
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{keywordcolor}{RGB}{0,0,180}
+\definecolor{commentcolor}{RGB}{0,128,0}
+\definecolor{stringcolor}{RGB}{163,21,21}
+\definecolor{sectionblue}{RGB}{0,82,155}
+\definecolor{accentred}{RGB}{180,30,30}
+
+% ===================== 代码样式 =====================
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    keywordstyle=\color{keywordcolor}\bfseries,
+    commentstyle=\color{commentcolor}\itshape,
+    stringstyle=\color{stringcolor},
+    captionpos=b,
+    xleftmargin=1em,
+    xrightmargin=0.5em,
+}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    morekeywords={uint8_t,uint16_t,uint32_t,int16_t,float,GPIO_PinState,HAL_StatusTypeDef},
+}
+
+\lstdefinestyle{matlabstyle}{
+    language=Matlab,
+    morekeywords={function,end,for,if,else,elseif,return,switch,case,otherwise,while,break,continue},
+}
+
+\lstdefinestyle{vhdlstyle}{
+    language=VHDL,
+    morekeywords={STD_LOGIC,STD_LOGIC_VECTOR,buffer,downto,rising_edge},
+}
+
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    morekeywords={auto,nullptr,override,constexpr,size_t,string,vector,shared_ptr,unique_ptr,cv,Mat,Point,Scalar,RotatedRect},
+}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    morekeywords={self,True,False,None,lambda,yield,async,await,with,as,import,from},
+}
+
+% ===================== 页眉页脚 =====================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{薛雅文·科研实践项目集}}
+\fancyhead[R]{\small\textit{重庆大学·机器人工程}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ===================== 标题样式 =====================
+\titleformat{\section}{\Large\bfseries\color{sectionblue}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{sectionblue!80}}{\thesubsection}{0.8em}{}
+
+% ===================== 信息框 =====================
+\newtcolorbox{infobox}[1][]{
+    colback=blue!5,
+    colframe=sectionblue,
+    fonttitle=\bfseries,
+    title=#1,
+    breakable,
+}
+
+\newtcolorbox{iterbox}[1][]{
+    colback=orange!5,
+    colframe=orange!70!black,
+    fonttitle=\bfseries,
+    title=#1,
+    breakable,
+}
+
+\newtcolorbox{resultbox}[1][]{
+    colback=green!5,
+    colframe=green!50!black,
+    fonttitle=\bfseries,
+    title=#1,
+    breakable,
+}
+
+% ===================== 文档信息 =====================
+\title{%
+    \vspace{-1cm}
+    {\Huge\bfseries 科研实践项目集}\\[0.5em]
+    {\Large\color{sectionblue} 嵌入式系统 · 机器视觉 · 数字电路 · 电力电子 · 机器学习}\\[1em]
+    {\large 薛雅文}\\[0.3em]
+    {\normalsize 重庆大学 国家卓越工程师学院 明月科创实验班 · 机器人工程专业}
+}
+\date{\today}
+\author{}
+
+% ===================== 正文开始 =====================
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\begin{abstract}
+本文档系统梳理了本人在大学期间参与的十余项科研与工程实践项目，涵盖\textbf{嵌入式系统开发}、\textbf{计算机视觉与机器学习}、\textbf{数字电路设计}、\textbf{电力电子变换}及\textbf{机器人竞赛}等多个方向。每个项目均从\textit{项目背景、技术方案、核心代码实现、迭代优化思路}和\textit{最终成果}五个维度展开说明，力求全面展现本人的科研实践能力、工程素养与创新思维。
+
+\noindent\textbf{核心成果}：RoboMaster 2025全国赛三等奖（第一负责人）、中国大学生工程实践与创新能力大赛校级铜奖（队长）、挑战杯校级优胜奖、市级大学生创新训练项目良好结题、国家自然科学基金课题参与、第一作者会议论文《LightViServo》（在投）。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ========================================================================
+% 第一章：RoboMaster 视觉伺服引擎
+% ========================================================================
+\section{RoboMaster 视觉伺服引擎（rm-engine）}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目角色} & 第一负责人 · 视觉算法与引擎架构开发 \\
+\textbf{技术栈}   & C++17, OpenCV 4.11, OpenGL, Dear ImGui, PyBind11, Eigen \\
+\textbf{硬件平台} & Intel NUC i5-1135G7（无独立GPU，纯CPU边缘计算） \\
+\textbf{竞赛成果} & RoboMaster 2025全国赛三等奖、区域赛二等奖 \\
+\textbf{学术成果} & 第一作者IEEE会议论文 \textit{LightViServo}（在投）
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景与目标}
+
+RoboMaster机甲大师赛要求工程机器人在高速对抗环境下实现自主``取矿--兑换''操作。核心挑战在于：机械臂末端需精准对准兑换站上的4个L形蓝色LED标记（30$\times$30cm正方形四角），完成6-DoF位姿估计后驱动4连杆机械臂执行抓取，整个闭环延迟须低于20ms才能满足实时性要求。
+
+本项目自研了一套\textbf{跨平台C++17视觉伺服引擎框架}（rm-engine），在不依赖GPU加速的Intel NUC边缘设备上，实现了从鱼眼图像采集、传统视觉检测、6-DoF PnP位姿估计、解析逆运动学求解、笛卡尔轨迹插值到CRC16串口闭环反馈的\textbf{全链路自动操控}，端到端延迟仅\textbf{13.5ms}（$\sim$74 FPS）。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_robot.png}
+    \caption{工程机器人全貌——标注鱼眼相机（Eye-in-hand构型）与4连杆机械臂}
+\end{figure}
+
+\subsection{硬件平台配置}
+
+\begin{table}[H]
+\centering
+\caption{系统硬件规格}
+\begin{tabular}{lll}
+\toprule
+\textbf{组件} & \textbf{型号/规格} & \textbf{说明} \\
+\midrule
+计算单元 & Intel NUC i5-1135G7, 16GB RAM & 无独立GPU，纯CPU计算 \\
+工业相机 & 迈德威视 + 3.37mm F2.8鱼眼镜头 & Eye-in-hand构型 \\
+分辨率/帧率 & 1280$\times$1024, 最高120FPS & 实际处理74FPS \\
+机械臂 & 4连杆构型 ($l_1 = l_2 = 28$cm) & 2-DoF平面臂 + 升降 + 3-DoF腕部 \\
+控制器 & STM32F407 & USB-UART 9600 baud \\
+目标标记 & 4个L形蓝色LED & 30$\times$30cm正方形四角 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_camera.png}
+    \caption{迈德威视工业相机——3.37mm F2.8鱼眼镜头}
+\end{figure}
+
+\subsection{rm-engine 跨平台引擎框架}
+
+rm-engine是本项目的核心软件产出，设计为一个\textbf{分层模块化、跨平台}的C++17引擎框架，借鉴游戏引擎架构思想，将视觉伺服系统组织为可复用的模块化组件：
+
+\begin{lstlisting}[style=cppstyle, caption={rm-engine 引擎门面头文件（rmengine.h）}]
+#pragma once
+// === Core ===
+#include "core/core.h"
+#include "core/application.h"        // 应用生命周期管理
+#include "core/log.h"                // spdlog日志系统
+#include "core/layer.h"              // 图层栈(Layer Stack)
+#include "core/timestep.h"           // 帧间时间步
+
+// === Events & Input ===
+#include "events/event.h"            // 事件系统
+#include "events/application-event.h"
+#include "events/key-event.h"
+#include "core/input.h"              // 平台无关输入
+#include "core/key-codes.h"
+
+// === Renderer ===
+#include "renderer/renderer.h"       // OpenGL渲染器
+#include "renderer/render-command.h"
+#include "renderer/buffer.h"
+#include "renderer/shader.h"
+#include "renderer/texture.h"
+#include "renderer/vertex-array.h"
+#include "renderer/orthographic-camera.h"
+#include "renderer/frame-buffer.h"   // 帧缓冲(FBO)
+
+// === ImGui ===
+#include "imgui/imgui-layer.h"       // Dear ImGui调参界面
+\end{lstlisting}
+
+\subsubsection{引擎架构分层}
+
+引擎源码组织为以下分层架构，所有代码位于\texttt{Mechax}命名空间：
+
+\begin{table}[H]
+\centering
+\caption{rm-engine 分层架构}
+\begin{tabular}{p{2cm}p{4cm}p{6.5cm}}
+\toprule
+\textbf{层级} & \textbf{模块} & \textbf{职责与技术} \\
+\midrule
+\textbf{基础层} & \texttt{core/} & Application生命周期、Layer图层栈、多线程管理、Timer性能分析、spdlog日志（5级：TRACE/DEBUG/INFO/WARN/ERROR） \\
+\textbf{事件层} & \texttt{events/} & 事件分发系统（键盘/鼠标/窗口事件），平台无关输入抽象 \\
+\textbf{渲染层} & \texttt{renderer/} & OpenGL渲染管线：Shader/Buffer/Texture/VAO/FBO，2D渲染器，正交相机 \\
+\textbf{模块层} & \texttt{modules/} & 相机采集（MindVision/Intel RealSense）、DH坐标系、串口通信、图像处理流水线 \\
+\textbf{数学层} & \texttt{RMECV/} & 自定义矩阵库（\texttt{mat.h}），轻量级替代Eigen用于关键路径 \\
+\textbf{绑定层} & \texttt{python/} & PyBind11 C++$\to$Python绑定，支持Python脚本调用引擎API \\
+\textbf{可视化} & \texttt{imgui/} & Dear ImGui集成，实时HSV阈值调参、PnP结果可视化 \\
+\textbf{平台层} & \texttt{platform/} & Windows（\texttt{win-window.h}）、Linux（GLFW窗口系统）平台适配 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Premake5 跨平台构建系统}
+
+构建系统采用\textbf{Premake5}（Lua脚本驱动），通过一套配置文件生成Windows（VS2022 \texttt{.sln}）和Linux（\texttt{gmake2 Makefile}）工程，实现\textbf{跨平台一键编译}：
+
+\begin{lstlisting}[style=cppstyle, caption={premake5.lua 核心构建配置}, language={[5.3]Lua}]
+workspace "RM Engine"
+    architecture "x64"
+    configurations { "debug", "release", "dist" }
+
+-- 第三方依赖目录
+includeDir["glfw"]      = "robomaster-engine/vendor/glfw/include"
+includeDir["glad"]      = "robomaster-engine/vendor/glad/include"
+includeDir["imgui"]     = "robomaster-engine/vendor/imgui"
+includeDir["glm"]       = "robomaster-engine/vendor/glm"
+includeDir["spdlog"]    = "robomaster-engine/vendor/spdlog/include"
+includeDir["serial"]    = "robomaster-engine/vendor/serial"
+includeDir["MV"]        = "robomaster-engine/vendor/mindvision"
+includeDir["realsense"] = "robomaster-engine/vendor/intel_realsense"
+includeDir["pybind11"]  = "robomaster-engine/vendor/pybind11"
+\end{lstlisting}
+
+Lua扩展脚本体系实现环境自适应：
+\begin{itemize}
+    \item \texttt{lua/env.lua}：自动检测Anaconda/系统Python环境，维护\texttt{python.ini}跨平台路径配置
+    \item \texttt{lua/python-need.lua}：Python C++编译环境（Windows: python310.lib / Linux: python3.10.so）
+    \item \texttt{lua/opencv-need.lua}：OpenCV 4.11.0（Windows: DLL自动拷贝 / Linux: SO + RPATH链接）
+    \item \texttt{lua/openvino-need.lua}：Intel OpenVINO推理框架（ONNX、PyTorch前端、Linux OpenCL加速）
+\end{itemize}
+
+\begin{lstlisting}[style=cppstyle, caption={跨平台构建命令}, language=bash]
+# Windows (Anaconda + VS2022)
+premake5 --python="D:\anaconda3\envs\rm" --is_conda=true vs2022
+
+# Linux (Conda + gmake2)
+premake5 --python="/home/user/miniconda3/envs/rm" \
+         --is_conda=true gmake2
+
+# Docker部署
+sudo docker exec -it <container_id> /bin/bash
+\end{lstlisting}
+
+\subsubsection{多线程模块化运行}
+
+引擎采用\textbf{多线程流水线}运行模型，每个功能模块继承自\texttt{modules}基类，可选择独立线程或主线程运行：
+
+\begin{lstlisting}[style=cppstyle, caption={多线程模块注册与启动}]
+// 主线程控制
+Application& app = Application::Get();
+app.PushMultiThreadToCurrent(new VisualModule());
+app.PushMultiThreadToCurrent(new IKSolverModule());
+
+// 宏控制多线程启停
+#define ENABLE_MULTITHREADING 1
+#if ENABLE_MULTITHREADING
+  pool.enqueue(module_visual);
+  pool.enqueue(module_ik);
+#else
+  module_visual();
+  module_ik();
+#endif
+\end{lstlisting}
+
+性能分析采用Chrome Tracing格式，通过\texttt{ROBOT\_PROFILE\_FUNCTION()}和\texttt{ROBOT\_PROFILE\_SCOPE("name")}宏标注热点，输出JSON时序数据供\texttt{chrome://tracing}可视化分析。
+
+\subsection{完整视觉伺服流水线}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_pipeline.png}
+    \caption{视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取}
+\end{figure}
+
+端到端流水线分为以下阶段，每帧总延迟仅\textbf{13.5ms}：
+
+\subsubsection{Stage 1--2：鱼眼采集与双色彩空间分割}
+
+采用HSV与灰度\textbf{联合过滤}隔离蓝色LED区域，有效抑制镜面反射与彩色背景干扰：
+
+\begin{equation}
+    \mathbf{M} = \mathbf{M}_{\text{HSV}} \cap \mathbf{M}_{\text{gray}}, \quad
+    \mathbf{M}_{\text{HSV}} = \mathbf{1}[H \!\in\! [38,179] \wedge S \!\in\! [135,255] \wedge V \!\in\! [100,255]]
+\end{equation}
+
+鱼眼相机内参与Brown-Conrady畸变系数（$k_1 = -0.339$的强负值反映桶形畸变特征）：
+
+\begin{equation}
+    \mathbf{K} = \begin{bmatrix} 501.36 & 0 & 635.69 \\ 0 & 501.26 & 488.57 \\ 0 & 0 & 1 \end{bmatrix}, \quad
+    \mathbf{d} = [-0.339,\; 0.152,\; -1.14\!\times\!10^{-5},\; -3.30\!\times\!10^{-5},\; -0.036]
+\end{equation}
+
+\subsubsection{Stage 3--4：边缘增强与多准则轮廓过滤}
+
+\begin{equation}
+    \mathbf{E} = \text{Dilate}_{5\times5}\Big(\text{Canny}\big(\text{GaussBlur}_{7\times7,\sigma=5}(\mathbf{M}),\; 50,\; 100\big)\Big)
+\end{equation}
+
+通过\textbf{四个几何准则}筛选有效的L形轮廓：
+
+\begin{enumerate}
+    \item \textbf{面积约束}：$A_c > 200$ px$^2$（剔除噪声）
+    \item \textbf{长宽比}：$0.4 < \text{AR} < 3.5$（剔除细长伪影）
+    \item \textbf{多边形顶点数}：$4 \leq N_{\text{poly}} \leq 15$（匹配L形几何，$\varepsilon = 0.02 \times$周长）
+    \item \textbf{填充率}：$0.35 \leq A_c/(w \times h) \leq 0.75$（匹配L形面积比）
+\end{enumerate}
+
+\begin{lstlisting}[style=cppstyle, caption={HSV分割+Canny边缘+多准则轮廓过滤}]
+// 双色彩空间分割
+cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+cv::inRange(hsv, cv::Scalar(38,135,100),
+            cv::Scalar(179,255,255), mask_hsv);
+cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+cv::threshold(gray, mask_gray, 100, 200, cv::THRESH_BINARY);
+cv::bitwise_and(mask_hsv, mask_gray, mask);
+
+// 边缘增强: 高斯模糊 -> Canny -> 膨胀
+cv::GaussianBlur(mask, mask, cv::Size(7,7), 5);
+cv::Canny(mask, edges, 50, 100);
+cv::dilate(edges, edges,
+    cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5)));
+
+// 多准则轮廓过滤
+for (const auto& c : contours) {
+    double area = cv::contourArea(c);
+    if (area < 200) continue;  // 面积约束
+    auto rrect = cv::minAreaRect(c);
+    float ar = std::max(rrect.size.width, rrect.size.height)
+             / std::min(rrect.size.width, rrect.size.height);
+    if (ar > 3.5f || ar < 0.4f) continue;  // 长宽比
+    double extent = area/(rrect.size.width*rrect.size.height);
+    if (extent < 0.35 || extent > 0.75) continue; // 填充率
+    valid_contours.push_back(c);
+}
+\end{lstlisting}
+
+\subsubsection{Stage 5：最小包围圆(MEC)关键点提取}
+
+对通过过滤的$N$个轮廓，枚举所有$\binom{N}{4}$个四元组，选择全局包围圆面积最小的组合，从4个选中圆的边界提取最远点作为关键点：
+
+\begin{equation}
+    P_i^{\text{far}} = c_i + r_i \cdot \frac{c_i - C^*}{\|c_i - C^*\|}
+\end{equation}
+
+4个关键点按极角$\alpha_i = \text{atan2}(\Delta y, \Delta x)$升序排列，标注为A、B、C、D，确保与3D模型点一一对应后送入PnP求解。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_success.png}
+    \caption{MEC关键点提取成功——极角排序标注A/B/C/D，Extent值与包围圆可视化}
+\end{figure}
+
+\subsubsection{Stage 6：PnP位姿估计与手眼坐标变换}
+
+使用\texttt{cv::solvePnP}（ITERATIVE模式）在求解过程中内联处理Brown-Conrady畸变校正，恢复6-DoF位姿后，通过\textbf{手眼标定外参偏移}将相机坐标系转换到机械臂基座坐标系：
+
+\begin{equation}
+    a_x = t_z - 36, \quad a_y = -t_x - 5, \quad a_z = -t_y + 55 \quad (\text{单位: cm})
+\end{equation}
+
+姿态角直接传递：$a_{\text{pitch}} = r_x$，$a_{\text{yaw}} = -r_y$，$a_{\text{roll}} = r_z$。
+
+\subsection{解析逆运动学求解器}
+
+4连杆机械臂（$l_1 = l_2 = 28$cm，$l_3 = 7$cm，$l_4 = 12$cm）的自由度分配为：大臂$\theta_1$（X方向）、小臂$\theta_2$（Y方向）、底座升降（Z轴）、腕部3-DoF（$\psi, \phi, \rho$）。
+
+\subsubsection{求解算法}
+
+\textbf{Step 1：腕部中心解耦}
+\begin{equation}
+    x_w = a_x - (l_3 + l_4\cos\phi)\cos\psi, \quad
+    y_w = a_y - (l_3 + l_4\cos\phi)\sin\psi, \quad
+    z_w = a_z - l_4\sin\phi
+\end{equation}
+
+\textbf{Step 2：余弦定理求解}——平面到达距离$r = \sqrt{x_w^2 + y_w^2}$，工作空间约束$|l_1 - l_2| \leq r \leq l_1 + l_2$：
+
+\begin{equation}
+    \cos\theta_2 = \text{clamp}\!\left(\frac{r^2 - l_1^2 - l_2^2}{2l_1 l_2},\; -1,\; 1\right)
+\end{equation}
+
+\begin{equation}
+    \theta_1 = \text{atan2}(y_w, x_w) \pm \arccos\!\left(\text{clamp}\!\left(\frac{l_1^2 + r^2 - l_2^2}{2l_1 r},\; -1,\; 1\right)\right)
+\end{equation}
+
+\textbf{Step 3：双分支消歧与正运动学验证}——$\theta_1$和$\theta_2$的$\pm$组合产生最多4个候选解，通过关节限位（$\theta_1 \in [\pi/2, \pi]$，$\theta_2 \in [-\pi, 2\pi]$）和正运动学验证（末端误差$< 0.5$cm）筛选，最终调整偏航角$\psi_{\text{final}} = \psi - \theta_1 - \theta_2$。
+
+\textbf{Step 4：工作空间扩展}——当$r > 80$cm时触发底盘前移补偿；若IK仍失败则复位至安全构型。
+
+\begin{table}[H]
+\centering
+\caption{解析IK求解器性能（不同距离）}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{距离(cm)} & \textbf{平均误差(cm)} & \textbf{最大误差(cm)} & \textbf{求解率} & \textbf{耗时($\mu$s)} \\
+\midrule
+20 & 0.02 & 0.08 & 100\% & 1.2 \\
+40 & 0.05 & 0.18 & 100\% & 1.3 \\
+60 & 0.12 & 0.41 & 98.5\% & 1.4 \\
+80 & 0.31 & 0.49 & 94.2\% & 1.5 \\
+$>$80(含底盘) & 0.28 & 0.47 & 91.8\% & 2.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{轨迹插值与串口闭环控制}
+
+解出目标关节角后，在笛卡尔空间（而非关节空间）进行$N=10$步线性插值，保证末端轨迹平滑。逼近距离$d = -40$cm，每个航点均进行IK求解，\textbf{仅当全部航点有效时才执行轨迹}。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_arm_target.png}
+    \caption{机械臂对准兑换站目标——L形蓝色LED标记与串口闭环反馈}
+\end{figure}
+
+CRC16串口协议帧格式：
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{字节位置} & \textbf{字段} & \textbf{类型} & \textbf{说明} \\
+\midrule
+0        & 帧头SOF       & uint8   & 发送0xA5 / 接收0xB5 \\
+1--8     & $\theta_1, \theta_2$ & 2$\times$float & 关节1\&2角度 \\
+9--12    & z\_height     & float   & 升降高度（$\times$1.25缩放） \\
+13--24   & $\psi, \phi, \rho$ & 3$\times$float & 腕部姿态角 \\
+25--36   & fwd, bwd, cw  & 3$\times$float & 底盘运动指令 \\
+37       & CRC16         & uint16  & 多项式0xA001校验 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+闭环反馈控制（最多100次迭代）：发送关节命令$\to$读取反馈角度$\to$检查收敛条件$|\theta_i^{\text{fb}} - \theta_i^{\text{cmd}}| < 0.1$ rad$\to$收敛后前进至下一航点。
+
+\subsection{深度学习方案对比分析：为什么回退到传统视觉}
+
+项目前期尝试了YOLOv11n-Pose关键点检测方案，在OpenVINO INT8量化后实际部署中遇到了三个核心问题，最终决策回退至传统视觉：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{robomaster/rm-engine-armsolve-xyw/paper/fig_yolo_fail.png}
+    \caption{YOLOv11-Pose检测失败案例——近距离L形标记面积过大导致误检}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{传统视觉 vs YOLOv11-Pose 工程对比}
+\begin{tabular}{lcc}
+\toprule
+\textbf{指标} & \textbf{传统视觉} & \textbf{YOLOv11-Pose} \\
+\midrule
+训练数据需求 & \textbf{无} & 大量标注数据 \\
+检测延迟 & \textbf{6.7ms} & 12.8ms \\
+端到端延迟 & \textbf{13.5ms} & $\sim$22ms+ \\
+光照变化稳定性 & 高（几何先验） & 低（数据不足） \\
+关键点精度 & 亚像素级 & 偏差较大 \\
+GPU依赖 & \textbf{无} & 需要（CPU低效） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{核心结论}：在数据有限、场景结构化的RoboMaster赛场条件下，传统视觉方法是更稳健的工程选择。深度学习方案受限于训练数据多样性不足（竞赛场地光照、视角变化难以充分覆盖），模型泛化能力有限。
+
+\subsection{迭代优化历程}
+
+\begin{iterbox}[版本迭代]
+\begin{enumerate}[label=\textbf{V\arabic*}:, leftmargin=3em]
+    \item \textbf{原型验证}（Python + OpenCV）：单线程检测原型，帧率仅$\sim$15 FPS，但验证了HSV分割+轮廓过滤+PnP的算法可行性
+    \item \textbf{C++17引擎重构}：设计rm-engine分层模块化架构（Core/Events/Renderer/Modules/ImGui），引入Layer图层栈与事件分发系统，帧率提升至$\sim$40 FPS
+    \item \textbf{深度学习实验}：训练YOLOv11n-Pose关键点检测模型，OpenVINO INT8量化部署。发现训练数据不足导致泛化差、关键点精度不满足PnP需求、推理延迟12.8ms超出预算
+    \item \textbf{传统视觉回退优化}：设计六阶段流水线——双色彩空间分割+Canny边缘+四准则过滤+MEC关键点+PnP，帧率突破$\sim$74 FPS，延迟降至\textbf{13.5ms}
+    \item \textbf{IK求解器迭代}：初版采用Ceres Solver非线性优化（梯度下降），耗时$\sim$20$\mu$s；重构为余弦定理解析解+双分支消歧+FK验证，耗时降至$<$2.1$\mu$s（提速$\sim$10$\times$）
+    \item \textbf{跨平台构建系统}：Premake5 Lua脚本体系，自动检测Python/OpenCV/OpenVINO环境，一键生成VS2022（Windows）/ gmake2（Linux）工程，支持Docker部署
+    \item \textbf{工程化完善}：集成Dear ImGui可视化调参界面（HSV阈值、轮廓参数实时滑块）、PyBind11 Python绑定、多相机驱动热插拔（MindVision/Intel RealSense）、spdlog 5级日志、Chrome Tracing性能分析
+    \item \textbf{论文输出}：系统总结为IEEE会议论文\textit{LightViServo: Real-Time Visual Servoing for Robotic Arm Manipulation via Traditional Vision on Edge Devices}，第一作者，在投
+\end{enumerate}
+\end{iterbox}
+
+\subsection{端到端性能指标}
+
+\begin{resultbox}[测试结果（Intel NUC i5-1135G7，无GPU）]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{处理阶段} & \textbf{延迟(ms)} & \textbf{占比} \\
+\midrule
+图像采集         & 2.1   & 19.6\% \\
+HSV+灰度分割     & 0.8   & 7.5\% \\
+高斯+Canny+膨胀  & 1.2   & 11.2\% \\
+轮廓提取+过滤     & 1.5   & 14.0\% \\
+MEC+关键点提取    & 1.8   & 16.8\% \\
+PnP位姿估计      & 1.4   & 13.1\% \\
+坐标变换         & 0.2   & 1.9\% \\
+IK求解           & $<$0.01 & $<$0.1\% \\
+轨迹规划         & 0.4   & 3.7\% \\
+串口通信         & 1.2   & 11.2\% \\
+\midrule
+\textbf{合计}    & \textbf{$\sim$10.7} & --- \\
+\textbf{实际(含ImGui)} & \textbf{$\sim$13.5} & \textbf{$\sim$74 FPS} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{resultbox}
+
+\begin{table}[H]
+\centering
+\caption{操控成功率与失败原因分析}
+\begin{tabular}{lcc}
+\toprule
+\textbf{指标} & \textbf{数值} & \textbf{占比} \\
+\midrule
+静态场景操控成功率 & $>$80\% & --- \\
+\midrule
+近距离检测失败 & --- & 35\% \\
+光照干扰失败 & --- & 30\% \\
+工作空间边界IK无解 & --- & 20\% \\
+通信/反馈超时 & --- & 15\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{robomaster/MVIMG_20250428_151002.jpg}
+    \caption{RoboMaster测试现场}
+\end{figure}
+
+% ========================================================================
+% 第二章：SmartRobot 智能扫地机器人
+% ========================================================================
+\newpage
+\section{SmartRobot 智能扫地机器人}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目角色} & 核心开发 \\
+\textbf{课程}     & 微电路设计课程项目 \\
+\textbf{时间}     & 2024.09 --- 2025.01 \\
+\textbf{技术栈}   & STM32F4, A4950, JY901S IMU, HC-05蓝牙, PyQt5 \\
+\textbf{核心功能} & 全屋建图、自主路径规划、遥控模式、碰撞安全响应
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+本项目设计并实现了一套\textbf{完整的智能扫地机器人系统}，涵盖自研PCB硬件设计、嵌入式底层驱动、PID闭环控制、航迹推算位姿解算以及上位机实时可视化。
+
+\subsection{硬件设计——自研PCB}
+
+采用Altium Designer完成PCB设计，核心模块包括：
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{模块} & \textbf{器件} & \textbf{功能} \\
+\midrule
+电源管理 & SLM6900 DC-DC + AMS1117-3.3V LDO & 锂电池充放电管理 \\
+电机驱动 & A4950 $\times$ 2（双H桥配置） & 正反转PWM调速 \\
+主控     & STM32F407 & Cortex-M4核心控制器 \\
+IMU      & JY901S九轴 & USART2, 11字节帧解析 \\
+蓝牙     & HC-05     & 上位机通信 \\
+传感器   & 4路悬崖红外ADC + 2路碰撞开关 & 安全防护 \\
+辅助     & 74HC14 施密特触发器 & 编码器信号整形 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{编码器与航迹推算}
+
+通过TIM2/TIM5编码器模式采集轮速，实现航迹推算（Dead Reckoning）：
+
+\begin{equation}
+    \Delta s = \frac{\Delta s_L + \Delta s_R}{2}, \quad
+    \Delta\theta = \frac{\Delta s_R - \Delta s_L}{D}
+\end{equation}
+
+\begin{equation}
+    x_{k+1} = x_k + \Delta s \cdot \cos\!\left(\theta_k + \frac{\Delta\theta}{2}\right), \quad
+    y_{k+1} = y_k + \Delta s \cdot \sin\!\left(\theta_k + \frac{\Delta\theta}{2}\right)
+\end{equation}
+
+其中 $D$ 为两轮轴距，$\Delta s_L$、$\Delta s_R$ 分别为左右轮弧长增量。结合JY901S IMU的航向角进行\textbf{加权融合}修正累积漂移。
+
+\subsection{PID闭环速度控制}
+
+\begin{lstlisting}[style=cstyle, caption={增量式PID速度控制器（50ms采样周期）}]
+typedef struct {
+    float Kp, Ki, Kd;       // Kp=0.1, Ki=0.1, Kd=0.001
+    float error, last_error, prev_error;
+    float output;
+    float out_max, out_min;
+} PID_TypeDef;
+
+float PID_Incremental(PID_TypeDef *pid, float target, float actual) {
+    pid->error = target - actual;
+
+    // 增量式PID: delta_u = Kp*(e-e1) + Ki*e + Kd*(e-2e1+e2)
+    float delta = pid->Kp * (pid->error - pid->last_error)
+                + pid->Ki * pid->error
+                + pid->Kd * (pid->error - 2*pid->last_error
+                             + pid->prev_error);
+
+    pid->output += delta;
+
+    // 输出限幅，防止PWM溢出
+    if (pid->output > pid->out_max) pid->output = pid->out_max;
+    if (pid->output < pid->out_min) pid->output = pid->out_min;
+
+    pid->prev_error = pid->last_error;
+    pid->last_error = pid->error;
+
+    return pid->output;
+}
+\end{lstlisting}
+
+\subsection{JY901S IMU数据解析}
+
+\begin{lstlisting}[style=cstyle, caption={JY901S串口数据帧解析（11字节帧）}]
+// JY901S 数据帧格式: 0x55 + TYPE + 8字节数据 + SUM
+void IMU_ParseFrame(uint8_t *buf) {
+    if (buf[0] != 0x55) return;
+
+    uint8_t type = buf[1];
+    switch (type) {
+        case 0x53:  // 欧拉角数据帧
+            // Roll/Pitch/Yaw = raw * (180.0 / 32768.0)
+            imu_data.roll  = ((int16_t)(buf[3]<<8|buf[2]))
+                             / 32768.0f * 180.0f;
+            imu_data.pitch = ((int16_t)(buf[5]<<8|buf[4]))
+                             / 32768.0f * 180.0f;
+            imu_data.yaw   = ((int16_t)(buf[7]<<8|buf[6]))
+                             / 32768.0f * 180.0f;
+            break;
+        case 0x51:  // 加速度数据帧
+            imu_data.ax = ((int16_t)(buf[3]<<8|buf[2]))
+                          / 32768.0f * 16.0f * 9.8f;
+            imu_data.ay = ((int16_t)(buf[5]<<8|buf[4]))
+                          / 32768.0f * 16.0f * 9.8f;
+            break;
+    }
+}
+\end{lstlisting}
+
+\subsection{系统状态机与安全响应}
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{状态} & \textbf{模式} & \textbf{触发条件} & \textbf{行为} \\
+\midrule
+0 & 关机     & 上电默认/遥控关机 & 电机停止，系统待机 \\
+1 & 遥控模式 & 蓝牙指令切换      & 接收上位机速度指令 \\
+2 & 自主建图 & 蓝牙指令切换      & 牛耕式路径规划清扫 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+碰撞/悬崖传感器触发时执行\textbf{50ms紧急制动}策略：立即停止$\to$后退200ms$\to$旋转90°$\to$继续清扫。
+
+\subsection{蓝牙通信协议}
+
+\begin{center}
+\begin{tabular}{cllll}
+\toprule
+\textbf{方向} & \textbf{帧长} & \textbf{帧头} & \textbf{内容} & \textbf{校验} \\
+\midrule
+上行（遥控$\to$下位机） & 6字节 & 0xAA & 模式+左右轮速度 & 校验和 \\
+下行（下位机$\to$上位机） & 14字节 & 0xBB & 编码器+IMU+传感器 & 校验和 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{lstlisting}[style=cstyle, caption={下行状态反馈帧封装}]
+// 14字节下行帧: 0xBB + 编码器(4B) + IMU(4B) + 传感器(4B) + SUM
+void SendStatusFrame(void) {
+    uint8_t frame[14];
+    frame[0] = 0xBB;  // 帧头
+    // 编码器脉冲数 (左/右)
+    frame[1] = (encoder_left >> 8) & 0xFF;
+    frame[2] = encoder_left & 0xFF;
+    frame[3] = (encoder_right >> 8) & 0xFF;
+    frame[4] = encoder_right & 0xFF;
+    // IMU 航向角
+    int16_t yaw_raw = (int16_t)(imu_data.yaw * 100);
+    frame[5] = (yaw_raw >> 8) & 0xFF;
+    frame[6] = yaw_raw & 0xFF;
+    // 传感器状态 (碰撞+悬崖)
+    frame[7] = collision_left | (collision_right << 1);
+    frame[8] = cliff_sensor[0] | (cliff_sensor[1] << 1)
+             | (cliff_sensor[2] << 2) | (cliff_sensor[3] << 3);
+    // 校验和
+    uint8_t sum = 0;
+    for (int i = 0; i < 13; i++) sum += frame[i];
+    frame[13] = sum;
+    HAL_UART_Transmit(&huart_bt, frame, 14, 100);
+}
+\end{lstlisting}
+
+\subsection{上位机——PyQt5实时可视化}
+
+\begin{lstlisting}[style=pythonstyle, caption={PyQt5上位机轨迹可视化核心}]
+class TrajectoryWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.fig, self.ax = plt.subplots(figsize=(6, 6))
+        self.canvas = FigureCanvas(self.fig)
+        self.trajectory_x = []
+        self.trajectory_y = []
+
+    def update_position(self, x, y, theta):
+        """接收下位机解算的位姿，实时绘制轨迹"""
+        self.trajectory_x.append(x)
+        self.trajectory_y.append(y)
+        self.ax.clear()
+        self.ax.plot(self.trajectory_x, self.trajectory_y,
+                     'b-', linewidth=1.5, label='轨迹')
+        # 绘制当前朝向箭头
+        dx = 0.05 * math.cos(math.radians(theta))
+        dy = 0.05 * math.sin(math.radians(theta))
+        self.ax.arrow(x, y, dx, dy, head_width=0.02,
+                      color='red')
+        self.ax.set_aspect('equal')
+        self.ax.legend()
+        self.canvas.draw()
+\end{lstlisting}
+
+\subsection{路径规划——Boustrophedon牛耕式全覆盖}
+
+\begin{enumerate}
+    \item \textbf{贴墙建图阶段}：启动后沿墙壁行驶，通过碰撞传感器检测墙体，编码器+IMU融合记录轮廓
+    \item \textbf{边界构建}：贴墙行驶一圈后闭合轮廓，生成环境边界多边形
+    \item \textbf{牛耕模式}：沿直线前进至碰墙$\to$横移一个清扫宽度$\to$反向行驶，形成``弓''字形覆盖
+    \item \textbf{航向修正}：IMU实时监测航向偏差，PID闭环修正保持直线精度
+    \item \textbf{覆盖率统计}：上位机计算已清扫面积占比
+\end{enumerate}
+
+\subsection{测试结果}
+
+\begin{resultbox}[性能指标]
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{指标} & \textbf{数值} \\
+\midrule
+直线100cm偏角     & $<5°$ \\
+直线距离偏差      & $<2$ cm \\
+90°旋转误差       & $<2°$ \\
+碰撞响应延迟      & $<50$ ms \\
+贴墙建图完整度    & 完整闭合 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{resultbox}
+
+\begin{iterbox}[版本迭代]
+\begin{enumerate}[label=\textbf{V\arabic*}:, leftmargin=3em]
+    \item \textbf{面包板原型}：Arduino + L298N验证电机驱动基本功能
+    \item \textbf{自研PCB V1}：Altium Designer绘制PCB，集成SLM6900电源+A4950驱动，嘉立创打样
+    \item \textbf{闭环控制}：引入编码器反馈+增量式PID，直线偏差从$>$10cm收敛至$<$2cm
+    \item \textbf{IMU融合}：集成JY901S，编码器+IMU加权融合，旋转精度从$\pm$8°提升至$\pm$2°
+    \item \textbf{自主建图}：实现贴墙建图+牛耕路径规划+PyQt5上位机实时可视化
+\end{enumerate}
+\end{iterbox}
+
+% ========================================================================
+% 第三章：工创赛——K210垃圾分类识别
+% ========================================================================
+\newpage
+\section{工创赛——K210智能垃圾分类识别系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目角色} & 队长 · 视觉开发 \\
+\textbf{竞赛}     & 第九届中国大学生工程实践与创新能力大赛 \\
+\textbf{竞赛成果} & \textbf{校级铜奖} \\
+\textbf{技术栈}   & K210 边缘AI芯片, MaixHub, MaixPy IDE, 卷积神经网络 \\
+\textbf{时间}     & 2024.11
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+中国大学生工程实践与创新能力大赛（工创赛）要求在边缘设备上实现智能垃圾分类。本项目基于\textbf{嘉楠K210}边缘AI芯片，通过数据采集、云端训练、本地部署的完整流程，实现了四类垃圾的实时识别分类。
+
+\subsection{技术方案与实现步骤}
+
+\subsubsection{Step 1: 数据集采集与标注}
+
+收集四种类型垃圾的数据集：
+
+\begin{center}
+\begin{tabular}{clc}
+\toprule
+\textbf{类别} & \textbf{垃圾类型} & \textbf{样本数量} \\
+\midrule
+0 & 可回收垃圾   & 200+ 张 \\
+1 & 有害垃圾     & 200+ 张 \\
+2 & 厨余垃圾     & 200+ 张 \\
+3 & 其他垃圾     & 200+ 张 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+采用K210摄像头模块进行多角度、多光照条件下的样本采集，使用标注工具进行bounding box标注。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{"工创赛/数据集.png"}
+    \caption{垃圾分类数据集样本示例}
+\end{figure}
+
+\subsubsection{Step 2: MaixHub云端模型训练}
+
+将标注完成的数据集上传至\textbf{MaixHub}平台进行云端训练：
+
+\begin{enumerate}
+    \item 创建MaixHub项目，上传标注数据集
+    \item 选择适配K210的轻量级CNN网络结构
+    \item 配置训练参数：学习率、epoch数、batch size
+    \item 云端训练完成后下载\texttt{.kmodel}模型文件
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{"工创赛/训练集准确率.png"}
+    \caption{MaixHub模型训练准确率曲线}
+\end{figure}
+
+\subsubsection{Step 3: MaixPy IDE串口调试与测试}
+
+使用\textbf{MaixPy IDE}连接K210开发板进行调试：
+
+\begin{lstlisting}[style=pythonstyle, caption={MaixPy K210目标检测推理代码}]
+import sensor, image, lcd, KPU
+from machine import UART
+
+# 初始化摄像头
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)  # 320x240
+sensor.run(1)
+
+# 加载 kmodel 模型
+task = KPU.load("/sd/model.kmodel")
+anchor = (1.889, 2.525, 2.947, 3.941, 4.0, 5.366,
+          5.588, 6.750, 7.840, 9.606)
+KPU.init_yolo2(task, 0.5, 0.3, 5, anchor)
+
+# 初始化串口 (与主控通信)
+uart = UART(UART.UART1, baudrate=115200)
+
+lcd.init()
+
+while True:
+    img = sensor.snapshot()
+    objects = KPU.run_yolo2(task, img)
+
+    if objects:
+        for obj in objects:
+            # 绘制检测框
+            img.draw_rectangle(obj.rect())
+            class_id = obj.classid()
+            confidence = obj.value()
+            class_names = ["可回收", "有害", "厨余", "其他"]
+            img.draw_string(obj.x(), obj.y(),
+                class_names[class_id], scale=2)
+            # 串口发送分类结果
+            uart.write(str(class_id) + '\n')
+
+    lcd.display(img)
+\end{lstlisting}
+
+\subsubsection{Step 4: 串口通信与舵机执行机构}
+
+K210识别出垃圾类别后，通过串口将分类编号（0--3）发送给STM32主控MCU。MCU接收分类数字后，驱动舵机旋转到对应角度，控制分类挡板将垃圾导入对应的收集桶：
+
+\begin{center}
+\begin{tabular}{cclc}
+\toprule
+\textbf{class\_id} & \textbf{垃圾类型} & \textbf{舵机角度} & \textbf{对应桶位} \\
+\midrule
+0 & 可回收垃圾 & 0° & 1号桶 \\
+1 & 有害垃圾   & 90° & 2号桶 \\
+2 & 厨余垃圾   & 180° & 3号桶 \\
+3 & 其他垃圾   & 270° & 4号桶 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{MCU端舵机控制逻辑}：
+
+\begin{lstlisting}[style=cstyle, caption={STM32主控接收分类结果驱动舵机}]
+// 串口接收中断回调
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart == &huart1) {
+        uint8_t class_id = rx_buffer[0] - '0'; // ASCII转数字
+        if (class_id <= 3) {
+            // 四种垃圾对应四种舵机角度
+            uint16_t angles[4] = {0, 90, 180, 270};
+            Servo_SetAngle(angles[class_id]);
+        }
+        // 重新开启接收
+        HAL_UART_Receive_IT(&huart1, rx_buffer, 1);
+    }
+}
+
+// 舵机角度设置 (50Hz PWM, 0.5ms~2.5ms脉宽)
+void Servo_SetAngle(uint16_t angle) {
+    // 将0~270度映射到500~2500us脉宽
+    uint16_t pulse = 500 + (uint32_t)angle * 2000 / 270;
+    __HAL_TIM_SET_COMPARE(&htim_servo, TIM_CHANNEL_1, pulse);
+    HAL_Delay(500); // 等待舵机到位
+}
+\end{lstlisting}
+
+\subsubsection{Step 5: TF卡烧录独立运行}
+
+调试完成后将程序与模型烧录至TF卡，实现K210开机自启动独立运行，脱离PC调试环境。完整系统工作流程：K210视觉识别$\to$串口发送class\_id$\to$MCU接收$\to$舵机旋转到对应角度$\to$垃圾分类投放。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{"工创赛/Snipaste_2026-04-08_23-09-42.png"}
+    \caption{K210垃圾分类识别系统运行效果}
+\end{figure}
+
+\subsection{迭代优化历程}
+
+\begin{iterbox}[版本迭代]
+\begin{enumerate}[label=\textbf{V\arabic*}:, leftmargin=3em]
+    \item \textbf{数据采集}：多角度、多光照采集800+张四类垃圾样本
+    \item \textbf{模型训练}：MaixHub云端训练，调整网络结构和超参数，准确率逐步提升
+    \item \textbf{本地部署}：MaixPy IDE串口联调，优化推理速度和显示效果
+    \item \textbf{舵机联调}：K210串口发送class\_id（0/1/2/3），MCU驱动舵机旋转至对应角度（0°/90°/180°/270°），实现四类垃圾自动分拣
+    \item \textbf{系统集成}：TF卡烧录独立运行，K210识别+串口通信+舵机执行全链路闭环
+\end{enumerate}
+\end{iterbox}
+
+% ========================================================================
+% 第四章：电机驱动控制系统
+% ========================================================================
+\newpage
+\section{电机驱动综合系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 个人实践项目 \\
+\textbf{技术栈}   & STM32F103C8T6, HAL库, Altium Designer, 嘉立创打样 \\
+\textbf{核心功能} & 有刷/无刷电机驱动、电压电流检测、霍尔/无感驱动、OLED显示 \\
+\textbf{PCB设计}  & 自研有刷电机综合PCB + 无刷电机综合PCB，多版迭代
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+本项目从零构建了两套\textbf{完整的电机控制综合系统}，分别对应有刷直流电机和无刷电机。与扫地机器人项目中使用A4950作为主控板上的电机控制模块不同，本项目的两块自研PCB均为\textbf{独立完整的电机驱动综合系统}，每块板不仅实现电机驱动功能，还集成了电压检测、电流检测、OLED实时显示、按键交互、PI闭环控制等多项功能，形成了一个自包含的电机测试与控制平台。项目经历了从面包板原型到多版PCB迭代的完整工程化过程。
+
+\subsection{系统功能总览}
+
+\textbf{有刷电机综合系统}和\textbf{无刷电机综合系统}各为一块独立PCB，功能对比如下：
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{功能模块} & \textbf{有刷电机PCB} & \textbf{无刷电机PCB} \\
+\midrule
+电机驱动         & H桥PWM驱动           & 三相全桥逆变器 \\
+电压检测         & 33k/10k分压ADC采样   & 分压ADC采样 \\
+电流检测         & 0.01$\Omega$采样电阻+运放  & 采样电阻+运放 \\
+位置/速度反馈    & ---                  & 霍尔传感器驱动 \\
+无感驱动         & ---                  & 反电动势过零检测 \\
+OLED显示         & SSD1306 128$\times$64  & SSD1306 128$\times$64 \\
+按键交互         & 4路独立按键          & 4路独立按键 \\
+LED状态指示      & 2路LED               & 2路LED \\
+闭环控制         & PI控制器             & 双环PI（速度+电流） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{有刷电机综合PCB——硬件方案}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{模块} & \textbf{规格} & \textbf{引脚} \\
+\midrule
+MCU          & STM32F103C8T6 (72 MHz, Cortex-M3) & --- \\
+电机驱动     & H桥MOSFET驱动电路 & --- \\
+PWM通道1     & TIM2\_CH4，2400级分辨率 & PB11 \\
+PWM通道2     & TIM3\_CH4，2400级分辨率 & PB1 \\
+方向控制     & GPIO高低电平切换H桥 & PB0, PB10 \\
+电压检测     & ADC\_CH6, 33k/10k分压, 比值4.3 & PA6 \\
+电流检测     & ADC\_CH5, 0.01$\Omega$采样, 运放放大$\times$20 & PA5 \\
+OLED显示     & SSD1306 128$\times$64, 软件I2C & PB12/PB13 \\
+按键输入     & 4路独立按键，低电平有效 & PB4--PB7 \\
+LED指示      & 2路运行状态指示 & PA15, PB3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{ADC双通道电压电流检测}
+
+原理图参数：电压分压 $R_{16}=33\text{k}\Omega$, $R_{22}=10\text{k}\Omega$；电流检测 $R_{shunt}=0.01\Omega$, 放大倍数$\times$20：
+
+\begin{equation}
+    V_{in} = V_{adc} \times \frac{R_{16} + R_{22}}{R_{22}} = V_{adc} \times 4.3
+\end{equation}
+
+\begin{equation}
+    I = \frac{V_{out} - V_{ref}}{20 \times R_{shunt}} = 5 \times (V_{out} - 1.2)
+\end{equation}
+
+\begin{lstlisting}[style=cstyle, caption={ADC双通道序列采集 + 16次滑动平均滤波}]
+#define ADC_VREF        3.3f
+#define ADC_MAX_COUNTS  4095.0f
+#define VOL_RATIO       4.3f      // 电压分压比
+#define CUR_VREF        1.2f      // 电流检测参考电压
+#define CUR_GAIN        5.0f      // 电流增益 A/V
+#define ADC_AVG_N       16        // 平均滤波次数
+
+static void ADC_Read_CurVol_Avg(uint16_t *raw_cur,
+                                 uint16_t *raw_vol)
+{
+    uint32_t sum_cur = 0, sum_vol = 0;
+    for (int n = 0; n < ADC_AVG_N; n++) {
+        HAL_ADC_Start(&hadc1);
+        // Rank1 = CH5 = ADC_CUR (PA5)
+        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+            sum_cur += HAL_ADC_GetValue(&hadc1);
+        // Rank2 = CH6 = ADC_VOL (PA6)
+        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+            sum_vol += HAL_ADC_GetValue(&hadc1);
+        HAL_ADC_Stop(&hadc1);
+    }
+    *raw_cur = (uint16_t)(sum_cur / ADC_AVG_N);
+    *raw_vol = (uint16_t)(sum_vol / ADC_AVG_N);
+}
+
+static void Measure_Update(void) {
+    ADC_Read_CurVol_Avg(&adc_raw_cur, &adc_raw_vol);
+    float v_cur = (adc_raw_cur * ADC_VREF) / ADC_MAX_COUNTS;
+    float v_vol = (adc_raw_vol * ADC_VREF) / ADC_MAX_COUNTS;
+    meas_voltage_V = v_vol * VOL_RATIO;        // 真实电压
+    meas_current_A = (v_cur - CUR_VREF) * CUR_GAIN; // 真实电流
+    if (meas_current_A < 0.0f) meas_current_A = 0.0f;
+}
+\end{lstlisting}
+
+\subsection{H桥交叉控制正反转}
+
+采用两路PWM通道交叉控制H桥MOSFET，实现正反转切换：
+
+\begin{lstlisting}[style=cstyle, caption={H桥交叉控制——正反转+速度调节}]
+uint8_t  Motor_Dir = 0;      // 0=正转, 1=反转
+uint16_t Motor_Speed = 1199; // PWM占空比: 0~2399
+uint8_t  Motor_Speed_Step = 239; // 每次加减速步长(约10%)
+
+void Motor_UpdateOutput(void) {
+    if (Motor_Dir == 1) {           // 正向转
+        HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, Motor_Speed);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+        HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+        // LED指示: 正转亮LED2
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+    } else {                         // 反向转
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, Motor_Speed);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+        // LED指示: 反转亮LED1
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+    }
+}
+
+void Motor_Stop(void) {
+    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
+    HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+    // 全灭LED
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+}
+\end{lstlisting}
+
+\subsection{按键扫描与交互控制}
+
+4路独立按键实现人机交互控制：
+
+\begin{lstlisting}[style=cstyle, caption={4键扫描——消抖+等待释放}]
+uint8_t Key_Scan(void) {
+    // KEY1 (PB4): 停止
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+        HAL_Delay(10);  // 10ms消抖
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+            while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)
+                   == GPIO_PIN_RESET); // 等待释放
+            return 1;
+        }
+    }
+    // KEY2 (PB5): 方向切换
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET) {
+        HAL_Delay(10);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET) {
+            while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)
+                   == GPIO_PIN_RESET);
+            return 2;
+        }
+    }
+    // KEY3 (PB6): 加速   KEY4 (PB7): 减速
+    // ... 同理实现
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{OLED软件I2C显示}
+
+自实现\textbf{软件I2C协议}驱动SSD1306，包含6$\times$8最小字库、帧缓冲区刷新机制：
+
+\begin{lstlisting}[style=cstyle, caption={SSD1306 OLED实时数据显示}]
+// 6x8 最小字库: 0-9, D, I, M, P, R, W, V, 空格, 冒号
+static const uint8_t font6x8[][6] = {
+    {0x00,0x00,0x00,0x00,0x00,0x00}, // ' '
+    {0x00,0x36,0x36,0x00,0x00,0x00}, // ':'
+    {0x3E,0x45,0x49,0x51,0x3E,0x00}, // '0'
+    // ... 完整字库定义
+};
+
+// 帧缓冲区 128x64/8 = 1024 字节
+static uint8_t oled_buf[128 * 64 / 8];
+
+static void OLED_ShowMeas(uint16_t speed, uint8_t dir,
+                           float vin, float ia) {
+    char line1[24], line2[24], line3[24], line4[24];
+    int vin_mV = (int)(vin * 1000.0f);
+    int ia_mA  = (int)(ia  * 1000.0f);
+    snprintf(line1, sizeof(line1), "PWM:%4d", speed);
+    snprintf(line2, sizeof(line2), "DIR:%1d", dir ? 1 : 0);
+    snprintf(line3, sizeof(line3), "V:%5d", vin_mV);
+    snprintf(line4, sizeof(line4), "I:%5d", ia_mA);
+    OLED_Fill(0);          // 清屏
+    OLED_Puts(0, 7, line1); // Page7: PWM值
+    OLED_Puts(0, 5, line2); // Page5: 方向
+    OLED_Puts(0, 3, line3); // Page3: 电压(mV)
+    OLED_Puts(0, 1, line4); // Page1: 电流(mA)
+    OLED_Update();           // 刷新整个帧缓冲区到屏幕
+}
+\end{lstlisting}
+
+\subsection{PI闭环控制器}
+
+PI控制器基于离散化实现，采样周期 $T = 2$ ms（500 Hz）：
+
+\begin{equation}
+    V_{PI}(k) = K_p \cdot e(k) + K_i \sum_{n=0}^{k} e(n) \cdot T
+\end{equation}
+
+\begin{lstlisting}[style=cstyle, caption={PI控制器离散实现（500Hz采样频率）}]
+float Kp = 0.8f;
+float T  = 0.002f;           // 采样周期 2ms = 500Hz
+float Ki = Kp / T;           // Ki = 400
+float Ve, VI = 0.0f, Vpi;
+
+// 在定时器中断中每2ms调用一次
+void PI_Control_Update(float Vin, float Vref) {
+    Ve = Vin - Vref;          // 误差 = 实际值 - 目标值
+    VI += Ki * T * Ve;        // 积分项累加
+    // 积分限幅防止windup
+    if (VI > PI_MAX) VI = PI_MAX;
+    if (VI < PI_MIN) VI = PI_MIN;
+    Vpi = Kp * Ve + VI;      // PI输出 = 比例项 + 积分项
+}
+\end{lstlisting}
+
+\subsection{无刷电机综合PCB——FOC矢量控制}
+
+在有刷电机综合系统基础上，进一步开发了\textbf{无刷电机综合PCB}，该板集成了以下功能模块：
+
+\begin{itemize}
+    \item \textbf{驱动拓扑}：三相全桥逆变器，6个MOSFET开关管，支持最大电流$\geq$10A
+    \item \textbf{霍尔驱动}：3路霍尔传感器接口，支持有感FOC控制，实时读取转子位置
+    \item \textbf{无感驱动}：反电动势过零检测电路，实现无传感器FOC控制
+    \item \textbf{电压检测}：分压ADC采样，实时监控母线电压
+    \item \textbf{电流检测}：采样电阻+运放，实时监控相电流
+    \item \textbf{换相策略}：六步换相$\to$正弦波调制（SVPWM）
+    \item \textbf{闭环结构}：速度环（PI）$\to$电流环（PI）$\to$SVPWM输出
+    \item \textbf{OLED显示}：SSD1306实时显示转速、电压、电流、工作模式
+    \item \textbf{按键交互}：4路按键控制启停、调速、模式切换
+\end{itemize}
+
+\subsection{PCB设计迭代}
+
+\begin{iterbox}[PCB版本迭代]
+\begin{enumerate}[label=\textbf{Rev.\arabic*}:, leftmargin=3.5em]
+    \item \textbf{MOTOR\_1023}：初版有刷电机综合PCB，H桥驱动方案，基本电机控制+OLED显示功能验证
+    \item \textbf{MOTOR\_260305}：改进版有刷综合PCB，优化电源布局、增加散热铜皮、新增电压/电流检测电路（33k/10k分压 + 0.01$\Omega$采样电阻 + 运放放大×20）、完善OLED显示与按键交互
+    \item \textbf{wushua\_MOTOR}：无刷电机综合PCB，三相全桥逆变器 + 霍尔传感器驱动接口 + 反电动势无感驱动电路 + 栅极驱动电路 + 电压电流检测 + OLED显示
+\end{enumerate}
+\end{iterbox}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{电机驱动/有刷电机.png}
+        \caption{有刷电机驱动板}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{电机驱动/无刷电机.png}
+        \caption{无刷电机FOC驱动板}
+    \end{subfigure}
+    \caption{自研电机综合PCB设计（Altium Designer，嘉立创打样）}
+\end{figure}
+
+\subsection{主循环控制逻辑}
+
+\begin{lstlisting}[style=cstyle, caption={主循环：按键响应 + 100ms周期测量刷新}]
+int main(void) {
+    HAL_Init();
+    SystemClock_Config();   // 72MHz HSE + PLL
+    MX_GPIO_Init();
+    MX_ADC1_Init();
+    MX_TIM2_Init();
+    MX_TIM3_Init();
+    HAL_ADCEx_Calibration_Start(&hadc1); // ADC校准
+    OLED_Init();
+    Measure_Update();
+    OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                  meas_voltage_V, meas_current_A);
+
+    while (1) {
+        Key_status = Key_Scan();
+        if (Key_status != 0) {
+            switch (Key_status) {
+                case 1: Motor_Stop(); break;      // 停止
+                case 2: Motor_Dir = !Motor_Dir;    // 换向
+                        Motor_UpdateOutput(); break;
+                case 3: Motor_Speed += Motor_Speed_Step; // 加速
+                        if (Motor_Speed > 2300) Motor_Speed = 2300;
+                        Motor_UpdateOutput(); break;
+                case 4: Motor_Speed -= Motor_Speed_Step; // 减速
+                        if (Motor_Speed < 100) Motor_Speed = 100;
+                        Motor_UpdateOutput(); break;
+            }
+            OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                          meas_voltage_V, meas_current_A);
+        }
+        // 每100ms更新一次电压电流测量值
+        static uint32_t meas_tick = 0;
+        if (HAL_GetTick() - meas_tick >= 100) {
+            meas_tick = HAL_GetTick();
+            Measure_Update();
+            OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                          meas_voltage_V, meas_current_A);
+        }
+    }
+}
+\end{lstlisting}
+
+% ========================================================================
+% 第五章：人脸识别系统
+% ========================================================================
+\newpage
+\section{PCA + SVM 人脸识别系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 线性代数课程拓展项目 \\
+\textbf{技术栈}   & MATLAB, PCA, SVM, MATLAB App Designer \\
+\textbf{核心功能} & 27人人脸识别、实时摄像头采集、GUI应用 \\
+\textbf{数据规模} & 27人 $\times$ 6--8张/人，56$\times$46像素灰度图
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+本项目在MATLAB环境下构建了一套完整的\textbf{PCA降维 + One-vs-All多分类SVM}人脸识别系统，支持27人识别分类，并通过MATLAB App Designer开发了图形化应用界面，支持摄像头实时采集和马赛克特效。
+
+\subsection{算法流程}
+
+\begin{enumerate}
+    \item \textbf{数据读取}（ReadFace.m）：读取56$\times$46灰度图，展平为2576维行向量，标注类别标签
+    \item \textbf{PCA降维}（PCA.m）：中心化$\to$协方差矩阵$\to$特征分解$\to$投影至$k$维子空间
+    \item \textbf{特征归一化}（scaling.m）：Min-Max缩放至$[-1, 1]$区间，消除量纲影响
+    \item \textbf{SVM训练}（multiSVMtrain.m）：27个One-vs-All二分类SVM模型（\texttt{fitcsvm}）
+    \item \textbf{预测推理}（multiSVM.m）：Bagging后验概率投票选出类别
+    \item \textbf{GUI应用}（xtw.mlapp）：MATLAB App Designer界面，集成拍照+预测
+\end{enumerate}
+
+\subsection{核心代码实现}
+
+\subsubsection{数据读取与预处理}
+
+\begin{lstlisting}[style=matlabstyle, caption={ReadFace.m -- 批量读取人脸样本并展平}]
+function [trainData, trainLabel, testData, testLabel] = ReadFace()
+    n_person = 27;    % 27个人
+    n_train = 6;      % 每人6张训练
+    n_test = 2;       % 每人2张测试
+    img_h = 56; img_w = 46;
+    dim = img_h * img_w;  % 2576维
+
+    trainData = zeros(n_person*n_train, dim);
+    trainLabel = zeros(n_person*n_train, 1);
+
+    for p = 1:n_person
+        for s = 1:n_train
+            filename = sprintf('照片库/z%d_%d.jpg', p, s);
+            img = imread(filename);
+            if size(img, 3) == 3
+                img = rgb2gray(img);
+            end
+            img = imresize(img, [img_h, img_w]);
+            trainData((p-1)*n_train+s, :) = ...
+                double(reshape(img, 1, []));
+            trainLabel((p-1)*n_train+s) = p;
+        end
+    end
+    % 测试集同理...
+end
+\end{lstlisting}
+
+\subsubsection{PCA主成分分析}
+
+\begin{lstlisting}[style=matlabstyle, caption={PCA.m -- 协方差矩阵特征分解降维}]
+function [pcaA, V, conVec] = PCA(A, k)
+% 输入: A -- 样本矩阵(N x 2576), k -- 目标维度
+% 输出: pcaA -- 降维后特征, V -- 主成分向量
+
+[row, col] = size(A);
+
+% Step 1: 去除均值（中心化）
+meanA = mean(A);
+meanVec = A - meanA;
+
+% Step 2: 计算协方差矩阵 (使用 A'A 替代 AA' 加速)
+conVec = meanVec' * meanVec / row;
+
+% Step 3: 计算前k个最大特征值对应的特征向量
+[V, D] = eigs(conVec, k);
+
+% Step 4: 特征向量归一化为单位向量
+for i = 1:k
+    V(:,i) = V(:,i) / norm(V(:,i));
+end
+
+% Step 5: 将原始样本投影到k维子空间
+pcaA = meanVec * V;
+\end{lstlisting}
+
+PCA的数学原理：设样本矩阵 $\mathbf{X} \in \mathbb{R}^{N \times d}$（$d=2576$），中心化后的协方差矩阵：
+
+\begin{equation}
+    \mathbf{C} = \frac{1}{N} \bar{\mathbf{X}}^T \bar{\mathbf{X}} \in \mathbb{R}^{d \times d}
+\end{equation}
+
+取前$k$个最大特征值对应的特征向量 $\mathbf{V} = [\mathbf{v}_1, \ldots, \mathbf{v}_k]$，降维结果：
+\begin{equation}
+    \mathbf{Y} = \bar{\mathbf{X}} \cdot \mathbf{V} \in \mathbb{R}^{N \times k}
+\end{equation}
+
+\subsubsection{Min-Max特征归一化}
+
+\begin{lstlisting}[style=matlabstyle, caption={scaling.m -- Min-Max归一化至[-1,1]}]
+function [scaledData, minVals, maxVals] = scaling(data)
+    minVals = min(data);
+    maxVals = max(data);
+    range = maxVals - minVals;
+    range(range == 0) = 1;  % 避免除零
+    scaledData = 2 * (data - minVals) ./ range - 1;
+end
+\end{lstlisting}
+
+\subsubsection{One-vs-All多分类SVM训练}
+
+\begin{lstlisting}[style=matlabstyle, caption={multiSVMtrain.m -- 27个二分类SVM训练}]
+function models = multiSVMtrain(X_train, y_train)
+    y_labels = unique(y_train);
+    n_class = length(y_labels);  % 27
+    models = cell(n_class, 1);
+
+    for i = 1:n_class
+        % 构建二分类标签: 当前类=1, 其余=-1
+        y_binary = -1 * ones(size(y_train));
+        y_binary(y_train == y_labels(i)) = 1;
+
+        % 训练SVM (线性核 + 后验概率)
+        models{i} = fitcsvm(X_train, y_binary, ...
+            'KernelFunction', 'linear', ...
+            'FitPosterior', true);
+        disp(['已训练: 类别 ', num2str(y_labels(i)), ...
+              ' (', num2str(i), '/', num2str(n_class), ')']);
+    end
+end
+\end{lstlisting}
+
+\subsubsection{Bagging概率投票预测}
+
+\begin{lstlisting}[style=matlabstyle, caption={multiSVM.m -- Bagging后验概率投票}]
+function [pred, acc] = multiSVM(X_test, testlabel, y_train, models)
+    y_labels = unique(y_train);
+    n_class = 27;
+    test_num = size(X_test, 1);
+    y_predict = zeros(test_num, 1);
+
+    for i = 1:test_num
+        bagging = zeros(n_class, 1);
+        for j = 1:n_class
+            model = models{j};
+            [~, rat] = predict(model, X_test(i,:));
+            bagging(j) = bagging(j) + rat(2);
+        end
+        [~, maxp] = max(bagging);
+        y_predict(i) = y_labels(maxp);
+    end
+
+    right = sum(y_predict == testlabel);
+    acc = right / test_num;
+    pred = y_predict;
+    fprintf('识别准确率: %.2f%%\n', acc * 100);
+end
+\end{lstlisting}
+
+\subsubsection{单图预测接口}
+
+\begin{lstlisting}[style=matlabstyle, caption={PredictImg.m -- 新图像预测}]
+function name = PredictImg(img_path, V, meanA, models, y_train)
+    names = {'赵某某','肖某某','陈某某', ...
+             '薛雅文', ...}; % 27人姓名列表
+
+    img = imread(img_path);
+    img = rgb2gray(img);
+    img = imresize(img, [56, 46]);
+    vec = double(reshape(img, 1, []));
+
+    % PCA投影到训练时的子空间
+    vec_centered = vec - meanA;
+    feature = vec_centered * V;
+
+    % 归一化 + SVM预测
+    [pred, ~] = multiSVM(feature, 0, y_train, models);
+    name = names{pred};
+    fprintf('识别结果: %s\n', name);
+end
+\end{lstlisting}
+
+\subsection{MATLAB App界面}
+
+通过\textbf{MATLAB App Designer}开发GUI应用（xtw.mlapp），功能包括：
+\begin{itemize}
+    \item 摄像头实时采集人脸图像（\texttt{paizhao.m}）
+    \item 一键识别按钮调用PCA+SVM流程
+    \item 马赛克特效处理（\texttt{mosaic.m}）
+    \item 识别结果显示27人姓名
+\end{itemize}
+
+\subsection{迭代优化历程}
+
+\begin{iterbox}[版本迭代]
+\begin{enumerate}[label=\textbf{V\arabic*}:, leftmargin=3em]
+    \item \textbf{基础PCA + 最近邻}：仅PCA降维+欧氏距离KNN分类，准确率$\sim$70\%
+    \item \textbf{引入SVM}：One-vs-All策略训练27个线性SVM，准确率显著提升
+    \item \textbf{Bagging投票}：后验概率Bagging替代硬标签投票，提高鲁棒性
+    \item \textbf{GUI应用}：MATLAB App Designer图形界面+摄像头实时采集+马赛克特效
+\end{enumerate}
+\end{iterbox}
+
+% ========================================================================
+% 第六章：VHDL 数字逻辑设计
+% ========================================================================
+\newpage
+\section{VHDL数字逻辑电路设计}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 工程原理课程设计 \\
+\textbf{技术栈}   & VHDL, Quartus, ModelSim, Multisim, Altium Designer \\
+\textbf{内容}     & 8个数字电路模块 + 流水灯 + 直流电源 + 循迹小车
+\end{tabular}
+\end{infobox}
+
+\subsection{核心VHDL模块实现}
+
+\subsubsection{四位同步二进制可逆计数器}
+
+支持异步清零、并行加载、上升/下降计数、进位输出四种功能：
+
+\begin{lstlisting}[style=vhdlstyle, caption={四位同步可逆计数器完整实现（test31.vhd）}]
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity test31 is
+    Port (
+        clk   : in  STD_LOGIC;
+        clr   : in  STD_LOGIC;     -- 异步清零 (高有效)
+        s     : in  STD_LOGIC;     -- 并行加载使能
+        en    : in  STD_LOGIC;     -- 计数使能
+        updn  : in  STD_LOGIC;     -- 1=上计数, 0=下计数
+        d     : in  STD_LOGIC_VECTOR(3 downto 0);
+        co    : out STD_LOGIC;     -- 进位/借位输出
+        q     : buffer STD_LOGIC_VECTOR(3 downto 0)
+    );
+end test31;
+
+architecture Behavioral of test31 is
+begin
+    process(clk, clr)
+    begin
+        if clr = '1' then
+            q <= "0000";           -- 异步清零
+        elsif rising_edge(clk) then
+            if s = '1' then
+                q <= d;            -- 并行加载
+            elsif en = '1' then
+                if updn = '1' then
+                    q <= q + 1;    -- 上升计数
+                else
+                    q <= q - 1;    -- 下降计数
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- 进位输出: 上计数到1111或下计数到0000时置1
+    co <= '1' when (updn='1' and q="1111" and en='1')
+              or   (updn='0' and q="0000" and en='1')
+          else '0';
+end Behavioral;
+\end{lstlisting}
+
+\subsubsection{四位双向移位寄存器}
+
+\begin{lstlisting}[style=vhdlstyle, caption={四位双向移位寄存器（shift\_4.vhd）}]
+entity shift_4 is
+    Port (
+        clk         : in  STD_LOGIC;
+        reset       : in  STD_LOGIC;
+        shift_left  : in  STD_LOGIC;
+        shift_right : in  STD_LOGIC;
+        data_in     : in  STD_LOGIC_VECTOR(3 downto 0);
+        data_out    : out STD_LOGIC_VECTOR(3 downto 0)
+    );
+end shift_4;
+
+architecture Behavioral of shift_4 is
+    signal reg : STD_LOGIC_VECTOR(3 downto 0);
+begin
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            reg <= "0000";
+        elsif rising_edge(clk) then
+            if shift_left = '1' then
+                -- 循环左移: 最高位移到最低位
+                reg <= reg(2 downto 0) & reg(3);
+            elsif shift_right = '1' then
+                -- 循环右移: 最低位移到最高位
+                reg <= reg(0) & reg(3 downto 1);
+            else
+                reg <= data_in;  -- 并行加载
+            end if;
+        end if;
+    end process;
+    data_out <= reg;
+end Behavioral;
+\end{lstlisting}
+
+\subsubsection{同步八进制可逆计数器}
+
+\begin{lstlisting}[style=vhdlstyle, caption={同步八进制可逆计数器（counter.vhd）}]
+entity counter is
+    Port (
+        clk     : in  STD_LOGIC;
+        reset   : in  STD_LOGIC;
+        up_down : in  STD_LOGIC;    -- 1=加法, 0=减法
+        count   : out STD_LOGIC_VECTOR(2 downto 0)
+    );
+end counter;
+
+architecture Behavioral of counter is
+    signal cnt : STD_LOGIC_VECTOR(2 downto 0) := "000";
+begin
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            cnt <= "000";
+        elsif rising_edge(clk) then
+            if up_down = '1' then
+                if cnt = "111" then cnt <= "000"; -- 7->0 循环
+                else cnt <= cnt + 1;
+                end if;
+            else
+                if cnt = "000" then cnt <= "111"; -- 0->7 循环
+                else cnt <= cnt - 1;
+                end if;
+            end if;
+        end if;
+    end process;
+    count <= cnt;
+end Behavioral;
+\end{lstlisting}
+
+\subsection{五种触发器实现}
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{序号} & \textbf{触发器类型} & \textbf{触发方式} & \textbf{核心行为} \\
+\midrule
+1 & 边沿触发D触发器 & 时钟上升沿 & $Q \leftarrow D$ \\
+2 & 电平触发D触发器 & 时钟高电平 & 透明传输$D\to Q$ \\
+3 & JK触发器        & 时钟上升沿 & J=K=1时$Q$翻转 \\
+4 & SR触发器        & 时钟上升沿 & S=1置位, R=1复位 \\
+5 & T触发器         & 时钟上升沿 & T=1时$Q$翻转 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+每种触发器均通过\textbf{ModelSim}进行完整功能仿真验证，生成时序波形图确认逻辑正确性。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"工程原理 (1)/四位同步二进制可逆计数器的VHDL实现/simulation.png"}
+        \caption{四位可逆计数器仿真波形}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"工程原理 (1)/同步八进制可逆计数器的VHDL实现/simulation.png"}
+        \caption{八进制计数器仿真波形}
+    \end{subfigure}
+    \caption{ModelSim仿真波形验证}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"工程原理 (1)/四位双向移位寄存器的VHDL实现/simulation.png"}
+        \caption{四位移位寄存器仿真波形}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"工程原理 (1)/不同功能触发器的VHDL实现/边沿触发的D触发器/simulation.png"}
+        \caption{D触发器仿真波形}
+    \end{subfigure}
+    \caption{更多ModelSim仿真结果}
+\end{figure}
+
+\subsection{延伸项目：FPGA自动循迹小车}
+
+将数字逻辑设计延伸至实际工程应用——基于FPGA的自动循迹小车。系统采用三路独立供电架构，支持51单片机与FPGA双控制核心切换。
+
+\subsubsection{系统架构与供电设计}
+
+系统分为三路独立供电通道（共地连接），各模块功能互不干扰：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/tracking_1.png}
+    \caption{循迹小车系统供电与信号流框图}
+\end{figure}
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{供电通道} & \textbf{电源} & \textbf{驱动对象} & \textbf{功能} \\
+\midrule
+通道1 & 南孚电池组 & 舵机 & 转向控制 \\
+通道2 & 14.4V锂电池 & L298N $\to$ 电机 & 驱动行进 \\
+通道3 & 5V充电宝 & STC89C52RC / EP4CE10F17C8N FPGA & 逻辑控制+红外采集 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{自研8路红外传感器模块}
+
+采用Altium Designer设计8路红外传感器PCB，每路采用反射式红外对管+ LM393比较器构成独立检测通道，可独立调节检测阈值。板载8路LED实时指示各通道检测状态。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/tracking_7.png}
+        \caption{8路红外传感器模块原理图}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/tracking_5.png}
+        \caption{8路红外传感器PCB布局}
+    \end{subfigure}
+    \caption{自研8路红外传感器模块设计}
+\end{figure}
+
+\subsubsection{循迹算法与丢线恢复策略}
+
+循迹算法核心为8路红外加权中心法：根据各传感器位置赋予加权系数，计算黑线偏移量，生成差速转向信号。当所有传感器均未检测到黑线时，进入丢线恢复模式——累计丢线次数，若超过阈值则按上次偏转方向反向倒车搜索，否则保持原状态等待重新捕获。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{extracted_images/tracking_8.png}
+    \caption{循迹算法流程图（含丢线恢复策略）}
+\end{figure}
+
+\subsubsection{电机驱动模块}
+
+电机驱动模块同样为自研PCB，采用A4950双H桥驱动芯片，支持正转/反转/刹车/滑行四种工作模式。通过FPGA输出的PWM信号控制电机转速，实现差速转向。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{extracted_images/tracking_3.png}
+    \caption{L298N电机驱动真值表}
+\end{figure}
+
+\subsection{配套设计}
+
+\begin{enumerate}
+    \item \textbf{硬件流水灯}：Multisim仿真，555定时器+CD4017十进制计数器级联，实现8路LED顺序点亮
+    \item \textbf{直流稳压电源}：Multisim设计，变压$\to$整流$\to$滤波$\to$稳压（7805），输出5V/1A稳定直流
+\end{enumerate}
+
+% ========================================================================
+% 第七章：心率检测系统
+% ========================================================================
+\newpage
+\section{心电信号采集与处理系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 信号与系统课程拓展项目 \\
+\textbf{技术栈}   & STM32F4, ADS1292R, SPI通信, CMSIS-DSP, MATLAB \\
+\textbf{核心技术} & ADS1292R芯片SPI采集、FIR/IIR数字滤波、FFT频谱分析、\\
+                  & Pan-Tompkins R波检测、LCD实时波形显示 \\
+\textbf{硬件平台} & STM32F407 + ADS1292R心电前端 + LCD显示屏 \\
+\textbf{输入}     & ECG心电信号（采样率500Hz, 24bit ADC）
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景与需求}
+
+本项目设计并实现了一套\textbf{完整的心电信号采集与处理系统}，从硬件层的ADS1292R芯片SPI通信、到信号处理层的多级数字滤波、再到应用层的心率计算与LCD实时显示。项目要求：
+
+\begin{enumerate}
+    \item ADS1292R芯片通过SPI读取心电信号，能调用内部测试信号验证通信正确性
+    \item 数字滤波处理：通带截止频率40Hz（衰减3dB）、阻带截止频率50Hz（衰减$\geq$40dB）、采样频率500Hz
+    \item 滤波后信号分析峰峰值、心率等特征
+    \item 处理后的信号及心电特征实时显示在LCD屏幕上
+    \item 能够采集人体真实ECG信号并显示
+\end{enumerate}
+
+\subsection{硬件系统——ADS1292R SPI通信}
+
+\subsubsection{SPI通信协议}
+
+ADS1292R采用\textbf{SPI全双工通信}，STM32作为主设备，ADS1292R作为从设备。SPI接口使用4根信号线：MOSI、MISO、SCLK、CS。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{extracted_images/heart_0.png}
+    \caption{SPI通信时序——CPOL=1/CPHA=1模式}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extracted_images/heart_35.png}
+    \caption{SPI主从设备移位寄存器数据交换原理}
+\end{figure}
+
+\subsubsection{ADS1292R硬件连接}
+
+ADS1292R传感器模块共12个输出引脚，关键连接如下：
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{引脚} & \textbf{功能} & \textbf{连接} \\
+\midrule
+SPI\_SCK   & SPI时钟信号     & STM32 SPI\_CLK \\
+SPI\_MISO  & 数据输出（从$\to$主） & STM32 SPI\_MISO \\
+SPI\_MOSI  & 数据输入（主$\to$从） & STM32 SPI\_MOSI \\
+SPI\_CS0   & 片选信号        & STM32 GPIO \\
+ADS\_DRDY  & 数据就绪中断    & STM32 外部中断 \\
+ADS\_START & 开始采集        & STM32 GPIO \\
+ADS\_PWDN  & 复位/掉电       & STM32 GPIO \\
++5V        & 电源            & STM32 5V输出 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{注意}：STM32仅接受0--3.3V输出电压，因此需将ADS1292R模块VDD与3.3V引脚通过跳线帽相连实现电压转换。
+
+\subsubsection{ADS1292R数据读取}
+
+SPI读取ADS1292R的原始数据帧格式为：3字节状态 + 3字节通道1数据 + 3字节通道2数据，共9字节。24位有符号数需要扩展为32位：
+
+\begin{lstlisting}[style=cstyle, caption={ADS1292R SPI数据读取与24位符号扩展}]
+// 发送读取数据命令
+void ADS1292_ReadData(int32_t *ch1_data) {
+    uint8_t buff[10];
+    // 发送 RDATA 命令 (0x12)
+    ADS1292_SendCommand(CMD_RDATA);
+
+    // 读取 9 字节: 3字节状态 + 3字节CH1 + 3字节CH2
+    HAL_SPI_Receive(&hspi1, &buff[1], 9, 100);
+
+    // 提取通道1的24位数据 (高字节在前)
+    int32_t raw = ((int32_t)buff[4] << 16)
+               | ((int32_t)buff[5] << 8)
+               | ((int32_t)buff[6]);
+
+    // 24位有符号数扩展为32位 (补码符号位扩展)
+    if (raw & 0x800000) {      // bit23 = 1 表示负数
+        raw |= 0xFF000000;     // 高8位补1
+    }
+
+    *ch1_data = raw;
+}
+\end{lstlisting}
+
+\noindent 读取得到的原始数据需要按照芯片手册解码，乘以增益系数恢复为实际电压值（单位mV）。
+
+\subsection{MATLAB算法验证}
+
+在部署到嵌入式平台之前，先在MATLAB环境中完成算法验证。
+
+\subsubsection{原始信号与频谱分析}
+
+将ADS1292R采集的原始信号通过串口导出为CH1.txt文件，在MATLAB中进行FFT频谱分析：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/heart_30.png}
+    \caption{原始ECG信号频谱图——可见0Hz直流分量、50Hz工频干扰及高频噪声}
+\end{figure}
+
+\subsubsection{直流陷波处理}
+
+设计0Hz陷波器滤除直流分量：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{extracted_images/heart_29.png}
+    \caption{直流陷波前后频谱对比——左：陷波后（红），右：原始频谱（蓝），0Hz处直流分量被有效滤除}
+\end{figure}
+
+\subsubsection{FIR低通滤波器设计}
+
+根据设计指标（通带40Hz/3dB、阻带50Hz/40dB、采样500Hz），使用MATLAB \texttt{filterDesigner}工具设计FIR数字低通滤波器：
+
+\begin{itemize}
+    \item \textbf{窗函数}：Chebyshev窗（在给定窗口长度下提供最小主瓣宽度）
+    \item \textbf{滤波器阶数}：81阶（当前点及前80个点加权求和）
+    \item \textbf{主要优势}：频域主瓣振幅波动最小化，过渡带陡峭
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{extracted_images/heart_26.png}
+    \caption{FIR低通滤波前后频谱对比——左：滤波前（红），右：FIR滤波后（蓝），50Hz以上全部有效抑制}
+\end{figure}
+
+\subsection{STM32嵌入式实现}
+
+\subsubsection{CMSIS-DSP FFT频谱计算}
+
+利用ARM CMSIS-DSP库实现1024点FFT频谱计算，在LCD上实时显示频谱：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/heart_8.png}
+        \caption{FFT计算核心代码——CMSIS-DSP \texttt{arm\_cfft\_f32}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/heart_7.png}
+        \caption{LCD频谱绘制——\texttt{Draw\_Spectrum}函数}
+    \end{subfigure}
+    \caption{嵌入式端FFT频谱分析实现}
+\end{figure}
+
+\subsubsection{FIR滤波器嵌入式部署}
+
+将MATLAB设计的81阶FIR滤波器系数导出为C数组，部署到STM32：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/heart_20.png}
+    \caption{FIR滤波器系数数组（81阶Chebyshev窗）与FFT实例定义}
+\end{figure}
+
+\subsubsection{LCD实时心电波形绘制}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{extracted_images/heart_9.png}
+    \caption{LCD实时波形绘制函数——\texttt{drawCurve}，支持坐标反转与自动清屏}
+\end{figure}
+
+\subsection{信号处理链}
+
+ECG心电信号从原始采集到BPM输出的完整处理流程：
+
+\begin{enumerate}
+    \item \textbf{信号采集}：ADS1292R通过SPI读取24位原始ECG数据，采样率500Hz
+    \item \textbf{直流陷波}：滤除0Hz直流分量（电极偏置电压）
+    \item \textbf{FIR低通滤波}（0--40Hz）：81阶Chebyshev窗FIR，去除50Hz工频及高频噪声
+    \item \textbf{50Hz工频陷波}：二阶IIR陷波器进一步消除电网工频干扰
+    \item \textbf{Pan-Tompkins R波检测算法}：
+    \begin{enumerate}[label=(\alph*)]
+        \item \textbf{五点差分}：突出QRS波群的快速斜率变化
+        \item \textbf{平方运算}：增强大斜率区域，抑制小信号
+        \item \textbf{滑动窗口积分}：窗口宽度$\approx$150ms，平滑包络轮廓
+        \item \textbf{自适应双阈值检测}：动态调整阈值，识别R波峰值位置
+    \end{enumerate}
+    \item \textbf{BPM计算}：统计相邻R波间隔计算实时心率
+    \item \textbf{LCD显示}：实时绘制滤波后心电波形、频谱图、心率数值
+\end{enumerate}
+
+\subsection{Pan-Tompkins算法数学表达}
+
+\textbf{五点差分}（突出QRS斜率）：
+\begin{equation}
+    y[n] = \frac{1}{8}\left(2x[n] + x[n\!-\!1] - x[n\!-\!3] - 2x[n\!-\!4]\right)
+\end{equation}
+
+\textbf{平方增强}：
+\begin{equation}
+    z[n] = y[n]^2
+\end{equation}
+
+\textbf{滑动窗口积分}（$N \approx 0.15 \times f_s$）：
+\begin{equation}
+    w[n] = \frac{1}{N}\sum_{k=0}^{N-1} z[n-k]
+\end{equation}
+
+\textbf{心率计算}：
+\begin{equation}
+    \text{BPM} = \frac{60 \times f_s}{\overline{RR}}
+\end{equation}
+
+其中 $\overline{RR}$ 为平均R-R间期采样点数，$f_s$ 为采样频率。
+
+\subsection{自适应阈值策略}
+
+Pan-Tompkins算法的关键在于\textbf{自适应双阈值}机制：
+
+\begin{lstlisting}[style=matlabstyle, caption={Pan-Tompkins自适应阈值R波检测}]
+% 初始化阈值
+SPKI = max(signal(1:2*fs));   % 信号峰值初始估计
+NPKI = mean(signal(1:2*fs));  % 噪声峰值初始估计
+THR1 = NPKI + 0.25*(SPKI - NPKI); % 检测阈值
+THR2 = 0.5 * THR1;            % 回搜阈值
+
+R_peaks = [];
+for i = 2:length(signal)-1
+    if signal(i) > signal(i-1) && signal(i) > signal(i+1)
+        if signal(i) > THR1
+            % 检测到R波
+            R_peaks = [R_peaks, i];
+            % 更新信号峰值估计
+            SPKI = 0.125*signal(i) + 0.875*SPKI;
+        else
+            % 更新噪声峰值估计
+            NPKI = 0.125*signal(i) + 0.875*NPKI;
+        end
+        % 动态更新阈值
+        THR1 = NPKI + 0.25*(SPKI - NPKI);
+        THR2 = 0.5 * THR1;
+    end
+end
+
+% 计算心率
+RR_intervals = diff(R_peaks);
+BPM = 60 * fs / mean(RR_intervals);
+fprintf('心率: %.1f BPM\n', BPM);
+\end{lstlisting}
+
+% ========================================================================
+% 第八章：仿生多模态智能台灯
+% ========================================================================
+\newpage
+\section{仿生多模态智能台灯}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 自动控制原理课程综合项目 \\
+\textbf{核心平台} & 树莓派CM5 (4GB) + STM32F103 \\
+\textbf{交互方式} & 语音（讯飞ASR）+ 手势（MediaPipe）+ 运动控制 \\
+\textbf{机械结构} & 3-DOF串联连杆机械臂，飞特STS3215串行舵机 \\
+\textbf{设计理念} & 借鉴Apple Elegant情感交互台灯 + 《死亡搁浅》奥德拉德克造型
+\end{tabular}
+\end{infobox}
+
+\subsection{设计灵感与外观造型}
+
+本项目的设计灵感来源于Apple Elegant情感交互台灯概念——将传统台灯重新定义为具有情感感知和表达能力的``桌面伴侣''，通过流畅的机械运动和智能交互实现人与物之间的情感连接。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{extracted_images/lamp_0.png}
+    \caption{Apple Elegant情感交互台灯概念参考}
+\end{figure}
+
+外观造型参考游戏《死亡搁浅》中的肩部机械臂探测仪``奥德拉德克''（Odradek），其发光的四叶片造型简约且极具未来机械美感，正好符合机械臂台灯的功能需求。在此基础上原创设计了台灯的机械细节，多处采用倒角镂空，兼顾物理受力与轻量化，并加入液压杆装饰增强科幻质感。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extracted_images/lamp_1.png}
+    \caption{《死亡搁浅》奥德拉德克外观灵感来源}
+\end{figure}
+
+\subsection{系统总体架构}
+
+系统基于树莓派CM5计算模块为核心处理器，集成视觉识别、语音交互、机械臂控制和智能照明等多个子系统，采用分层模块化软件架构：
+
+\begin{table}[H]
+\centering
+\caption{系统硬件清单}
+\begin{tabular}{clll}
+\toprule
+\textbf{序号} & \textbf{硬件名称} & \textbf{型号/规格} & \textbf{功能描述} \\
+\midrule
+1 & 主控制器 & 树莓派CM5 (4GB) & 运行Linux，核心处理 \\
+2 & 摄像头 & USB免驱 640$\times$480 & 手势识别 \\
+3 & 麦克风 & USB PnP 48kHz & 语音采集 \\
+4 & 扬声器 & Yundea M1066 USB & 语音播报 \\
+5 & 舵机$\times$3 & 飞特STS3215串行舵机 & 三轴运动控制 \\
+6 & 亮度控制器 & STM32F103 & PWM调光 \\
+7 & LED灯珠 & 高亮LED模组 & 照明输出 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+软件架构分为四层：
+\begin{itemize}
+    \item \textbf{入口层}：\texttt{run.py}，系统启动入口
+    \item \textbf{核心层}：\texttt{MainController}主控制器 + \texttt{StateMachine}有限状态机
+    \item \textbf{模式层}：\texttt{HandFollowMode}（手部跟随）、\texttt{PetMode}（桌宠互动）、\texttt{BrightnessMode}（亮度调节）
+    \item \textbf{驱动层}：语音识别模块（讯飞API）、舵机控制线程、逆运动学工具
+\end{itemize}
+
+\subsection{机械结构设计与迭代}
+
+台灯主体分为底座与机械臂两部分。底座设计为长方体盒子，容纳全部电气元器件与接线，摄像头置于斜侧面，符合日常使用台灯时斜向摆放的习惯。半圆形底座内部设计镂空可放入配重，增强稳定性。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{extracted_images/lamp_2.png}
+    \caption{底座3D模型——收纳电子元器件与摄像头}
+\end{figure}
+
+机械臂经历了两版迭代。第一版设计简洁，符合传统台灯造型，用作原理样机快速实现机械功能：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{extracted_images/lamp_3.png}
+    \caption{第一版机械臂——原理验证样机}
+\end{figure}
+
+第二版增加了外观设计，融入奥德拉德克设计理念。采用镂空、浮雕等工艺，融入机械转轴、气缸、散热片等浮雕元素强调机械感，发光方式从单条灯带改为三条灯带照明：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{extracted_images/lamp_4.png}
+    \caption{第二版机械臂——融入奥德拉德克设计语言}
+\end{figure}
+
+\subsection{3-DOF逆运动学解算}
+
+台灯采用3自由度串联连杆机构，连杆长度$L_1 = L_2 = 145\text{mm}$。系统采用几何法进行逆运动学解算，将目标位置表示为等腰三角形参数：
+
+\begin{itemize}
+    \item $b$：等腰三角形底边长（米），范围$0 \sim 0.28$m
+    \item $\theta_0$：底边角度（台灯朝向），范围$0° \sim 180°$
+    \item $\beta$：灯头俯仰角，范围$-30° \sim 60°$
+\end{itemize}
+
+逆解算公式：
+\begin{equation}
+    \theta_1 = \arcsin\left(\frac{b}{2a}\right), \quad
+    \alpha_1 = \theta_0, \quad
+    \alpha_2 = 90° - \theta_1, \quad
+    \alpha_3 = 180° - 2\theta_1 + \beta
+\end{equation}
+
+其中$a = 0.145$m为连杆长度。舵机编码与角度的转换关系为：
+\begin{equation}
+    \text{encoder} = \text{zero\_pos} + \text{direction} \times \left(\text{angle} \times \frac{410}{90}\right)
+\end{equation}
+
+\begin{table}[H]
+\centering
+\caption{舵机参数配置}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{舵机ID} & \textbf{位置} & \textbf{零位编码} & \textbf{方向} & \textbf{角度范围} \\
+\midrule
+3 & 底座 & 400 & +1 & $0° \sim 136°$ \\
+2 & 中间 & 500 & $-1$ & $0° \sim 109°$ \\
+1 & 顶端 & 475 & $-1$ & $0° \sim 88°$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{有限状态机与多模态交互}
+
+系统采用有限状态机（FSM）管理运行状态，状态包括：STANDBY（待机）、LISTENING（监听）、HAND\_FOLLOW（手部跟随）、PET\_MODE（桌宠互动）、BRIGHTNESS\_MODE（亮度调节）。状态转移规则如下：
+
+\begin{itemize}
+    \item STANDBY $\xrightarrow{\text{唤醒词``宝莉''}}$ LISTENING $\xrightarrow{\text{超时10s}}$ STANDBY
+    \item LISTENING $\xrightarrow{\text{``跟随模式''}}$ HAND\_FOLLOW
+    \item LISTENING $\xrightarrow{\text{``桌宠模式''}}$ PET\_MODE
+    \item LISTENING $\xrightarrow{\text{``亮度模式''}}$ BRIGHTNESS\_MODE
+    \item 任意模式 $\xrightarrow{\text{``退出''}}$ STANDBY
+\end{itemize}
+
+\textbf{手部跟随模式}：基于MediaPipe实现手部检测，通过像素到世界坐标的转换，经逆运动学解算后驱动舵机，使灯头实时跟踪用户手部位置。
+
+\textbf{桌宠互动模式}：赋予台灯``宠物''特性，通过语音命令触发拟人化动作。支持``卖萌''（左右摇摆）、``跳舞''（节奏摆动）、``点头/摇头''、``打招呼''、``睡觉/醒来''等10+种动作指令。
+
+\textbf{亮度调节模式}：通过手势控制LED亮度，手掌张开程度与亮度成正比（握拳$\to$0\%，半握$\to$50\%，张开$\to$100\%）。
+
+\subsection{语音识别与亮度控制通信}
+
+语音系统采用讯飞实时语音转写API，USB麦克风原生48kHz采样率经\texttt{audioop.ratecv}实时重采样至16kHz后送入API识别。语音合成采用Edge-TTS（\texttt{zh-CN-XiaoxiaoNeural}声音），通过\texttt{mpg123}播放。
+
+亮度控制通过USB CDC虚拟串口与STM32通信，协议帧格式为：帧头\texttt{0xAA} + 亮度值（67--101，映射0\%--100\%），STM32接收后输出对应PWM驱动LED。
+
+\begin{lstlisting}[style=pythonstyle, caption={手部跟随模式核心逻辑}]
+class HandFollowMode(BaseMode):
+    def update(self, frame=None, voice_text=None):
+        hand_pos = self._detect_hand(frame)
+        if hand_pos:
+            x, y = self._pixel_to_world(hand_pos)
+            b, theta_0, beta = self._calc_ik_params(x, y)
+            encoders = inverse_kinematics_to_encoders(
+                b, theta_0, beta)
+            self._servo_thread.sync_move(
+                encoders, speed=300)
+        return True
+\end{lstlisting}
+
+% ========================================================================
+% 第九章：机器人色块识别与抓取
+% ========================================================================
+\newpage
+\section{机器人色块识别与抓取}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 机器人基础课程设计 \\
+\textbf{技术栈}   & OpenCV, Python, PID控制, 视觉伺服 \\
+\textbf{核心功能} & 4色HSV识别 + 闭环视觉伺服 + 机械臂6步抓取
+\end{tabular}
+\end{infobox}
+
+\subsection{视觉系统——多色HSV识别}
+
+\begin{lstlisting}[style=pythonstyle, caption={OpenCV多色HSV空间色块检测}]
+import cv2
+import numpy as np
+
+# 四种颜色HSV阈值范围
+color_ranges = {
+    'red':   ([0, 100, 100],   [10, 255, 255]),
+    'green': ([35, 100, 100],  [85, 255, 255]),
+    'blue':  ([100, 100, 100], [130, 255, 255]),
+    'yellow':([20, 100, 100],  [35, 255, 255]),
+}
+
+def detect_blocks(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    results = []
+
+    for color_name, (lower, upper) in color_ranges.items():
+        mask = cv2.inRange(hsv, np.array(lower),
+                           np.array(upper))
+        # 形态学处理: 开运算去噪 + 闭运算填充
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE, (5, 5))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+        # 轮廓检测
+        contours, _ = cv2.findContours(
+            mask, cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area > 500:  # 最小面积过滤
+                x, y, w, h = cv2.boundingRect(cnt)
+                cx, cy = x + w//2, y + h//2
+                results.append({
+                    'color': color_name,
+                    'center': (cx, cy),
+                    'area': area,
+                    'bbox': (x, y, w, h)
+                })
+    return results
+\end{lstlisting}
+
+\subsection{视觉伺服闭环控制}
+
+将色块中心偏差作为PID输入，控制底盘运动趋近目标：
+
+\begin{lstlisting}[style=pythonstyle, caption={视觉伺服PID闭环底盘控制}]
+class VisualServoPID:
+    def __init__(self):
+        self.Kp_x = 0.003   # 水平偏差比例增益
+        self.Kp_d = 0.005   # 距离比例增益
+        self.target_cx = 320 # 图像中心x (640/2)
+        self.target_area = 5000 # 目标面积 (对应期望距离)
+
+    def compute(self, cx, area):
+        # 水平偏差 -> 旋转速度
+        error_x = cx - self.target_cx
+        omega = -self.Kp_x * error_x
+
+        # 面积偏差 -> 前进速度
+        error_d = self.target_area - area
+        velocity = self.Kp_d * error_d
+
+        return velocity, omega
+\end{lstlisting}
+
+\subsection{六步抓取流程}
+
+\begin{center}
+\begin{tabular}{cll}
+\toprule
+\textbf{步骤} & \textbf{动作} & \textbf{控制方式} \\
+\midrule
+1 & 视觉检测目标色块 & OpenCV HSV分割+轮廓检测 \\
+2 & 像素$\to$世界坐标 & 相机标定+坐标映射 \\
+3 & 底盘PID趋近 & 视觉伺服闭环驱动 \\
+4 & 精细位姿对准 & 小步微调，消除残差 \\
+5 & 机械臂夹取 & 舵机控制夹爪闭合 \\
+6 & 搬运至目标区域 & 导航到放置点$\to$释放 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ========================================================================
+% 第十章：FSBB 尖峰补能系统
+% ========================================================================
+\newpage
+\section{FSBB尖峰补能系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 国市创大学生创新训练项目 \\
+\textbf{结题评级} & \textbf{良好} \\
+\textbf{技术方向} & 电力电子 DC-DC 变换器
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+针对储能系统中负载突变引起的\textbf{尖峰功率需求}，设计了一套基于\textbf{四开关Buck-Boost（FSBB）}拓扑的DC-DC变换器，实现升降压无缝切换与双闭环数字控制。
+
+\subsection{FSBB拓扑结构}
+
+FSBB拓扑由四个功率MOSFET构成（$Q_1$--$Q_4$），根据输入/输出电压关系自动切换工作模式：
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{模式} & \textbf{条件} & \textbf{开关动作} & \textbf{功率流} \\
+\midrule
+Buck   & $V_{in} \gg V_{out}$ & $Q_1$/$Q_2$ PWM, $Q_3$ ON, $Q_4$ OFF & 降压输出 \\
+Boost  & $V_{in} \ll V_{out}$ & $Q_3$/$Q_4$ PWM, $Q_1$ ON, $Q_2$ OFF & 升压输出 \\
+Buck-Boost & $V_{in} \approx V_{out}$ & 四管协同PWM & 无缝过渡 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/fsbb_2.png}
+    \caption{FSBB逻辑控制框图}
+\end{figure}
+
+\subsection{系统架构与模块化设计}
+
+系统采用模块化设计，分为电池模块、尖峰补能模块（FSBB+超级电容）与控制模块三部分。各模块通过标准化接口连接（如XT30电源接口、GH1.25通信接口等），支持热插拔与并联扩展。整体能量流为：锂电池提供基础能量，超级电容承担尖峰功率，FSBB负责双向能量调度与升降压匹配。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/fsbb_0.png}
+        \caption{PCB控制示意图与防倒灌模块}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/fsbb_1.png}
+        \caption{标准化接口设置}
+    \end{subfigure}
+    \caption{FSBB尖峰补能系统硬件设计}
+\end{figure}
+
+\subsection{``三环并联''增量式PID协同控制}
+
+为同时满足``电池安全功率约束''与``超级电容SOC（电压）边界约束''，系统采用\textbf{``三环并联''协同控制结构}：
+
+\begin{itemize}
+    \item \textbf{外环}：锂电池功率环（全局功率上限约束）
+    \item \textbf{约束环}：超级电容高压/低压电压环（SOC边界）
+    \item \textbf{内环}：电容电流环（快速执行）
+\end{itemize}
+
+控制器通过MIN/MAX选择器融合功率与电压两类约束，实时生成安全的目标电流，最终调节DCDC的广义占空比，实现双源能量协同调度与平滑过渡。采用\textbf{增量式PID}作为各环调节器，其输出控制量增量、计算量小、对积分饱和不敏感，适用于STM32平台，可在保证精度的同时获得毫秒级动态响应。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/fsbb_4.png}
+    \caption{尖峰补能装置三环并联控制框图}
+\end{figure}
+
+\subsection{毫秒级高速供电切换模块}
+
+系统采用``STM32 + 高速比较器（Comparator）''协同架构：STM32负责上层状态机、能量管理策略与参数更新；高速比较器实时监控关键节点阈值。当检测到突变信号时，比较器可纳秒级触发硬件中断，实现硬件级快速响应。
+
+切换模块核心采用\textbf{双向功率MOSFET阵列}，配合同步整流降低导通损耗；引入理想二极管控制与软启动逻辑抑制切换瞬间的电压尖峰与反向电流倒灌，保护锂电池与超级电容安全。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{extracted_images/fsbb_5.png}
+    \caption{防倒灌模块原理图与PCB设计}
+\end{figure}
+
+\subsection{趋势感知动态限幅滤波}
+
+户外复杂工况下，电流采样信号常呈现``噪声与真实突变叠加''的特点。系统采用\textbf{趋势感知的动态限幅滤波}：通过历史状态累积判断电流变化趋势，被判定为趋势性变化时提高限幅阈值加速跟踪，被判定为噪声时收紧限幅阈值加强平滑，实现滤噪与动态响应的平衡。
+
+% ========================================================================
+% 第十一章：挑战杯·青年养老赋能计划
+% ========================================================================
+\newpage
+\section{挑战杯·青年养老赋能计划}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 国家自然科学基金课题 + 挑战杯 \\
+\textbf{竞赛成果} & \textbf{挑战杯校级优胜奖} \\
+\textbf{课题方向} & 山地城市社区老年人体力活动特征及环境影响机制 \\
+\textbf{核心模式} & ``发声--链接--成长''三支柱模型 \\
+\textbf{覆盖规模} & 300+ 人次
+\end{tabular}
+\end{infobox}
+
+\subsection{项目背景}
+
+本项目依托国家自然科学基金课题《基于行动能力差异的山地城市社区老年人体力活动特征及环境影响机制研究》，针对老龄化社会中养老从业者面临的多重困境，构建了\textbf{``发声--链接--成长''三支柱赋能模型}。
+
+\subsection{核心创新——突破四重壁垒}
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{壁垒} & \textbf{问题} & \textbf{解决方案} & \textbf{量化成果} \\
+\midrule
+信息壁垒 & 数字鸿沟     & 公众号传播 & 20+推文，万+阅读 \\
+能力壁垒 & 缺乏专业技能 & 园艺疗法培训 & 标准化课程体系 \\
+认知壁垒 & 社会认知偏差 & 口述史访谈 & 深度访谈50+人 \\
+心理壁垒 & 孤独感疏离   & 数字平台 & 六模块智能匹配 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{实践成果}
+
+\begin{enumerate}
+    \item \textbf{花园共建}：蓝铃花小园、悦心园两处社区疗愈花园改造（从设计到施工全程参与）
+    \item \textbf{园艺疗法}：开发标准化培训课程，组织多次实践活动
+    \item \textbf{文化活动}：墙绘美化、文创设计、摄影学习等多元赋能活动
+    \item \textbf{数字平台}：六模块架构——智能匹配引擎、个人档案、在线培训、政策资讯、社群互动、数据看板
+    \item \textbf{媒体报道}：\textbf{入选国家卫健委老龄健康司医养结合典型案例}，重庆文明网、网易新闻、渝北时报、重大新闻网等多家主流媒体报道
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"国自然项目&挑战杯/材料/重庆文明网报道.png"}
+        \caption{重庆文明网报道}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"国自然项目&挑战杯/材料/网易新闻报道.png"}
+        \caption{网易新闻报道}
+    \end{subfigure}
+    \caption{主流媒体报道}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"国自然项目&挑战杯/材料/重大新闻报道.png"}
+        \caption{重大新闻网报道}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{"国自然项目&挑战杯/材料/花园烧烤.png"}
+        \caption{花园共建活动}
+    \end{subfigure}
+    \caption{项目实践现场}
+\end{figure}
+
+% ========================================================================
+% 第十二章：QEA 电动船设计与稳性分析
+% ========================================================================
+\newpage
+\section{QEA电动船设计与稳性分析}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & QEA（Quantitative Engineering Analysis）课程项目 \\
+\textbf{项目角色} & 结构设计与稳性计算 \\
+\textbf{核心工具} & SolidWorks / MATLAB / Altium Designer
+\end{tabular}
+\end{infobox}
+
+\subsection{项目概述}
+
+本项目为QEA课程综合设计，要求从零设计并制造一艘电动船，完成水面自主航行。项目涵盖船体结构设计（SolidWorks三维建模）、流体力学稳性分析（MATLAB数值计算）、供电与驱动系统设计、以及实船制造与下水测试。
+
+\subsection{船体结构设计}
+
+采用SolidWorks进行船体三维建模，船体结构由以下零部件组成：
+
+\begin{itemize}
+    \item \textbf{船首/船尾挡板}：流线型曲面设计，减小水阻
+    \item \textbf{龙骨框架}：``V''型截面肋骨+纵向龙骨杆，提供结构强度
+    \item \textbf{电机支架}：带安装孔的L型支架，固定推进电机
+    \item \textbf{舵机支架}：矩形框架结构，安装舵机与连杆
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_10.png}
+        \caption{船体骨架三维装配模型}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_11.png}
+        \caption{船首曲面挡板零件}
+    \end{subfigure}
+    \caption{SolidWorks船体结构设计}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_8.png}
+        \caption{电机/舵机安装支架}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_9.png}
+        \caption{舵臂连接件}
+    \end{subfigure}
+    \caption{关键零部件设计}
+\end{figure}
+
+\subsection{MATLAB稳性分析}
+
+船舶稳性是安全航行的核心指标。本项目采用MATLAB进行数值化稳性分析，核心思路为：通过离散化船体网格，在不同横倾角下迭代求解吃水线位置，进而计算浮心坐标与复原力臂（GZ值）。
+
+\subsubsection{船体几何参数化}
+
+采用幂函数截面描述船体横截面形状，通过参数 \texttt{hull.width}、\texttt{hull.deep}、\texttt{hull.n} 控制切片宽度、深度与曲线形状：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{extracted_images/boat_21.png}
+    \caption{MATLAB船体参数化定义}
+\end{figure}
+
+\texttt{getHull()} 函数将参数化截面映射到离散网格上，生成布尔矩阵标记船体内部区域：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extracted_images/boat_20.png}
+    \caption{getHull()函数——船体几何网格化}
+\end{figure}
+
+\subsubsection{吃水线迭代与浮心计算}
+
+对于给定横倾角，需找到满足重力=浮力的吃水线位置。\texttt{getwaterline2()} 函数通过 while 循环逐步抬升吃水线，直到浸没体积产生的浮力等于船重：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{extracted_images/boat_19.png}
+    \caption{吃水线迭代求解函数}
+\end{figure}
+
+浮心坐标由 \texttt{bofy2()} 和 \texttt{bofz2()} 分别计算Y/Z方向的浮心偏移：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_17.png}
+        \caption{浮心Y坐标计算}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/boat_18.png}
+        \caption{浮心Z坐标计算}
+    \end{subfigure}
+    \caption{浮心坐标计算函数}
+\end{figure}
+
+\subsubsection{复原力臂与稳性曲线}
+
+复原力臂 $GZ$ 是衡量船舶稳性的关键指标，定义为浮心相对重心的横向力臂。对不同横倾角 $\theta \in [0°, 180°]$ 扫描，计算各角度的 $GZ$ 值绘制稳性曲线。航向角修正通过以下公式实现：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extracted_images/boat_14.png}
+    \caption{角度修正与航向计算代码}
+\end{figure}
+
+稳性分析的关键结论：重心低→定倾高度（GM）大→复原力臂（GZ）大→稳度好；反之则稳度差。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{extracted_images/boat_13.png}
+    \caption{GZ稳性曲线（不同重心高度对比）}
+\end{figure}
+
+\subsection{实船制造与下水测试}
+
+根据SolidWorks三维模型，采用激光切割木板+蓝色防水胶带外蒙皮方案制造实船。实测结果验证了稳性分析的有效性。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{extracted_images/boat_5.jpeg}
+    \caption{实船制造成品}
+\end{figure}
+
+% ========================================================================
+% 第十三章：工程原理路径规划
+% ========================================================================
+\newpage
+\section{工程原理——激光雷达路径规划系统}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 工程原理课程项目 \\
+\textbf{项目角色} & 核心开发 \\
+\textbf{核心工具} & STM32 / 激光雷达 / MATLAB / Altium Designer \\
+\textbf{关键技术} & 雷达数据解析、RANSAC圆检测、路径规划
+\end{tabular}
+\end{infobox}
+
+\subsection{项目概述}
+
+本项目基于STM32与激光雷达，实现室内环境下的障碍物检测、地图构建与路径规划。系统由STM32采集雷达数据，MATLAB端进行可视化与路径优化，最终规划最优路径引导小车自主导航。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{extracted_images/pathplan_4.png}
+    \caption{路径规划系统功能框图}
+\end{figure}
+
+\subsection{激光雷达数据采集与解析}
+
+系统采用360°激光雷达，每圈输出1440个极坐标点（角度+距离）。雷达通过串口向STM32发送数据包，帧格式如下：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{extracted_images/pathplan_8.png}
+    \caption{激光雷达数据帧格式}
+\end{figure}
+
+STM32通过UART接收并解析帧头（0xA5 0x5A）、起止角度、距离数组与CRC校验，将数据传输至上位机。
+
+\subsection{圆柱障碍物检测——类RANSAC算法}
+
+为从稀疏点云中识别圆柱形障碍物，采用类RANSAC（Random Sample Consensus）方法：
+
+\begin{enumerate}
+    \item 将360个极坐标障碍物点转换为笛卡尔坐标
+    \item 对每个障碍物点向外延伸圆半径长度，生成假定圆心候选点
+    \item 统计各候选圆心附近的内点（inlier）数量
+    \item 内点数最多的候选即为检测到的圆柱中心
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{extracted_images/pathplan_1.png}
+    \caption{类RANSAC圆柱检测算法流程}
+\end{figure}
+
+\subsection{电机驱动与舵机控制}
+
+驱动模块采用AT8236双H桥芯片，通过STM32 PWM控制电机转速，支持正反转与制动。舵机用于前轮转向控制。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/pathplan_5.png}
+        \caption{AT8236电机驱动原理图}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/pathplan_3.png}
+        \caption{系统信号流框图}
+    \end{subfigure}
+    \caption{驱动与控制系统设计}
+\end{figure}
+
+\subsection{MATLAB上位机与路径可视化}
+
+STM32将处理后的雷达数据通过串口导出至MATLAB，上位机负责：
+
+\begin{itemize}
+    \item 极坐标$\to$笛卡尔坐标转换与全图拼接
+    \item 障碍物检测结果叠加显示
+    \item 基于检测结果的路径规划与可视化
+\end{itemize}
+
+% ========================================================================
+% 第十四章：SRTP 学生科研训练项目
+% ========================================================================
+\newpage
+\section{SRTP 学生科研训练项目——电磁炮}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{项目类型} & 学生科研训练项目（SRTP） \\
+\textbf{结题评级} & 合格 \\
+\textbf{研究方向} & 电容储能式多级电磁线圈发射技术 \\
+\textbf{核心芯片} & STM32F103 / IGBT功率管 \\
+\textbf{核心工具} & SIGLENT示波器 / Altium Designer / 嘉立创PCB生产
+\end{tabular}
+\end{infobox}
+
+SRTP是本人在大学期间初次系统参与的科研训练项目。项目以电容储能式电磁炮为载体，从理论建模到电路设计、PCB绘制、IGBT功率管特性实测、多级线圈放电时序控制，经历了完整的"提出问题$\to$方案设计$\to$硬件实现$\to$实验验证$\to$迭代优化"科研闭环。
+
+\subsection{研究背景与目标}
+
+电磁发射技术（Electromagnetic Launch, EML）利用安培力取代传统化学发射，具有可控性强、能量转换效率可优化等优势。项目以多级电磁线圈炮（Coilgun）为研究对象，核心目标包括：
+
+\begin{enumerate}
+    \item 设计并制作电容储能式多级电磁线圈发射装置
+    \item 实现精确的多级放电时序控制，使弹丸在各级线圈中获得级联加速
+    \item 通过示波器采集IGBT开关管关断/导通波形，分析功率回路瞬态特性
+    \item 验证理论模型与实际放电曲线的一致性，优化能量转换效率
+\end{enumerate}
+
+\subsection{系统总体设计——模块化架构}
+
+整个电磁炮系统采用模块化设计思路，将复杂系统拆分为三大功能模块：
+
+\begin{itemize}
+    \item \textbf{储能模块}：多组铝电解电容并联，提供瞬时大电流放电能力；充电回路通过限流电阻控制充电速率，防护电路包含放电保护与过压保护
+    \item \textbf{触发模块}：IGBT功率管作为主开关器件，通过驱动电路将STM32的低压控制信号转换为IGBT栅极驱动信号；每级线圈对应独立的IGBT触发通道
+    \item \textbf{光电检测模块}：弹丸经过各级线圈时触发光电传感器，生成中断信号反馈STM32，实现闭环级联触发
+\end{itemize}
+
+\begin{iterbox}[核心设计决策]
+\textbf{为何选择IGBT而非MOSFET？}——电磁炮放电瞬间电流可达数十安培，电压可达数百伏。IGBT在高压大电流工况下导通压降低、开关损耗可控，比MOSFET更适合脉冲功率应用。但IGBT关断速度相对较慢（$\mu$s级拖尾电流），需要通过实验精确表征关断特性以优化时序。
+\end{iterbox}
+
+\subsection{自研触发模块PCB设计}
+
+触发模块PCB是本项目硬件设计的核心。在Altium Designer中完成原理图与PCB布局，通过嘉立创生产。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{extracted_images/srtp_doc_4.jpeg}
+    \caption{自研触发模块PCB实物（板号：6857775A\_Y3\_240227）}
+\end{figure}
+
+触发模块包含以下关键子电路：
+
+\begin{itemize}
+    \item \textbf{IGBT驱动电路}：R1/R2为10K$\Omega$栅极限流电阻，D1/D2为续流二极管，保护IGBT免受反向电动势损坏
+    \item \textbf{储能电容接口}：CAP+/CAP-焊盘用于连接储能电容组
+    \item \textbf{多级线圈接口}：COIL1/COIL2/COIL3三组接口支持三级线圈独立触发
+    \item \textbf{信号接口}：GND/信号线引脚连接STM32控制端
+\end{itemize}
+
+在PCB布局中，大电流回路（储能电容$\to$IGBT$\to$线圈）的走线宽度$\geq$2mm并覆铜加强，控制信号走线与功率走线物理隔离，减少电磁干扰对控制电路的影响。
+
+\subsection{IGBT关断特性实验分析}
+
+IGBT在关断瞬间存在"拖尾电流"现象——栅极信号撤除后，集电极电流并非立即降为零，而是经历一段衰减过程。拖尾电流的持续时间直接影响多级线圈的最小触发间隔。为此，项目进行了系统的IGBT关断波形采集与分析。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/srtp_doc_0.jpeg}
+        \caption{IGBT关断波形——2$\mu$s/div时基}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/srtp_0.jpeg}
+        \caption{放电波形——2$\mu$s/div时基}
+    \end{subfigure}
+    \caption{IGBT关断特性实测（SIGLENT SDS1102X-C示波器）。黄色：电压通道；粉色：电流通道}
+\end{figure}
+
+\textbf{实验观察与结论}：
+\begin{itemize}
+    \item 关断延迟时间$t_{d(\mathrm{off})} \approx 1.5\,\mu$s：从栅极信号下降沿到集电极电流开始下降的时间
+    \item 下降时间$t_f \approx 2.0\,\mu$s：电流从90\%降至10\%的时间
+    \item 拖尾电流持续$\approx 3$--$5\,\mu$s：电流降至接近零但伴有振荡
+    \item 关断总时间$\approx 6$--$8\,\mu$s，为多级触发间隔设定提供了下限约束
+\end{itemize}
+
+\subsection{多时基放电波形对比实验}
+
+为全面表征放电过程的不同时间尺度特征，项目在5$\mu$s/div与100$\mu$s/div两种时基下分别采集波形：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/srtp_1.jpeg}
+        \caption{放电波形——5$\mu$s/div时基}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/srtp_doc_3.jpeg}
+        \caption{完整放电过程——100$\mu$s/div时基}
+    \end{subfigure}
+    \caption{不同时间尺度下的放电波形对比}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{$\mu$s尺度}：可观察IGBT开通瞬间的电流上升斜率$di/dt$，以及线圈电感对电流上升的抑制效应（$V = L \cdot di/dt$），电流并非突变而是呈指数上升
+    \item \textbf{ms尺度}：可观察完整的RLC放电振荡过程——电容放电$\to$线圈储能$\to$续流衰减的全周期波形，验证了欠阻尼二阶放电模型
+\end{itemize}
+
+\subsection{RLC放电理论模型与实验验证}
+
+单级线圈放电过程可等效为RLC串联二阶电路。电容初始电压$V_0$，放电方程为：
+
+\[
+L\frac{d^2q}{dt^2} + R\frac{dq}{dt} + \frac{q}{C} = 0
+\]
+
+当$R^2 < 4L/C$（欠阻尼条件）时，放电电流为：
+
+\[
+i(t) = \frac{V_0}{\omega_d L} e^{-\alpha t} \sin(\omega_d t), \quad \alpha = \frac{R}{2L}, \quad \omega_d = \sqrt{\frac{1}{LC} - \alpha^2}
+\]
+
+实验中100$\mu$s/div时基下观察到的衰减振荡波形与上述欠阻尼解对应，电流峰值在第一个半周期达到最大，随后指数衰减，验证了理论模型的正确性。
+
+\subsection{项目收获与科研素养}
+
+\begin{resultbox}[项目成果]
+\begin{itemize}
+    \item 完成电容储能式三级电磁线圈发射装置的全系统设计、制作与调试
+    \item 自主设计触发模块PCB（Altium Designer），通过嘉立创生产并焊接验证
+    \item 系统表征IGBT关断特性：关断总时间$\approx 6$--$8\,\mu$s
+    \item 实验验证RLC欠阻尼放电模型与实际波形的一致性
+    \item 项目合格结题，培养了文献检索、实验设计、数据分析等基本科研能力
+\end{itemize}
+\end{resultbox}
+
+% ========================================================================
+% 第十五章：数学物理方法——圆形薄膜振动
+% ========================================================================
+\newpage
+\section{数学物理方法课程项目——圆形薄膜振动的理论分析与实验验证}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{课程} & 数学物理方法 \\
+\textbf{研究课题} & 圆形张紧薄膜振动的Bessel模态理论分析与Chladni实验验证 \\
+\textbf{核心方法} & 分离变量法 / Bessel函数 / COMSOL仿真 / MATLAB / 扫频盐粒法 \\
+\textbf{关键结论} & 频率比定律验证误差$<$$2\%$，成功显影3组模态节线
+\end{tabular}
+\end{infobox}
+
+本项目以羊皮鼓膜为研究对象，围绕"圆形张紧薄膜在不同激励条件下呈现何种振动模态"这一核心问题，经历了从时域瞬态分析到频域稳态分析的\textbf{研究路线迭代}，最终通过扫频+Chladni盐粒法成功验证了Bessel模态理论。
+
+\subsection{问题引入：单次敲击的时域瞬态分析}
+
+研究最初的兴趣源于最直观的物理好奇：当一个圆形鼓膜受到一次短促敲击时，其膜面位移如何随时间演化？
+
+将实际羊皮鼓抽象为理想二维圆形张紧薄膜，设膜面密度$\rho_s$（kg/m$^2$），张力$T$（N/m），膜上横波传播速度$c = \sqrt{T/\rho_s}$。膜面任意点$(r,\theta)$的位移$u(r,\theta,t)$满足二维波动方程：
+
+\[
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+\]
+
+边界条件为固定边界（Dirichlet条件）：$u(a, \theta, t) = 0$。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extracted_images/mathphys_001.png}
+    \caption{圆形薄膜COMSOL建模几何及坐标设定}
+\end{figure}
+
+\subsubsection{分离变量法求解本征模态}
+
+采用分离变量法$u = R(r)\Theta(\theta)T(t)$，径向部分满足$m$阶Bessel方程，由于膜心$r=0$处位移有限，舍弃第二类Bessel函数$Y_m$，仅保留第一类Bessel函数$J_m$：
+
+\[
+R_{mn}(r) = J_m\!\left(\frac{\alpha_{mn}}{a} r\right)
+\]
+
+其中$\alpha_{mn}$为$J_m$的第$n$个正零点。空间本征模态为：
+
+\[
+\Phi_{mn}(r,\theta) = J_m\!\left(\frac{\alpha_{mn}}{a} r\right)
+\begin{cases}
+\cos(m\theta) \\
+\sin(m\theta)
+\end{cases}
+\]
+
+对应本征频率为：
+
+\[
+f_{mn} = \frac{1}{2\pi} \sqrt{\frac{T}{\rho_s}} \cdot \frac{\alpha_{mn}}{a}
+\]
+
+\subsubsection{COMSOL仿真验证瞬态响应}
+
+通过COMSOL构建鼓膜有限元模型，模拟敲击极短时间的正半周期正弦激励，分析圆心位移随时间的变化：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_003.png}
+        \caption{COMSOL仿真模型与激励设定}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_005.png}
+        \caption{圆心时域位移曲线}
+    \end{subfigure}
+    \caption{COMSOL瞬态响应仿真}
+\end{figure}
+
+仿真结果与MATLAB理论解高度重合，证明了理论分析的准确性。但同时揭示了时域观测的三大困难：
+
+\begin{enumerate}
+    \item \textbf{多模态混叠}：一次敲击同时激发大量模态，时域信号是多频叠加
+    \item \textbf{瞬态衰减快}：高阶模态在极短时间窗口内衰减殆尽
+    \item \textbf{位移幅值小}：毫米甚至亚毫米级位移，普通设备难以精确采集
+\end{enumerate}
+
+\subsection{研究路线关键迭代：从时域到频域}
+
+\begin{iterbox}[方法论迭代]
+\textbf{核心转折}：上述三大困难表明——时域瞬态敲击几乎不可能"看清"单一模态。要验证Bessel模态形状，\textbf{必须通过稳态共振把单一模态"筛选"出来}，即从"时域瞬态"迭代为"频域稳态扫频响应"。这一转折是整个研究的方法论核心。
+\end{iterbox}
+
+\subsubsection{频域稳态理论：Helmholtz方程与共振筛选}
+
+取正弦稳态激励，波动方程转化为非齐次Helmholtz方程。利用本征函数展开，每阶模态的频率响应为：
+
+\[
+c_{mn}(\omega) = \frac{F_{mn}}{(\omega_{mn}^2 - \omega^2) + 2j\zeta_{mn}\omega_{mn}\omega}
+\]
+
+当驱动频率$\omega \to \omega_{mn}$时，分母趋近最小，该模态被显著放大，其他模态贡献弱——这就是\textbf{共振筛选机理}，也是Chladni盐粒法可行的根本物理原因。
+
+\subsection{核心验证判据：频率比定律}
+
+对同一张鼓膜，材料参数$T$、$\rho_s$和半径$a$均为常数。任意两模态频率之比仅由Bessel零点比决定：
+
+\[
+\frac{f_{mn}}{f_{pq}} = \frac{\alpha_{mn}}{\alpha_{pq}}
+\]
+
+这一定律的重要意义在于：\textbf{无需精确测量难以获取的膜张力或面密度}，只需测量两个共振频率即可与纯数学的Bessel零点比对照。
+
+\textbf{锚点预测法}：选取$(0,2)$模态作为锚点（实测$f_{0,2} = 525$ Hz），利用频率比定律预测其他模态频率：
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+\textbf{模态$(m,n)$} & \textbf{Bessel零点$\alpha_{mn}$} & \textbf{节线结构} & \textbf{预测频率(Hz)} \\
+\midrule
+$(0,1)$ & 2.4048 & 仅边界圆（基频） & 228.7 \\
+$(1,1)$ & 3.8317 & 1条直径 & 364.5 \\
+$(2,1)$ & 5.1356 & 2条直径（四瓣） & 488.5 \\
+$(0,2)$ & 5.5201 & 1个内圈+边界圈 & 525（锚点） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{MATLAB仿真：本征模态节线可视化}
+
+利用Bessel解析表达式，通过MATLAB生成各模态的理论节线图（Chladni标准答案）。节线由$\Phi_{mn} = 0$确定，包括径向节线（$m$条直径）和角向节线（$n-1$个同心圆）：
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{extracted_images/mathphys_007.png}
+    \caption{MATLAB绘制四组模态的理论节线图——$(0,1)$全膜同相、$(1,1)$两半反相、$(2,1)$四瓣、$(0,2)$同心双圈}
+\end{figure}
+
+\subsection{实验设计：扫频+Chladni盐粒法}
+
+\subsubsection{实验装置}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{组件} & \textbf{说明} \\
+\midrule
+鼓膜 & 羊皮鼓，半径$a \approx 0.1$ m，边缘固定于木框 \\
+激励源 & 手机/电脑音频软件生成单频正弦波，音箱播放 \\
+音箱 & 置于鼓膜正下方约5--10 cm，声压近似轴对称 \\
+显影介质 & 食盐颗粒，均匀薄撒 \\
+记录设备 & 手机相机俯拍 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{盐粒显影机理}
+
+盐粒在振动膜面上的运动遵循：大振幅区域盐粒受周期性惯性力被"抖"离，而节线（$\Phi = 0$）附近振幅最小，盐粒稳定停留并累积。因此稳态后\textbf{盐粒聚集位置$\approx$理论节线位置}。
+
+\subsection{实验结果与理论对照}
+
+\subsubsection{锚点模态$(0,2)$ @ 525 Hz——同心双圈}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_012.jpg}
+        \caption{实验盐粒图样——同心双圈清晰可见}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_013.png}
+        \caption{理论模态节线对照}
+    \end{subfigure}
+    \caption{$(0,2)$模态验证——内圈半径实测约4--5 cm，理论值$a \cdot \alpha_{01}/\alpha_{02} \approx 4.4$ cm，吻合度$\bigstar\bigstar\bigstar\bigstar\bigstar$}
+\end{figure}
+
+\subsubsection{模态$(1,1)$ @ 365--370 Hz——直径节线}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_016.jpg}
+        \caption{实验盐粒图样——"两半区分界"清晰}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_017.png}
+        \caption{理论模态节线对照}
+    \end{subfigure}
+    \caption{$(1,1)$模态验证——理论预测364 Hz，实测365--370 Hz，相对误差$<$$2\%$}
+\end{figure}
+
+\subsubsection{模态$(0,1)$基频——空心圆环}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_014.png}
+        \caption{实验盐粒图样}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_015.png}
+        \caption{理论模态节线对照}
+    \end{subfigure}
+    \caption{$(0,1)$基频模态验证——实测约235 Hz，理论228.7 Hz，误差约2.5\%}
+\end{figure}
+
+\subsubsection{模态$(2,1)$的观测困难与原因分析}
+
+$(2,1)$模态（理论488 Hz）未能稳定显影，实验中445--495 Hz区间图样复杂且不稳定：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_018.jpg}
+        \caption{实验图样——模态混合，未形成稳定四瓣}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/mathphys_019.png}
+        \caption{理论节线（2条正交直径）}
+    \end{subfigure}
+    \caption{$(2,1)$模态观测困难——频率与$(0,2)$仅差7\%，产生模态竞争}
+\end{figure}
+
+未能显影的原因分析：(1) 488 Hz与525 Hz间隔仅7\%，易产生模态竞争；(2) 轴对称声压激励对$m=2$模态耦合效率低。
+
+\subsection{定量验证汇总}
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{模态对} & \textbf{理论比值} & \textbf{实验比值} & \textbf{相对误差} & \textbf{吻合度} \\
+\midrule
+$f_{0,1}/f_{0,2}$ & 0.436 & $\sim$0.448 & 2.5\% & $\bigstar\bigstar\bigstar\bigstar$ \\
+$f_{1,1}/f_{0,2}$ & 0.694 & $\sim$0.705 & 1.6\% & $\bigstar\bigstar\bigstar\bigstar$ \\
+$f_{0,2}/f_{0,2}$ & 1.000 & 1.000 & 0\%（锚点） & $\bigstar\bigstar\bigstar\bigstar\bigstar$ \\
+$f_{2,1}/f_{0,2}$ & 0.930 & 未稳定 & --- & $\bigstar\bigstar$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{实验不足与反思}
+
+\begin{enumerate}
+    \item \textbf{激励源频响受限}：音箱在高频段声压输出下降，高阶模态激励能量不足
+    \item \textbf{真实阻尼}：空气辐射、膜材料内阻尼、边界摩擦导致高阶模态共振峰被"压低"
+    \item \textbf{显影介质局限}：盐粒粒径不均匀、摩擦力影响迁移效率
+    \item \textbf{环境扰动}：温湿度变化导致膜张力漂移，影响实验重复性
+\end{enumerate}
+
+\begin{resultbox}[核心结论]
+\begin{itemize}
+    \item 模态形状由Bessel函数$J_m$与三角函数乘积决定，$m$为角向节线数，$n$为径向节线数
+    \item 频率比定律$f_{mn}/f_{pq} = \alpha_{mn}/\alpha_{pq}$成功验证，误差$<$$2.5\%$
+    \item 时域瞬态$\to$频域稳态的方法迭代，是过渡至可观测实验的关键转折
+    \item 轴对称激励仅能有效耦合$m=0$模态；非轴对称模态需改进激励方式
+\end{itemize}
+\end{resultbox}
+
+% ========================================================================
+% 第十六章：工效学——救灾机器人人机交互
+% ========================================================================
+\newpage
+\section{工效学课程项目——隧道洪涝救灾机器人人机交互界面设计}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{课程} & 工效学（人因工程） \\
+\textbf{研究课题} & 隧道洪涝救灾机器人界面复杂度与拟人化程度对救援效能的影响 \\
+\textbf{核心方法} & Unity场景构建 / 被试内实验设计 / NASA-TLX认知负荷量表 \\
+\textbf{辅助研究} & 博物馆展签信息分层设计的人因分析
+\end{tabular}
+\end{infobox}
+
+工效学课程项目围绕"人--机器人交互"展开系统研究，分为两个部分：(1) 主体项目——救灾机器人交互界面的实验研究；(2) 辅助案例——博物馆展签信息设计的人因分析。
+
+\subsection{研究背景：隧道洪涝的极端救援需求}
+
+隧道洪灾（如郑州京广隧道2021、广州白云隧道2024）具有空间封闭、水位上涨迅速、能见度极低（0.3--1 m）等极端特征。远程操控救灾机器人是替代人类进入高危水域的关键手段，但操作者面临严峻的信息获取与认知负荷挑战：
+
+\begin{itemize}
+    \item 水体混有泥沙油污，摄像头画面高度退化
+    \item 单一视角深度线索不足，无法准确判断距离
+    \item 多任务并行（导航+搜索+物资投放）导致认知过载
+\end{itemize}
+
+\subsection{研究设计：用户需求分析与实验框架}
+
+\subsubsection{双角色需求挖掘}
+
+通过访谈法与焦点小组法，系统梳理两类关键角色的需求：
+
+\textbf{操作者需求}：(1) 环境感知——准确感知障碍物分布与水流状态；(2) 操控精度——在浑浊水体中精确控制运动路径；(3) 认知负荷管理——避免信息过载，关键信息突出显示；(4) 任务协作——与后方指挥中心高效沟通。
+
+\textbf{被困人员需求}：(1) 心理安全——能识别接近物体为救援设备；(2) 物理安全——机器人不造成二次伤害；(3) 互动沟通——传达自身状况。
+
+\subsubsection{界面复杂度渐进设计}
+
+基于需求分析，设计三级复杂度界面（非简单二元对立，而是逐步叠加信息要素）：
+
+\begin{enumerate}
+    \item \textbf{基础模拟界面}：单一主摄像头画面，暗光低可视度，无辅助信息——模拟最原始救援状态
+    \item \textbf{信息叠加界面}（中等复杂度）：新增二维小地图、风险区域标注、AI语音提示、机器人姿态自稳定
+    \item \textbf{高信息密度界面}（高复杂度）：第三人称视角(3PP)、声呐探测、多源信息融合、VR沉浸式操控
+\end{enumerate}
+
+\subsubsection{拟人化程度设计}
+
+\begin{itemize}
+    \item \textbf{功能导向型}（低拟人化）：流线型机身，高对比度荧光配色，通过指示灯传递状态
+    \item \textbf{拟人化叠加型}（高拟人化）：接入DeepSeek大模型语音反馈，姿态/动作表达意图，VR动作映射
+\end{itemize}
+
+\subsection{Unity仿真实验}
+
+\subsubsection{实验设计}
+
+采用被试内实验设计（Within-subject Design），每名被试在不同条件组合下完成同一救援任务。设置8个二水平自变量：
+
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+\textbf{自变量} & \textbf{说明} \\
+\midrule
+视野亮暗 & 暗光（真实洪涝条件） vs 明亮（界面增强） \\
+机器人稳态 & 姿态不稳定（水流扰动） vs 姿态稳定 \\
+小地图 & 隐藏 vs 显示 \\
+水位信息 & 不显示 vs 显示 \\
+视角模式 & 第一人称(1PP) vs 第三人称(3PP) \\
+投放次数 & 不限制 vs 限制 \\
+AI信息方式 & 语音提示 vs 语音+文字 \\
+操作方式 & 键鼠 / 手柄 / VR交互 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+任务场景：Unity构建200 m虚拟隧道，水下能见度0.5--2 m渐变，10+辆被淹没车辆随机分布，被试需完成导航$\to$搜索$\to$物资投放。
+
+\subsubsection{因变量测量}
+
+\begin{itemize}
+    \item \textbf{任务绩效}：完成时间（系统自动记录）、投放错误次数
+    \item \textbf{认知负荷}：参考NASA-TLX的0--10分主观评分（脑力负荷、努力程度、时间压力、头晕程度等）
+    \item \textbf{主观体验}：SUS系统易用性量表、TAM技术接受模型、半结构化访谈
+\end{itemize}
+
+\subsection{核心实验发现}
+
+\subsubsection{发现1：机器人稳态是效率的"基座"}
+
+任务完成时间分布在34--110 s区间。\textbf{机器人运动稳定性}决定效率下限（平均缩短20--25 s），视觉质量+认知外化工具（小地图、AI提示）决定效率上限。当系统行为不可预测时，\textbf{任何界面优化都会失效}。
+
+\subsubsection{发现2：AI辅助存在"情境适配区间"}
+
+\begin{itemize}
+    \item 轻度负荷场景：语音提示即可有效接收
+    \item 中等负荷场景：语音+文字提示有效降低努力与时间压力评分（降1--2分）
+    \item 极高负荷场景：纯文字信息处理困难，被试反映"来不及看"
+\end{itemize}
+
+\subsubsection{发现3：小地图作为"外部化认知支架"}
+
+引入小地图后NASA-TLX综合评分平均下降1--2分。机制：将"大脑内部的空间记忆与推理"转变为"外部视觉的直接检索"。但在任务简单+机器人稳态条件下，小地图的固定存在反而成为干扰。
+
+\subsubsection{发现4：第三人称视角显著降低晕动症}
+
+引入3PP后平均头晕评分从7.3分降至3.6分（降低51\%）。机制：将视觉输入识别为"他者运动"而非"自我运动"，避免与静止身体前庭信号的冲突。
+
+\subsubsection{发现5：拟人化呈"倒U型"效应}
+
+\begin{itemize}
+    \item 低拟人化（键鼠）：逻辑清晰、错误率可控，但直觉性不足
+    \item 中等拟人化（VR）：在直觉性、控制精度与生理舒适性间取得最佳平衡
+    \item 高拟人化（1PP强沉浸）：增强沉浸感但引发视觉--前庭冲突，认知负荷上升
+\end{itemize}
+
+\subsection{辅助研究：博物馆展签信息分层的人因分析}
+
+除主体实验外，项目还对\textbf{博物馆展签信息设计}进行了人因分析，前往湖北省博物馆实地调研：
+
+\begin{itemize}
+    \item 现场观察20位随机观众：信息过少/过多的展签停留$<$10 s，信息适中展签停留$>$30 s
+    \item 问卷调查28份：100\%选择"展品名称"为首要关注，76\%期望字数$<$150字
+    \item 最受欢迎展签类型（69.23\%）：信息适中、结构清晰型（C类）
+\end{itemize}
+
+\textbf{结论}：有效展签需具备三个特点——具象清晰的描述、适中简洁的篇幅、便于扫读的结构。
+
+\subsection{设计优化建议}
+
+\begin{resultbox}[核心结论]
+\begin{itemize}
+    \item \textbf{稳态优先}：机器人运动稳定性是所有交互优化的"生效前提"
+    \item \textbf{分层自适应}：视觉信息根据环境照度与任务类型动态切换视角策略
+    \item \textbf{界面复杂度存在最优区间}：并非"越简单越好"，适中复杂度+清晰结构最优
+    \item \textbf{拟人化的核心是映射清晰度}：映射的清晰度应优先于形态的拟真度
+    \item \textbf{AI作为"认知安全网"}：在极端场景下提供预设方案甚至一键接管选项
+\end{itemize}
+\end{resultbox}
+
+% ========================================================================
+% 第十七章：斯特林发动机联合仿真
+% ========================================================================
+\newpage
+\section{工程设计课程项目——Gamma型斯特林发动机联合仿真}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{课程} & 工程设计（热力学方向） \\
+\textbf{研究课题} & Gamma型斯特林发动机的ADAMS-MATLAB联合仿真分析 \\
+\textbf{核心工具} & SolidWorks / ADAMS / MATLAB Simulink \\
+\textbf{设计目标} & 输出功率$\geq$0.5 W，额定转速1500 r/min
+\end{tabular}
+\end{infobox}
+
+本项目以Gamma型斯特林发动机为研究对象，从热力学理论出发，经历结构参数设计$\to$三维建模$\to$多体动力学仿真$\to$联合仿真平台搭建的完整工程流程，实现了热力学计算与机械动力学的跨域耦合仿真。
+
+\subsection{斯特林循环热力学基础}
+
+斯特林循环由四个基本过程组成，是一种外燃式闭式循环：
+
+\begin{enumerate}
+    \item \textbf{等温压缩}（1$\to$2）：气体在低温侧被等温压缩，对外放热
+    \[
+    Q_{12} = W_{12} = -mR_gT_C \cdot \ln\frac{V_{max}}{V_{min}} = -0.4319\;\text{J}
+    \]
+    \item \textbf{等容吸热}（2$\to$3）：气体通过回热器从低温侧流向高温侧，等容吸热
+    \[
+    Q_{23} = mc_V(T_E - T_C) = 0.5968\;\text{J}, \quad W_{23} = 0
+    \]
+    \item \textbf{等温膨胀}（3$\to$4）：气体在高温侧等温膨胀对外做功
+    \[
+    Q_{34} = W_{34} = mR_gT_E \cdot \ln\frac{V_{max}}{V_{min}} = 0.7199\;\text{J}
+    \]
+    \item \textbf{等容放热}（4$\to$1）：气体通过回热器返回低温侧，等容放热
+    \[
+    Q_{41} = -mc_V(T_E - T_C) = -0.5968\;\text{J}, \quad W_{41} = 0
+    \]
+\end{enumerate}
+
+单次循环理论做功：
+
+\[
+W_i = W_{34} + W_{12} = mR_g(T_E - T_C) \cdot \ln\frac{V_{max}}{V_{min}} = 0.2880\;\text{J}
+\]
+
+在回热器效率$\eta_R = 1$的理想条件下，热效率达到卡诺效率：
+
+\[
+\eta = \frac{W_i}{Q_{in}} = \frac{T_E - T_C}{T_E} = 40.0\%
+\]
+
+\subsection{史密特理论建模}
+
+项目采用\textbf{史密特（Schmidt）理论}对Gamma型发动机进行准稳态热力学分析。核心假设包括：等温压缩/膨胀、理想气体、完全再生热交换、正弦容积变化。
+
+\subsubsection{容积与压力的解析表达}
+
+以排气器活塞上止点为曲柄角$\theta = 0^\circ$，膨胀空间与压缩空间瞬时容积为：
+
+\[
+V_E = \frac{V_{SE}}{2}(1 - \cos\theta), \quad V_C = \frac{V_{SE}}{2}(1 + \cos\theta) + \frac{V_{SC}}{2}[1 - \cos(\theta - \alpha)]
+\]
+
+瞬时压力由压力方程给出：
+
+\[
+p = \frac{p_{mean}\sqrt{1 - \delta^2}}{1 - \delta\cos(\theta - \phi)}
+\]
+
+其中$\delta = B/S$，$B$、$S$为由温度比$\tau = T_C/T_E$、行程容积比$\kappa$和死容积比$\chi$确定的参数。
+
+\subsection{结构参数设计}
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{参数} & \textbf{数值} \\
+\midrule
+活塞直径$D_P$ & 12 mm \\
+活塞行程$S_P$ & 11.8 mm \\
+相位角$\alpha$ & 90$^\circ$ \\
+全死容积比$\chi$ & 8.020 \\
+计算平均气压$p_{mean}$ & 11583 Pa \\
+温度比$\tau = T_C/T_E$ & 0.48 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{MATLAB曲线计算}
+
+利用史密特理论公式，通过MATLAB计算气压-曲柄角曲线与$p$-$V$图：
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_03.png}
+        \caption{气压随曲柄角变化曲线}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_04.png}
+        \caption{$V$-$\theta$图与$p$-$V$图（闭合环路面积$=$单次循环做功）}
+    \end{subfigure}
+    \caption{MATLAB计算的斯特林循环特性曲线}
+\end{figure}
+
+\subsection{SolidWorks三维建模与ADAMS仿真}
+
+\subsubsection{三维结构模型}
+
+在SolidWorks中精确构建Gamma型斯特林发动机的连杆、飞轮、活塞等关键部件，将Parasolid格式导入ADAMS进行动力学仿真。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_06.png}
+        \caption{SolidWorks三维模型}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_07.png}
+        \caption{ADAMS仿真模型（含约束、状态变量定义）}
+    \end{subfigure}
+    \caption{发动机多体动力学模型}
+\end{figure}
+
+\subsubsection{ADAMS运动副与约束设置}
+
+在ADAMS中定义多种运动副实现真实的机械运动关系：
+
+\begin{itemize}
+    \item \textbf{大地固定副}：提供全局参考系，避免冗余自由度导致仿真不收敛
+    \item \textbf{转动副}：连杆/飞轮与地面之间的旋转运动关系
+    \item \textbf{平移副}：活塞与气缸之间的往复运动关系
+    \item \textbf{圆柱副}：连杆与活塞销连接处的复合运动
+\end{itemize}
+
+定义4个状态变量：\texttt{torque1}（输入力矩，从Simulink获取）、\texttt{angle1}（轴转角）、\texttt{velocity1}（连杆转速）、\texttt{force1}（输入力），实现ADAMS与MATLAB的数据交互。
+
+\subsection{ADAMS-MATLAB联合仿真}
+
+\subsubsection{Simulink热力模型}
+
+在MATLAB/Simulink中编写\texttt{plant.m} S-Function，实现史密特理论的实时计算：转角$\theta$作为输入，根据史密特公式计算瞬时气缸压力$p$、活塞作用力$F_p = (p - p_{air})A_p$、曲柄转矩$T_q = F_p r(\sin\theta - \cos\theta)$，输出转矩反馈至ADAMS驱动机械系统运动。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{extracted_images/stirling_19.png}
+    \caption{Simulink联合仿真模型：\texttt{plant}模块输出转矩$\to$\texttt{adams\_sub}接收并驱动$\to$输出转角/转速}
+\end{figure}
+
+\subsubsection{仿真结果与分析}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_20.png}
+        \caption{转矩随时间变化曲线}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{extracted_images/stirling_21.png}
+        \caption{转速随时间变化曲线}
+    \end{subfigure}
+    \caption{联合仿真结果}
+\end{figure}
+
+初始仿真转速约90 r/min，低于设计目标。分析原因：
+
+\begin{itemize}
+    \item $t < 0.1$ s时初始力矩偏小（5 N + 0.3 N$\cdot$m），启动能量不足
+    \item 进入稳态后持续计算输出转矩偏小
+    \item 飞轮转动惯量设定影响转速稳定性
+\end{itemize}
+
+\subsubsection{参数敏感性分析与优化}
+
+通过调整关键参数实现目标转速：
+
+\begin{itemize}
+    \item 增大活塞直径$D_P$：增加有效受压面积，提高单次循环做功
+    \item 增大气缸长度：增大行程容积$V_{SE}$，提升循环功率
+    \item 优化飞轮质量与转动惯量：增大飞轮惯量可储存更多动能，稳定转速
+\end{itemize}
+
+经过多轮参数调整，最终实现1500 r/min的设计目标转速。
+
+\begin{resultbox}[项目成果]
+\begin{itemize}
+    \item 建立了Gamma型斯特林发动机的完整热力学理论模型（史密特理论）
+    \item 通过SolidWorks建模$\to$ADAMS多体动力学仿真$\to$MATLAB/Simulink热力耦合，实现跨域联合仿真
+    \item $p$-$V$闭合环路面积定量表征单次循环做功，理论热效率40\%（卡诺极限）
+    \item 参数敏感性分析明确了活塞直径、气缸长度、飞轮惯量对转速的影响机制
+    \item 最终实现设计目标功率$\geq$0.5 W、额定转速1500 r/min
+\end{itemize}
+\end{resultbox}
+
+% ========================================================================
+% 第十八章：数理综合2——悬浮液实验与仿真
+% ========================================================================
+\newpage
+\section{数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究}
+
+\begin{infobox}[项目概况]
+\begin{tabular}{ll}
+\textbf{课程} & 数学物理方法——综合实践2 \\
+\textbf{研究课题} & 垂直振荡容器中流体悬浮（Levitating Fluid）的物理机制与参数影响 \\
+\textbf{核心方法} & 理论推导 / 硅油振荡实验 / COMSOL Multiphysics多相流仿真 \\
+\textbf{关键词} & Rayleigh--Taylor不稳定性 / Kapitza效应 / Bjerknes力 / 法拉第不稳定性
+\end{tabular}
+\end{infobox}
+
+\subsection{研究背景与课题分析}
+
+当部分装满液体的容器进行垂直振荡并在底部注入空气时，液体可以稳定地``悬浮''在空气层之上。这一反直觉的现象涉及流体动力学与多相流稳定性的核心问题。2020年Apffel等人在\textit{Nature}上发表的研究表明，通过精确校准的垂直振荡，不仅可以使液体层悬浮，甚至可以在悬浮液体的下界面实现``倒置浮力''——物体能够在液体下方倒挂漂浮。
+
+课题要求系统研究以下因素对流体悬浮现象的影响：
+
+\begin{itemize}
+    \item 容器的形状、大小等几何参数
+    \item 液体的动力粘度和种类（硅油、甘油等）
+    \item 振动的频率、幅度和波形
+    \item 注入空气的压力、流速和注射位置
+    \item 液体的初始填充量
+\end{itemize}
+
+\subsection{理论分析}
+
+\subsubsection{Rayleigh--Taylor不稳定性与静态分析}
+
+当密度较大的流体位于密度较小的流体上方时，界面会发生Rayleigh--Taylor（RT）不稳定性。在静态情况下，液体位于气体下方时的正常界面满足重力--毛细管色散关系：
+
+\begin{equation}
+\omega_0^2(k) = gk + \frac{\gamma k^3}{\rho_l}
+\end{equation}
+
+其中$\omega_0$为自然振荡频率，$k$为波数，$\gamma$为表面张力系数，$\rho_l$为液体密度。重力和毛细力均为正值，界面稳定。
+
+当液体位于气体上方（倒置构型）时：
+
+\begin{equation}
+\omega_0^2(k) = -gk + \frac{\gamma k^3}{\rho_l}
+\end{equation}
+
+对于小波数$k$（长波），重力项$-gk$占主导，使$\omega_0^2(k)<0$，界面扰动随时间呈指数增长，液体最终坍塌。最不稳定的波数$k^*$由$\omega_0^2(k)$取极小值确定，对于大波矢量（短波），毛细力占主导并具有稳定作用。
+
+\subsubsection{Kapitza效应与动态稳定化}
+
+实验体系的核心思想类比\textbf{卡皮察倒立摆}（Stephenson--Kapitza pendulum）：通过高频垂直振荡在时间平均意义上产生``振动力''，从而稳定原本不稳定的倒置构型。
+
+假设液体受到垂直振荡$z_b(t) = A\cos(\omega t)$，液体的等效加速度为：
+
+\begin{equation}
+g_{\mathrm{eff}}(t) = g - A\omega^2\cos(\omega t)
+\end{equation}
+
+将线性化的Bernoulli方程应用于界面变形$\zeta$，得到受迫振子方程：
+
+\begin{equation}
+\ddot{\zeta} + \omega_0^2(k)\,\zeta = -kA_1\omega^2\cos(\omega t)\,\zeta
+\end{equation}
+
+其中$A_1$为液层的振荡幅度。按照Kapitza分析方法，将$\zeta$分解为慢分量$\zeta_s$与快分量$\zeta_f$：
+
+\begin{equation}
+\zeta = \zeta_s + \zeta_f
+\end{equation}
+
+对方程取时间平均（利用$\langle\cos^2(\omega t)\rangle = 1/2$），得到慢分量的有效运动方程：
+
+\begin{equation}
+\ddot{\zeta}_s + \omega_0^2(k)\,\zeta_s = -\frac{k^2A_1^2}{2}\omega^2\,\zeta_s
+\end{equation}
+
+右端项$-\frac{k^2A_1^2}{2}\omega^2\zeta_s$类比弹簧恢复力，是振动引起的\textbf{平均稳定化效应}。当$\zeta_s$偏离平衡位置时，该项提供抑制力，阻止界面变形进一步发展。
+
+\textbf{稳定化条件推导}：为使倒置界面稳定，振动稳定化项必须克服重力不稳定项：
+
+\begin{equation}
+\frac{k^2A_1^2}{2}\omega^2 > |\omega_0^2(k)|
+\end{equation}
+
+对于不稳定模式$\omega_0^2(k)<0$，且小$k$时$|\omega_0^2(k)|\approx gk$，简化得：
+
+\begin{equation}
+k > \frac{2g}{A_1^2\omega^2}
+\end{equation}
+
+对于横截面积尺度为$L$的容器，可激发的最小波数为$k_{\min} = \pi/L$，因此必须满足：
+
+\begin{equation}
+\boxed{A_1\omega > \sqrt{\frac{2gL}{\pi}}}
+\end{equation}
+
+该条件给出了实现悬浮所需的最小激励速度，且与容器横截面长度$L$的平方根成正比。
+
+\subsubsection{气泡临界下沉深度}
+
+在振荡液柱中，气泡受到加速度调制$g_{\mathrm{eff}}$和压强调制$P(t)$的联合作用。对气泡体积进行泰勒展开分析表明，除了常规的阿基米德浮力外，还存在额外的\textbf{Bjerknes力}——一种由压力梯度振荡引起的时间平均力。
+
+气泡的平衡方程考虑以下力的贡献：
+
+\begin{itemize}
+    \item 重力：$F_g = -\rho_b V g$
+    \item 浮力：$F_b = \rho_l V g$
+    \item 粘性阻力：$F_d = -\frac{1}{2}\pi r^2 \rho_l C_d u^2$，其中$C_d$为阻力系数
+    \item Basset力：$F_B = K_B \cdot 6\pi r \mu \int_0^t \frac{\dot{u}(\tau)}{\sqrt{\pi\nu(t-\tau)}}\,\mathrm{d}\tau$，其中$K_B$为Basset力经验系数
+    \item 附加质量力：$F_m = K_m \cdot \frac{1}{2}\rho_l V \dot{u}$，其中$K_m$为附加质量力经验系数
+\end{itemize}
+
+实验表明气泡的临界下沉深度$d^*$与振幅$A$的关系满足：
+
+\begin{equation}
+d^* = \frac{2gP_0}{\rho_l A^2 \omega^4} \cdot C
+\end{equation}
+
+其中特征体积$C$与气泡半径的平方和体积调制有关。高粘度液体不容易出现法拉第不稳定性，且Basset力会减弱浮力，有利于气泡保持稳定。
+
+\subsubsection{负重力效应与倒置浮力}
+
+在悬浮液层的下界面，振动不仅抑制了RT不稳定性，还产生了``负重力''效应。浮体在振动液体界面上的动态稳定条件为：
+
+\begin{equation}
+\omega_{\mathrm{buoy}}^2(1+\alpha) > 0, \quad \alpha = \frac{\omega_{\mathrm{buoy}}^2}{2}\left(\frac{A\omega}{g}\right)^2
+\end{equation}
+
+当振动足够强时，动态稳定化项$\alpha$使原本为负的有效势能变为极小值，物体可以在悬浮液体的下界面``倒置漂浮''。
+
+\subsection{预实验}
+
+预实验采用注射器容器验证基本原理：
+
+\begin{itemize}
+    \item 取9\,mL、100\,cst硅油加入注射器中
+    \item 接入波形发生器，设置频率100\,Hz、幅值20\,Vpp、正弦波
+    \item 通过底部缓慢注入空气
+    \item 观察到气体上升速度减缓，但未能实现稳定悬浮
+\end{itemize}
+
+预实验结果表明，注射器容器的横截面积较小，振动条件接近但未完全满足稳定化阈值。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.35\textwidth]{extracted_images/levitating_20_51.png}
+\caption{实验装置：注射器安装在克拉尼图形演示仪振动台上}
+\end{figure}
+
+\subsection{实验验证}
+
+\subsubsection{实验器材与方法}
+
+实验器材包括：有机玻璃容器、克拉尼图形演示仪振动台、波形发生器、功率放大器、硅油/甘油（100\,cst）以及注射器。判定标准为：
+
+\begin{itemize}
+    \item \textbf{液面稳定}：在30\,s（或更长时间）内保持同一状态，气泡位置和大小不发生变动
+    \item \textbf{坍塌}：气体层从一侧开始坍塌，气泡上浮
+\end{itemize}
+
+\subsubsection{频率影响实验}
+
+控制注入悬浮气体体积约1\,mL，改变振动频率范围70--250\,Hz。实验发现存在一个临界频率，低于该频率时液层无法保持悬浮，高于该频率时稳定性随频率增大而增强。在更高频率区间，当达到法拉第不稳定性阈值时，界面会出现反对称模式——空气层体积不再恒定，上层液体在摇摆中最终坍塌。
+
+\subsubsection{横截面积影响实验}
+
+保持不同横截面容器中液面高度一致，实验验证了理论预测$A_1\omega > \sqrt{2gL/\pi}$：横向尺度$L$越大，所需激发速度$A_1\omega$越大。实验数据与模型曲线$A_1\omega = \sqrt{2gL/\pi}$吻合良好。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{extracted_images/levitating_28_74.png}
+\caption{容器横截面长度$L$与临界激发速度$A_1\omega$的关系：实验数据（蓝点）与理论模型（红色虚线）对比}
+\end{figure}
+
+\subsubsection{注射深度与临界深度}
+
+改变空气注入深度测定临界深度$d^*$。实验表明临界深度与$1/A^2$拟合良好，验证了理论预测公式中振幅$A$的反比平方依赖关系。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{extracted_images/levitating_27_70.png}
+\caption{临界深度$d^*_{\mathrm{th}}$与振荡幅度$A$的关系：实验值（蓝线）与理论曲线（红线）}
+\end{figure}
+
+\subsection{COMSOL多相流仿真}
+
+\subsubsection{仿真建模}
+
+结合理论分析，使用COMSOL Multiphysics进行二维多相流仿真建模，前提条件包括：
+
+\begin{itemize}
+    \item 采用二维模型简化计算
+    \item 将振动激励施加在容器最下层边界，模拟实验中的振动台效果
+    \item 考虑液体与容器壁之间的接触和粘滞效应
+\end{itemize}
+
+\subsubsection{频率对比验证}
+
+仿真分别计算了70\,Hz和100\,Hz两种频率下的流场状态，与实验现象定性吻合：低频时悬浮不稳定，高频时气液界面保持平整。
+
+\subsubsection{横截面积对比验证}
+
+仿真中改变容器横截面尺寸，大面积容器需要更高的激发速度才能维持悬浮，与理论公式$A_1\omega \propto \sqrt{L}$一致。
+
+\subsubsection{注射深度对比验证}
+
+仿真比较了不同注射深度的情形：注射较深时气泡能够稳定悬浮，注射较浅时气泡趋于上浮。
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{extracted_images/levitating_33_92.png}
+    \caption{COMSOL仿真：空气体积分数分布（$t=1$\,s），清晰显示气--液界面位置}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{extracted_images/levitating_34_94.png}
+    \caption{COMSOL仿真：速度场分布（$t=1$\,s），气--液界面处速度梯度显著}
+\end{minipage}
+\end{figure}
+
+\subsubsection{界面特征深入分析}
+
+对仿真结果的进一步分析揭示了两个重要特征：
+
+\begin{enumerate}
+    \item \textbf{界面浑浊现象的解释}：空气体积分数分布图显示，气--液界面处并非锐利的零--一跃迁，而是存在一个过渡区域，体积分数在0.1--0.9之间渐变，这解释了实验中观察到的界面浑浊现象。
+
+    \item \textbf{壁面速度极值}：速度等值线分布图显示，在气--液界面\textbf{靠近容器壁}的区域存在明显的速度极值点（最大速度$\sim$0.034\,m/s），远高于流场中心区域（$\sim$4$\times10^{-5}$\,m/s）。
+
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{extracted_images/levitating_34_95.png}
+    \caption{速度等值线分布：壁面处速度极值清晰可见，最大值0.034\,m/s}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{extracted_images/levitating_35_97.png}
+    \caption{界面不同截线上的速度大小分布：边缘速度显著高于中心}
+\end{minipage}
+\end{figure}
+
+\subsection{气泡行为观察}
+
+实验中还观察到气泡在振荡液柱中的典型行为：当注射深度$d<d^*$时，气泡能够稳定悬浮并随时间保持位置不变；当$d>d^*$时，气泡无法维持稳定而缓慢下沉，最终到达容器底部。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{extracted_images/levitating_27_69.png}
+\caption{气泡在不同注射深度下的行为：$d<d^*$时稳定悬浮（上）；$d>d^*$时逐渐下沉（下）}
+\end{figure}
+
+\subsection{误差分析与不足}
+
+\begin{itemize}
+    \item 未对不同注射深度带来的动力学过渡过程进行定量分析
+    \item 注射器针管材料对气泡上升过程中表面张力的影响未考虑
+    \item 未讨论注入气体种类（空气、氮气等）对悬浮稳定性的差异
+    \item 气体注射流速未进行精确量化控制
+    \item 仅使用硅油进行实验，未对多种液体（甘油、FC-70等）进行对比
+    \item 液体中悬浮小气泡对主气层稳定性的干扰效应未评估
+\end{itemize}
+
+\begin{resultbox}[项目成果]
+\begin{itemize}
+    \item 系统建立了振荡容器中流体悬浮现象的理论框架：从Rayleigh--Taylor不稳定性出发，通过Kapitza效应推导出动态稳定化条件$A_1\omega > \sqrt{2gL/\pi}$
+    \item 完成了分析气泡受力的完整模型，涵盖重力、浮力、粘性阻力、Basset力、附加质量力及Bjerknes力
+    \item 实验验证了激发速度与容器横截面积、临界深度与振幅的理论关系
+    \item 基于COMSOL Multiphysics建立二维多相流仿真模型，频率/横截面积/注射深度三个维度均与实验定性吻合
+    \item 仿真揭示了界面浑浊的体积分数过渡机制及壁面速度极值现象
+    \item 观察到新现象：上表面出现稳定圆环结构
+\end{itemize}
+\end{resultbox}
+
+% ========================================================================
+% 总结
+% ========================================================================
+\newpage
+\section{总结与技术栈全景}
+
+\subsection{技术栈总览}
+
+\begin{center}
+\begin{longtable}{p{3cm}p{10cm}}
+\toprule
+\textbf{领域} & \textbf{技术栈} \\
+\midrule
+\endhead
+嵌入式系统    & STM32F103/F407, ESP32, K210, STM32CubeMX, HAL库 \\
+机器视觉      & OpenCV, YOLO, Intel RealSense, MindVision, PnP \\
+机器人        & 视觉伺服, DH运动学, 逆运动学求解, PID闭环 \\
+FPGA/数字电路 & VHDL, Quartus, ModelSim, Multisim \\
+PC软件        & C++17, Python, MATLAB, PyBind11, 多线程 \\
+控制理论      & PID, PI控制, FOC矢量控制, 滤波器设计 \\
+机器学习      & PCA, SVM, One-vs-All, Bagging投票, CNN \\
+PCB工程       & Altium Designer, 电源管理, 电机驱动, IGBT功率板 \\
+上位机开发    & PyQt5, Matplotlib, ImGui, MATLAB App \\
+电力电子      & FSBB拓扑, 双闭环控制, DC-DC变换 \\
+边缘AI        & K210, MaixHub, MaixPy, TF-Lite \\
+数学物理      & Bessel函数, Helmholtz方程, COMSOL仿真, Chladni实验 \\
+人因工程      & NASA-TLX, Unity仿真, 被试内实验, SUS量表 \\
+热力学仿真    & 斯特林循环, 史密特理论, SolidWorks, ADAMS-Simulink联合仿真 \\
+流体力学      & Rayleigh--Taylor不稳定性, Kapitza效应, Bjerknes力, COMSOL多相流仿真 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsection{能力成长路径}
+
+\begin{enumerate}
+    \item \textbf{基础阶段}（大一）：VHDL数字电路设计（8个模块+FPGA循迹小车）、MATLAB心率信号处理、硬件流水灯与直流稳压电源
+    \item \textbf{工程应用}（大二）：STM32有刷/无刷电机驱动（3版PCB迭代）、PCA+SVM人脸识别、仿生智能台灯（PID闭环）、自动循迹小车、SRTP电磁炮（IGBT功率板设计+RLC放电特性实测）
+    \item \textbf{理论深化}（大二--大三）：
+    \begin{itemize}
+        \item 数学物理方法——Bessel模态理论+COMSOL仿真+Chladni盐粒实验验证
+        \item 工效学——救灾机器人人机交互界面的Unity被试内实验+博物馆展签人因分析
+        \item 工程设计——Gamma型斯特林发动机ADAMS-MATLAB联合仿真
+        \item 流体力学——振荡容器悬浮液实验+COMSOL多相流仿真
+    \end{itemize}
+    \item \textbf{竞赛创新}（大三）：
+    \begin{itemize}
+        \item RoboMaster视觉伺服引擎——全国三等奖+会议论文（在投）
+        \item 智能扫地机器人——自研PCB+牛耕路径规划+上位机
+        \item K210垃圾分类——工创赛校级铜奖
+        \item FSBB尖峰补能——市创良好结题
+    \end{itemize}
+    \item \textbf{社会实践}：国自然基金课题参与+挑战杯校级优胜奖+国家卫健委典型案例入选
+\end{enumerate}
+
+\subsection{核心荣誉}
+
+\begin{resultbox}[竞赛与科研成果]
+\begin{itemize}
+    \item RoboMaster 2025 全国赛——\textbf{国家级三等奖}（第一负责人·视觉开发）
+    \item RoboMaster 2025 区域赛——\textbf{省级二等奖}（第一负责人·视觉开发）
+    \item 中国大学生工程实践与创新能力大赛——\textbf{校级铜奖}（队长·视觉开发）
+    \item 挑战杯——\textbf{校级优胜奖}
+    \item 市级大学生创新训练项目——\textbf{良好结题}
+    \item 第一作者会议论文 \textit{LightViServo: Real-Time Visual Servoing on Edge Devices via Traditional Vision}（在投）
+    \item 国家自然科学基金课题参与
+    \item 多次综合奖学金、优秀共青团员、重庆大学优秀学生
+\end{itemize}
+\end{resultbox}
+
+\end{document}
