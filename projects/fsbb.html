@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FSBB尖峰补能系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,36 +21,111 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">FSBB尖峰补能系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2024 – 2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>FSBB尖峰补能系统</li>
-                    <li>项目背景</li>
-                    <li>FSBB拓扑结构</li>
-                    <li>系统架构与模块化设计</li>
-                    <li>``三环并联''增量式PID协同控制</li>
-                    <li>毫秒级高速供电切换模块</li>
-                    <li>趋势感知动态限幅滤波</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>国市创大学生创新训练项目</td></tr>
+        <tr><td><strong>结题评级</strong></td><td><strong>良好</strong></td></tr>
+        <tr><td><strong>技术方向</strong></td><td>电力电子 DC-DC 变换器</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/fsbb/pages/page_071.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fsbb/pages/page_072.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fsbb/pages/page_073.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景</h2>
+    <p>
+        针对储能系统中负载突变引起的<strong>尖峰功率需求</strong>，设计了一套基于<strong>四开关Buck-Boost（FSBB）</strong>拓扑的DC-DC变换器，实现升降压无缝切换与双闭环数字控制。
+        </p>
+
+    <h2>2 &nbsp; FSBB拓扑结构</h2>
+    <p>
+        FSBB拓扑由四个功率MOSFET构成（<em class="math">Q<sub>1</sub></em>–<em class="math">Q<sub>4</sub></em>），根据输入/输出电压关系自动切换工作模式：
+        </p>
+    <table>
+        <tr><th><strong>模式</strong></th><th><strong>条件</strong></th><th><strong>开关动作</strong></th><th><strong>功率流</strong></th></tr>
+        <tr><td>Buck</td><td><em class="math">V<sub>in</sub> ≫ V<sub>out</sub></em></td><td><em class="math">Q<sub>1</sub></em>/<em class="math">Q<sub>2</sub></em> PWM, <em class="math">Q<sub>3</sub></em> ON, <em class="math">Q<sub>4</sub></em> OFF</td><td>降压输出</td></tr>
+        <tr><td>Boost</td><td><em class="math">V<sub>in</sub> ≪ V<sub>out</sub></em></td><td><em class="math">Q<sub>3</sub></em>/<em class="math">Q<sub>4</sub></em> PWM, <em class="math">Q<sub>1</sub></em> ON, <em class="math">Q<sub>2</sub></em> OFF</td><td>升压输出</td></tr>
+        <tr><td>Buck-Boost</td><td><em class="math">V<sub>in</sub> ≈ V<sub>out</sub></em></td><td>四管协同PWM</td><td>无缝过渡</td></tr>
+    </table>
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_2.png" alt="FSBB逻辑控制框图" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; FSBB逻辑控制框图</div>
+    </div>
+
+    <h2>3 &nbsp; 系统架构与模块化设计</h2>
+    <p>
+        系统采用模块化设计，分为电池模块、尖峰补能模块（FSBB+超级电容）与控制模块三部分。各模块通过标准化接口连接（如XT30电源接口、GH1.25通信接口等），支持热插拔与并联扩展。整体能量流为：锂电池提供基础能量，超级电容承担尖峰功率，FSBB负责双向能量调度与升降压匹配。
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/fsbb/fsbb_0.png" alt="PCB控制示意图与防倒灌模块" onclick="openLightbox(this)">
+            <div class="figure-caption">PCB控制示意图与防倒灌模块</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/fsbb/fsbb_1.png" alt="标准化接口设置" onclick="openLightbox(this)">
+            <div class="figure-caption">标准化接口设置</div>
+        </div>
+    </div>
+
+    <h2>4 &nbsp; "三环并联"增量式PID协同控制</h2>
+    <p>
+        为同时满足"电池安全功率约束"与"超级电容SOC（电压）边界约束"，系统采用<strong>"三环并联"协同控制结构</strong>：
+        </p>
+    <ul>
+        <li><strong>外环</strong>：锂电池功率环（全局功率上限约束）</li>
+        <li><strong>约束环</strong>：超级电容高压/低压电压环（SOC边界）</li>
+        <li><strong>内环</strong>：电容电流环（快速执行）</li>
+    </ul>
+    <p>
+        控制器通过MIN/MAX选择器融合功率与电压两类约束，实时生成安全的目标电流，最终调节DCDC的广义占空比，实现双源能量协同调度与平滑过渡。采用<strong>增量式PID</strong>作为各环调节器，其输出控制量增量、计算量小、对积分饱和不敏感，适用于STM32平台，可在保证精度的同时获得毫秒级动态响应。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_4.png" alt="尖峰补能装置三环并联控制框图" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; 尖峰补能装置三环并联控制框图</div>
+    </div>
+
+    <h2>5 &nbsp; 毫秒级高速供电切换模块</h2>
+    <p>
+        系统采用"STM32 + 高速比较器（Comparator）"协同架构：STM32负责上层状态机、能量管理策略与参数更新；高速比较器实时监控关键节点阈值。当检测到突变信号时，比较器可纳秒级触发硬件中断，实现硬件级快速响应。
+        </p>
+    <p>
+        切换模块核心采用<strong>双向功率MOSFET阵列</strong>，配合同步整流降低导通损耗；引入理想二极管控制与软启动逻辑抑制切换瞬间的电压尖峰与反向电流倒灌，保护锂电池与超级电容安全。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fsbb/fsbb_5.png" alt="防倒灌模块原理图与PCB设计" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; 防倒灌模块原理图与PCB设计</div>
+    </div>
+
+    <h2>6 &nbsp; 趋势感知动态限幅滤波</h2>
+    <p>
+        户外复杂工况下，电流采样信号常呈现"噪声与真实突变叠加"的特点。系统采用<strong>趋势感知的动态限幅滤波</strong>：通过历史状态累积判断电流变化趋势，被判定为趋势性变化时提高限幅阈值加速跟踪，被判定为噪声时收紧限幅阈值加强平滑，实现滤噪与动态响应的平衡。
+        </p>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>仿生多模态智能台灯</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,47 +21,187 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">仿生多模态智能台灯</h1>
+        <div class="article-meta">
+            <span>薛雅文、郑皓文、严海轩、令狐子安</span><span>2025 – 2026</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>仿生多模态智能台灯</li>
-                    <li>设计灵感与外观造型</li>
-                    <li>系统总体架构</li>
-                    <li>机械结构设计与迭代</li>
-                    <li>3-DOF逆运动学解算</li>
-                    <li>有限状态机与多模态交互</li>
-                    <li>语音识别与亮度控制通信</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>自动控制原理课程综合项目</td></tr>
+        <tr><td><strong>核心平台</strong></td><td>树莓派CM5 (4GB) + STM32F103</td></tr>
+        <tr><td><strong>交互方式</strong></td><td>语音（讯飞ASR）+ 手势（MediaPipe）+ 运动控制</td></tr>
+        <tr><td><strong>机械结构</strong></td><td>3-DOF串联连杆机械臂，飞特STS3215串行舵机</td></tr>
+        <tr><td><strong>设计理念</strong></td><td>借鉴Apple Elegant情感交互台灯 + 《死亡搁浅》奥德拉德克造型</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/desk-lamp/pages/page_062.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/desk-lamp/pages/page_063.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/desk-lamp/pages/page_064.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/desk-lamp/pages/page_065.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/desk-lamp/pages/page_066.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/desk-lamp/pages/page_067.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 设计灵感与外观造型</h2>
+    <p>
+        本项目的设计灵感来源于Apple Elegant情感交互台灯概念——将传统台灯重新定义为具有情感感知和表达能力的"桌面伴侣"，通过流畅的机械运动和智能交互实现人与物之间的情感连接。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/desk-lamp/lamp_0.png" alt="Apple Elegant情感交互台灯概念参考" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; Apple Elegant情感交互台灯概念参考</div>
+    </div>
+    <p>
+        外观造型参考游戏《死亡搁浅》中的肩部机械臂探测仪"奥德拉德克"（Odradek），其发光的四叶片造型简约且极具未来机械美感，正好符合机械臂台灯的功能需求。在此基础上原创设计了台灯的机械细节，多处采用倒角镂空，兼顾物理受力与轻量化，并加入液压杆装饰增强科幻质感。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/desk-lamp/lamp_1.png" alt="《死亡搁浅》奥德拉德克外观灵感来源" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; 《死亡搁浅》奥德拉德克外观灵感来源</div>
+    </div>
+
+    <h2>2 &nbsp; 系统总体架构</h2>
+    <p>
+        系统基于树莓派CM5计算模块为核心处理器，集成视觉识别、语音交互、机械臂控制和智能照明等多个子系统，采用分层模块化软件架构：
+        </p>
+    <table>
+        <caption>系统硬件清单</caption>
+        <tr><th><strong>序号</strong></th><th><strong>硬件名称</strong></th><th><strong>型号/规格</strong></th><th><strong>功能描述</strong></th></tr>
+        <tr><td>1</td><td>主控制器</td><td>树莓派CM5 (4GB)</td><td>运行Linux，核心处理</td></tr>
+        <tr><td>2</td><td>摄像头</td><td>USB免驱 640<em class="math">×</em>480</td><td>手势识别</td></tr>
+        <tr><td>3</td><td>麦克风</td><td>USB PnP 48kHz</td><td>语音采集</td></tr>
+        <tr><td>4</td><td>扬声器</td><td>Yundea M1066 USB</td><td>语音播报</td></tr>
+        <tr><td>5</td><td>舵机<em class="math">×</em>3</td><td>飞特STS3215串行舵机</td><td>三轴运动控制</td></tr>
+        <tr><td>6</td><td>亮度控制器</td><td>STM32F103</td><td>PWM调光</td></tr>
+        <tr><td>7</td><td>LED灯珠</td><td>高亮LED模组</td><td>照明输出</td></tr>
+    </table>
+    <p>
+        软件架构分为四层：
+        </p>
+    <ul>
+        <li><strong>入口层</strong>：<code>run.py</code>，系统启动入口</li>
+        <li><strong>核心层</strong>：<code>MainController</code>主控制器 + <code>StateMachine</code>有限状态机</li>
+        <li><strong>模式层</strong>：<code>HandFollowMode</code>（手部跟随）、<code>PetMode</code>（桌宠互动）、<code>BrightnessMode</code>（亮度调节）</li>
+        <li><strong>驱动层</strong>：语音识别模块（讯飞API）、舵机控制线程、逆运动学工具</li>
+    </ul>
+
+    <h2>3 &nbsp; 机械结构设计与迭代</h2>
+    <p>
+        台灯主体分为底座与机械臂两部分。底座设计为长方体盒子，容纳全部电气元器件与接线，摄像头置于斜侧面，符合日常使用台灯时斜向摆放的习惯。半圆形底座内部设计镂空可放入配重，增强稳定性。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/desk-lamp/lamp_2.png" alt="底座3D模型——收纳电子元器件与摄像头" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 底座3D模型——收纳电子元器件与摄像头</div>
+    </div>
+    <p>
+        机械臂经历了两版迭代。第一版设计简洁，符合传统台灯造型，用作原理样机快速实现机械功能：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/desk-lamp/lamp_3.png" alt="第一版机械臂——原理验证样机" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; 第一版机械臂——原理验证样机</div>
+    </div>
+    <p>
+        第二版增加了外观设计，融入奥德拉德克设计理念。采用镂空、浮雕等工艺，融入机械转轴、气缸、散热片等浮雕元素强调机械感，发光方式从单条灯带改为三条灯带照明：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/desk-lamp/lamp_4.png" alt="第二版机械臂——融入奥德拉德克设计语言" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; 第二版机械臂——融入奥德拉德克设计语言</div>
+    </div>
+
+    <h2>4 &nbsp; 3-DOF逆运动学解算</h2>
+    <p>
+        台灯采用3自由度串联连杆机构，连杆长度<em class="math">L<sub>1</sub> = L<sub>2</sub> = 145mm</em>。系统采用几何法进行逆运动学解算，将目标位置表示为等腰三角形参数：
+        </p>
+    <ul>
+        <li><em class="math">b</em>：等腰三角形底边长（米），范围<em class="math">0 ~ 0.28</em>m</li>
+        <li><em class="math">θ<sub>0</sub></em>：底边角度（台灯朝向），范围<em class="math">0° ~ 180°</em></li>
+        <li><em class="math">β</em>：灯头俯仰角，范围<em class="math">-30° ~ 60°</em></li>
+    </ul>
+    <p>
+        逆解算公式：
+        </p>
+    <div class="formula">θ<sub>1</sub> = arcsin(b)/(2a),   
+α<sub>1</sub> = θ<sub>0</sub>,   
+α<sub>2</sub> = 90° - θ<sub>1</sub>,   
+α<sub>3</sub> = 180° - 2θ<sub>1</sub> + β</div>
+    <p>
+        其中<em class="math">a = 0.145</em>m为连杆长度。舵机编码与角度的转换关系为：
+        </p>
+    <div class="formula">encoder = zero\<sub>p</sub>os + direction × angle × (410)/(90)</div>
+    <table>
+        <caption>舵机参数配置</caption>
+        <tr><th><strong>舵机ID</strong></th><th><strong>位置</strong></th><th><strong>零位编码</strong></th><th><strong>方向</strong></th><th><strong>角度范围</strong></th></tr>
+        <tr><td>3</td><td>底座</td><td>400</td><td>+1</td><td><em class="math">0° ~ 136°</em></td></tr>
+        <tr><td>2</td><td>中间</td><td>500</td><td><em class="math">-1</em></td><td><em class="math">0° ~ 109°</em></td></tr>
+        <tr><td>1</td><td>顶端</td><td>475</td><td><em class="math">-1</em></td><td><em class="math">0° ~ 88°</em></td></tr>
+    </table>
+
+    <h2>5 &nbsp; 有限状态机与多模态交互</h2>
+    <p>
+        系统采用有限状态机（FSM）管理运行状态，状态包括：STANDBY（待机）、LISTENING（监听）、HAND\<sub>F</sub>OLLOW（手部跟随）、PET\<sub>M</sub>ODE（桌宠互动）、BRIGHTNESS\<sub>M</sub>ODE（亮度调节）。状态转移规则如下：
+        </p>
+    <ul>
+        <li>STANDBY <em class="math">xrightarrow唤醒词"宝莉"</em> LISTENING <em class="math">xrightarrow超时10s</em> STANDBY</li>
+        <li>LISTENING <em class="math">xrightarrow"跟随模式"</em> HAND\<sub>F</sub>OLLOW</li>
+        <li>LISTENING <em class="math">xrightarrow"桌宠模式"</em> PET\<sub>M</sub>ODE</li>
+        <li>LISTENING <em class="math">xrightarrow"亮度模式"</em> BRIGHTNESS\<sub>M</sub>ODE</li>
+        <li>任意模式 <em class="math">xrightarrow"退出"</em> STANDBY</li>
+    </ul>
+    <p>
+        <strong>手部跟随模式</strong>：基于MediaPipe实现手部检测，通过像素到世界坐标的转换，经逆运动学解算后驱动舵机，使灯头实时跟踪用户手部位置。
+        </p>
+    <p>
+        <strong>桌宠互动模式</strong>：赋予台灯"宠物"特性，通过语音命令触发拟人化动作。支持"卖萌"（左右摇摆）、"跳舞"（节奏摆动）、"点头/摇头"、"打招呼"、"睡觉/醒来"等10+种动作指令。
+        </p>
+    <p>
+        <strong>亮度调节模式</strong>：通过手势控制LED亮度，手掌张开程度与亮度成正比（握拳<em class="math">→</em>0%，半握<em class="math">→</em>50%，张开<em class="math">→</em>100%）。
+        </p>
+
+    <h2>6 &nbsp; 语音识别与亮度控制通信</h2>
+    <p>
+        语音系统采用讯飞实时语音转写API，USB麦克风原生48kHz采样率经<code>audioop.ratecv</code>实时重采样至16kHz后送入API识别。语音合成采用Edge-TTS（<code>zh-CN-XiaoxiaoNeural</code>声音），通过<code>mpg123</code>播放。
+        </p>
+    <p>
+        亮度控制通过USB CDC虚拟串口与STM32通信，协议帧格式为：帧头<code>0xAA</code> + 亮度值（67–101，映射0%–100%），STM32接收后输出对应PWM驱动LED。
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">手部跟随模式核心逻辑</div>
+        <pre>class HandFollowMode(BaseMode):
+    def update(self, frame=None, voice_text=None):
+        hand_pos = self._detect_hand(frame)
+        if hand_pos:
+            x, y = self._pixel_to_world(hand_pos)
+            b, theta_0, beta = self._calc_ik_params(x, y)
+            encoders = inverse_kinematics_to_encoders(
+                b, theta_0, beta)
+            self._servo_thread.sync_move(
+                encoders, speed=300)
+        return True</pre>
+    </div>
 
 
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">智能台灯功能演示</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/desk-lamp.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 智能台灯功能演示</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

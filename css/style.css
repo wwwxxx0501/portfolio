@@ -1,9 +1,9 @@
-/* ===== LaTeX-Inspired Academic Portfolio ===== */
+﻿/* ===== LaTeX-Inspired Academic Portfolio ===== */
 
 /* Reset */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Typography — Computer Modern / Palatino fallback */
+/* Typography 鈥?Computer Modern / Palatino fallback */
 :root {
     --font-serif: "Palatino Linotype", "Book Antiqua", Palatino, "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
     --font-mono: "Cascadia Code", "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;

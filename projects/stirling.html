@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工程设计课程项目——Gamma型斯特林发动机联合仿真</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,45 +21,210 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">工程设计课程项目——Gamma型斯特林发动机联合仿真</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>课程</strong></td><td>工程设计（热力学方向）</td></tr>
+        <tr><td><strong>研究课题</strong></td><td>Gamma型斯特林发动机的ADAMS-MATLAB联合仿真分析</td></tr>
+        <tr><td><strong>核心工具</strong></td><td>SolidWorks / ADAMS / MATLAB Simulink</td></tr>
+        <tr><td><strong>设计目标</strong></td><td>输出功率<em class="math">≥</em>0.5 W，额定转速1500 r/min</td></tr>
+    </table>
+    </div>
+    <p>
+        本项目以Gamma型斯特林发动机为研究对象，从热力学理论出发，经历结构参数设计<em class="math">→</em>三维建模<em class="math">→</em>多体动力学仿真<em class="math">→</em>联合仿真平台搭建的完整工程流程，实现了热力学计算与机械动力学的跨域耦合仿真。
+        </p>
+
+    <h2>1 &nbsp; 斯特林循环热力学基础</h2>
+    <p>
+        斯特林循环由四个基本过程组成，是一种外燃式闭式循环：
+        </p>
+    <ol>
+        <li><strong>等温压缩</strong>（1<em class="math">→</em>2）：气体在低温侧被等温压缩，对外放热 \[ Q<sub>12</sub> = W<sub>12</sub> = -mR<sub>g</sub>T<sub>C</sub> · ln(V<sub>max</sub>)/(V<sub>min</sub>) = -0.4319 J \]</li>
+        <li><strong>等容吸热</strong>（2<em class="math">→</em>3）：气体通过回热器从低温侧流向高温侧，等容吸热 \[ Q<sub>23</sub> = mc<sub>V</sub>(T<sub>E</sub> - T<sub>C</sub>) = 0.5968 J,    W<sub>23</sub> = 0 \]</li>
+        <li><strong>等温膨胀</strong>（3<em class="math">→</em>4）：气体在高温侧等温膨胀对外做功 \[ Q<sub>34</sub> = W<sub>34</sub> = mR<sub>g</sub>T<sub>E</sub> · ln(V<sub>max</sub>)/(V<sub>min</sub>) = 0.7199 J \]</li>
+        <li><strong>等容放热</strong>（4<em class="math">→</em>1）：气体通过回热器返回低温侧，等容放热 \[ Q<sub>41</sub> = -mc<sub>V</sub>(T<sub>E</sub> - T<sub>C</sub>) = -0.5968 J,    W<sub>41</sub> = 0 \]</li>
+    </ol>
+    <p>
+        单次循环理论做功：
+        </p>
+    <p>
+        \[
+        W<sub>i</sub> = W<sub>34</sub> + W<sub>12</sub> = mR<sub>g</sub>(T<sub>E</sub> - T<sub>C</sub>) · ln(V<sub>max</sub>)/(V<sub>min</sub>) = 0.2880 J
+        \]
+        </p>
+    <p>
+        在回热器效率<em class="math">eta<sub>R</sub> = 1</em>的理想条件下，热效率达到卡诺效率：
+        </p>
+    <p>
+        \[
+        eta = (W<sub>i</sub>)/(Q<sub>in</sub>) = (T<sub>E</sub> - T<sub>C</sub>)/(T<sub>E</sub>) = 40.0%
+        \]
+        </p>
+
+    <h2>2 &nbsp; 史密特理论建模</h2>
+    <p>
+        项目采用<strong>史密特（Schmidt）理论</strong>对Gamma型发动机进行准稳态热力学分析。核心假设包括：等温压缩/膨胀、理想气体、完全再生热交换、正弦容积变化。
+        </p>
+
+    <h3>2.1 &nbsp; 容积与压力的解析表达</h3>
+    <p>
+        以排气器活塞上止点为曲柄角<em class="math">θ = 0^°</em>，膨胀空间与压缩空间瞬时容积为：
+        </p>
+    <p>
+        \[
+        V<sub>E</sub> = (V<sub>SE</sub>)/(2)(1 - cosθ),    V<sub>C</sub> = (V<sub>SE</sub>)/(2)(1 + cosθ) + (V<sub>SC</sub>)/(2)[1 - cos(θ - α)]
+        \]
+        </p>
+    <p>
+        瞬时压力由压力方程给出：
+        </p>
+    <p>
+        \[
+        p = (p<sub>mean</sub>√1 - δ<sup>2</sup>)/(1 - δcos(θ - φ))
+        \]
+        </p>
+    <p>
+        其中<em class="math">δ = B/S</em>，<em class="math">B</em>、<em class="math">S</em>为由温度比<em class="math">tau = T<sub>C</sub>/T<sub>E</sub></em>、行程容积比<em class="math">kappa</em>和死容积比<em class="math">chi</em>确定的参数。
+        </p>
+
+    <h2>3 &nbsp; 结构参数设计</h2>
+    <table>
+        <tr><th><strong>参数</strong></th><th><strong>数值</strong></th></tr>
+        <tr><td>活塞直径<em class="math">D<sub>P</sub></em></td><td>12 mm</td></tr>
+        <tr><td>活塞行程<em class="math">S<sub>P</sub></em></td><td>11.8 mm</td></tr>
+        <tr><td>相位角<em class="math">α</em></td><td>90<em class="math">^°</em></td></tr>
+        <tr><td>全死容积比<em class="math">chi</em></td><td>8.020</td></tr>
+        <tr><td>计算平均气压<em class="math">p<sub>mean</sub></em></td><td>11583 Pa</td></tr>
+        <tr><td>温度比<em class="math">tau = T<sub>C</sub>/T<sub>E</sub></em></td><td>0.48</td></tr>
+    </table>
+
+    <h2>4 &nbsp; MATLAB曲线计算</h2>
+    <p>
+        利用史密特理论公式，通过MATLAB计算气压-曲柄角曲线与<em class="math">p</em>-<em class="math">V</em>图：
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_03.png" alt="气压随曲柄角变化曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">气压随曲柄角变化曲线</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_04.png" alt="<em class="math">V</em>-<em class="math">θ</em>图与<em class="math">p</em>-<em class="math">V</em>图（闭合环路面积<em class="math">=</em>单次循环做功）" onclick="openLightbox(this)">
+            <div class="figure-caption"><em class="math">V</em>-<em class="math">θ</em>图与<em class="math">p</em>-<em class="math">V</em>图（闭合环路面积<em class="math">=</em>单次循环做功）</div>
+        </div>
+    </div>
+
+    <h2>5 &nbsp; SolidWorks三维建模与ADAMS仿真</h2>
+
+    <h3>5.1 &nbsp; 三维结构模型</h3>
+    <p>
+        在SolidWorks中精确构建Gamma型斯特林发动机的连杆、飞轮、活塞等关键部件，将Parasolid格式导入ADAMS进行动力学仿真。
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_06.png" alt="SolidWorks三维模型" onclick="openLightbox(this)">
+            <div class="figure-caption">SolidWorks三维模型</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_07.png" alt="ADAMS仿真模型（含约束、状态变量定义）" onclick="openLightbox(this)">
+            <div class="figure-caption">ADAMS仿真模型（含约束、状态变量定义）</div>
+        </div>
+    </div>
+
+    <h3>5.2 &nbsp; ADAMS运动副与约束设置</h3>
+    <p>
+        在ADAMS中定义多种运动副实现真实的机械运动关系：
+        </p>
+    <ul>
+        <li><strong>大地固定副</strong>：提供全局参考系，避免冗余自由度导致仿真不收敛</li>
+        <li><strong>转动副</strong>：连杆/飞轮与地面之间的旋转运动关系</li>
+        <li><strong>平移副</strong>：活塞与气缸之间的往复运动关系</li>
+        <li><strong>圆柱副</strong>：连杆与活塞销连接处的复合运动</li>
+    </ul>
+    <p>
+        定义4个状态变量：<code>torque1</code>（输入力矩，从Simulink获取）、<code>angle1</code>（轴转角）、<code>velocity1</code>（连杆转速）、<code>force1</code>（输入力），实现ADAMS与MATLAB的数据交互。
+        </p>
+
+    <h2>6 &nbsp; ADAMS-MATLAB联合仿真</h2>
+
+    <h3>6.1 &nbsp; Simulink热力模型</h3>
+    <p>
+        在MATLAB/Simulink中编写<code>plant.m</code> S-Function，实现史密特理论的实时计算：转角<em class="math">θ</em>作为输入，根据史密特公式计算瞬时气缸压力<em class="math">p</em>、活塞作用力<em class="math">F<sub>p</sub> = (p - p<sub>air</sub>)A<sub>p</sub></em>、曲柄转矩<em class="math">T<sub>q</sub> = F<sub>p</sub> r(sinθ - cosθ)</em>，输出转矩反馈至ADAMS驱动机械系统运动。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/stirling/stirling_19.png" alt="Simulink联合仿真模型：textttplant" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; Simulink联合仿真模型：textttplant</div>
+    </div>
+
+    <h3>6.2 &nbsp; 仿真结果与分析</h3>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_20.png" alt="转矩随时间变化曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">转矩随时间变化曲线</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_21.png" alt="转速随时间变化曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">转速随时间变化曲线</div>
+        </div>
+    </div>
+    <p>
+        初始仿真转速约90 r/min，低于设计目标。分析原因：
+        </p>
+    <ul>
+        <li><em class="math">t < 0.1</em> s时初始力矩偏小（5 N + 0.3 N<em class="math">·</em>m），启动能量不足</li>
+        <li>进入稳态后持续计算输出转矩偏小</li>
+        <li>飞轮转动惯量设定影响转速稳定性</li>
+    </ul>
+
+    <h3>6.3 &nbsp; 参数敏感性分析与优化</h3>
+    <p>
+        通过调整关键参数实现目标转速：
+        </p>
+    <ul>
+        <li>增大活塞直径<em class="math">D<sub>P</sub></em>：增加有效受压面积，提高单次循环做功</li>
+        <li>增大气缸长度：增大行程容积<em class="math">V<sub>SE</sub></em>，提升循环功率</li>
+        <li>优化飞轮质量与转动惯量：增大飞轮惯量可储存更多动能，稳定转速</li>
+    </ul>
+    <p>
+        经过多轮参数调整，最终实现1500 r/min的设计目标转速。
+        </p>
+    <div class="info-box">
+        <div class="info-box-title">项目成果</div>
         <ul>
-                <li>工程设计课程项目——Gamma型斯特林发动机联合仿真</li>
-                    <li>斯特林循环热力学基础</li>
-                    <li>史密特理论建模</li>
-                        <li>容积与压力的解析表达</li>
-                    <li>结构参数设计</li>
-                    <li>MATLAB曲线计算</li>
-                    <li>SolidWorks三维建模与ADAMS仿真</li>
-                        <li>三维结构模型</li>
-                        <li>ADAMS运动副与约束设置</li>
-                    <li>ADAMS-MATLAB联合仿真</li>
-                        <li>Simulink热力模型</li>
-                        <li>仿真结果与分析</li>
-                        <li>参数敏感性分析与优化</li>
+            <li>建立了Gamma型斯特林发动机的完整热力学理论模型（史密特理论）</li>
+            <li>通过SolidWorks建模<em class="math">→</em>ADAMS多体动力学仿真<em class="math">→</em>MATLAB/Simulink热力耦合，实现跨域联合仿真</li>
+            <li><em class="math">p</em>-<em class="math">V</em>闭合环路面积定量表征单次循环做功，理论热效率40%（卡诺极限）</li>
+            <li>参数敏感性分析明确了活塞直径、气缸长度、飞轮惯量对转速的影响机制</li>
+            <li>最终实现设计目标功率<em class="math">≥</em>0.5 W、额定转速1500 r/min</li>
         </ul>
     </div>
 
-    <img src="../assets/images/stirling/pages/page_099.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/stirling/pages/page_100.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/stirling/pages/page_101.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/stirling/pages/page_102.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/stirling/pages/page_103.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/stirling/pages/page_104.png" alt="PDF Page" class="pdf-page">
 
-
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

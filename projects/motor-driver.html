@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电机驱动综合系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,46 +21,336 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">电机驱动综合系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2024 – 2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>电机驱动综合系统</li>
-                    <li>项目背景</li>
-                    <li>系统功能总览</li>
-                    <li>有刷电机综合PCB——硬件方案</li>
-                    <li>ADC双通道电压电流检测</li>
-                    <li>H桥交叉控制正反转</li>
-                    <li>按键扫描与交互控制</li>
-                    <li>OLED软件I2C显示</li>
-                    <li>PI闭环控制器</li>
-                    <li>无刷电机综合PCB——FOC矢量控制</li>
-                    <li>PCB设计迭代</li>
-                    <li>主循环控制逻辑</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>个人实践项目</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>STM32F103C8T6, HAL库, Altium Designer, 嘉立创打样</td></tr>
+        <tr><td><strong>核心功能</strong></td><td>有刷/无刷电机驱动、电压电流检测、霍尔/无感驱动、OLED显示</td></tr>
+        <tr><td><strong>PCB设计</strong></td><td>自研有刷电机综合PCB + 无刷电机综合PCB，多版迭代</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/motor-driver/pages/page_033.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_034.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_035.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_036.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_037.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_038.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_039.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/motor-driver/pages/page_040.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景</h2>
+    <p>
+        本项目从零构建了两套<strong>完整的电机控制综合系统</strong>，分别对应有刷直流电机和无刷电机。与扫地机器人项目中使用A4950作为主控板上的电机控制模块不同，本项目的两块自研PCB均为<strong>独立完整的电机驱动综合系统</strong>，每块板不仅实现电机驱动功能，还集成了电压检测、电流检测、OLED实时显示、按键交互、PI闭环控制等多项功能，形成了一个自包含的电机测试与控制平台。项目经历了从面包板原型到多版PCB迭代的完整工程化过程。
+        </p>
+
+    <h2>2 &nbsp; 系统功能总览</h2>
+    <p>
+        <strong>有刷电机综合系统</strong>和<strong>无刷电机综合系统</strong>各为一块独立PCB，功能对比如下：
+        </p>
+    <table>
+        <tr><th><strong>功能模块</strong></th><th><strong>有刷电机PCB</strong></th><th><strong>无刷电机PCB</strong></th></tr>
+        <tr><td>电机驱动</td><td>H桥PWM驱动</td><td>三相全桥逆变器</td></tr>
+        <tr><td>电压检测</td><td>33k/10k分压ADC采样</td><td>分压ADC采样</td></tr>
+        <tr><td>电流检测</td><td>0.01<em class="math">Ω</em>采样电阻+运放</td><td>采样电阻+运放</td></tr>
+        <tr><td>位置/速度反馈</td><td>—</td><td>霍尔传感器驱动</td></tr>
+        <tr><td>无感驱动</td><td>—</td><td>反电动势过零检测</td></tr>
+        <tr><td>OLED显示</td><td>SSD1306 128<em class="math">×</em>64</td><td>SSD1306 128<em class="math">×</em>64</td></tr>
+        <tr><td>按键交互</td><td>4路独立按键</td><td>4路独立按键</td></tr>
+        <tr><td>LED状态指示</td><td>2路LED</td><td>2路LED</td></tr>
+        <tr><td>闭环控制</td><td>PI控制器</td><td>双环PI（速度+电流）</td></tr>
+    </table>
+
+    <h2>3 &nbsp; 有刷电机综合PCB——硬件方案</h2>
+    <table>
+        <tr><th><strong>模块</strong></th><th><strong>规格</strong></th><th><strong>引脚</strong></th></tr>
+        <tr><td>MCU</td><td>STM32F103C8T6 (72 MHz, Cortex-M3)</td><td>—</td></tr>
+        <tr><td>电机驱动</td><td>H桥MOSFET驱动电路</td><td>—</td></tr>
+        <tr><td>PWM通道1</td><td>TIM2\<sub>C</sub>H4，2400级分辨率</td><td>PB11</td></tr>
+        <tr><td>PWM通道2</td><td>TIM3\<sub>C</sub>H4，2400级分辨率</td><td>PB1</td></tr>
+        <tr><td>方向控制</td><td>GPIO高低电平切换H桥</td><td>PB0, PB10</td></tr>
+        <tr><td>电压检测</td><td>ADC\<sub>C</sub>H6, 33k/10k分压, 比值4.3</td><td>PA6</td></tr>
+        <tr><td>电流检测</td><td>ADC\<sub>C</sub>H5, 0.01<em class="math">Ω</em>采样, 运放放大<em class="math">×</em>20</td><td>PA5</td></tr>
+        <tr><td>OLED显示</td><td>SSD1306 128<em class="math">×</em>64, 软件I2C</td><td>PB12/PB13</td></tr>
+        <tr><td>按键输入</td><td>4路独立按键，低电平有效</td><td>PB4–PB7</td></tr>
+        <tr><td>LED指示</td><td>2路运行状态指示</td><td>PA15, PB3</td></tr>
+    </table>
+
+    <h2>4 &nbsp; ADC双通道电压电流检测</h2>
+    <p>
+        原理图参数：电压分压 <em class="math">R<sub>16</sub>=33kΩ</em>, <em class="math">R<sub>22</sub>=10kΩ</em>；电流检测 <em class="math">R<sub>shunt</sub>=0.01Ω</em>, 放大倍数<em class="math">×</em>20：
+        </p>
+    <div class="formula">V<sub>in</sub> = V<sub>adc</sub> × (R<sub>16</sub> + R<sub>22</sub>)/(R<sub>22</sub>) = V<sub>adc</sub> × 4.3</div>
+    <div class="formula">I = (V<sub>out</sub> - V<sub>ref</sub>)/(20 × R<sub>shunt</sub>) = 5 × (V<sub>out</sub> - 1.2)</div>
+    <div class="code-block">
+        <div class="code-block-header">ADC双通道序列采集 + 16次滑动平均滤波</div>
+        <pre>#define ADC_VREF        3.3f
+#define ADC_MAX_COUNTS  4095.0f
+#define VOL_RATIO       4.3f      // 电压分压比
+#define CUR_VREF        1.2f      // 电流检测参考电压
+#define CUR_GAIN        5.0f      // 电流增益 A/V
+#define ADC_AVG_N       16        // 平均滤波次数
+
+static void ADC_Read_CurVol_Avg(uint16_t *raw_cur,
+                                 uint16_t *raw_vol)
+{
+    uint32_t sum_cur = 0, sum_vol = 0;
+    for (int n = 0; n &lt; ADC_AVG_N; n++) {
+        HAL_ADC_Start(&amp;hadc1);
+        // Rank1 = CH5 = ADC_CUR (PA5)
+        if (HAL_ADC_PollForConversion(&amp;hadc1, 10) == HAL_OK)
+            sum_cur += HAL_ADC_GetValue(&amp;hadc1);
+        // Rank2 = CH6 = ADC_VOL (PA6)
+        if (HAL_ADC_PollForConversion(&amp;hadc1, 10) == HAL_OK)
+            sum_vol += HAL_ADC_GetValue(&amp;hadc1);
+        HAL_ADC_Stop(&amp;hadc1);
+    }
+    *raw_cur = (uint16_t)(sum_cur / ADC_AVG_N);
+    *raw_vol = (uint16_t)(sum_vol / ADC_AVG_N);
+}
+
+static void Measure_Update(void) {
+    ADC_Read_CurVol_Avg(&amp;adc_raw_cur, &amp;adc_raw_vol);
+    float v_cur = (adc_raw_cur * ADC_VREF) / ADC_MAX_COUNTS;
+    float v_vol = (adc_raw_vol * ADC_VREF) / ADC_MAX_COUNTS;
+    meas_voltage_V = v_vol * VOL_RATIO;        // 真实电压
+    meas_current_A = (v_cur - CUR_VREF) * CUR_GAIN; // 真实电流
+    if (meas_current_A &lt; 0.0f) meas_current_A = 0.0f;
+}</pre>
+    </div>
+
+    <h2>5 &nbsp; H桥交叉控制正反转</h2>
+    <p>
+        采用两路PWM通道交叉控制H桥MOSFET，实现正反转切换：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">H桥交叉控制——正反转+速度调节</div>
+        <pre>uint8_t  Motor_Dir = 0;      // 0=正转, 1=反转
+uint16_t Motor_Speed = 1199; // PWM占空比: 0~2399
+uint8_t  Motor_Speed_Step = 239; // 每次加减速步长(约10%)
+
+void Motor_UpdateOutput(void) {
+    if (Motor_Dir == 1) {           // 正向转
+        HAL_TIM_PWM_Start(&amp;htim2, TIM_CHANNEL_4);
+        __HAL_TIM_SET_COMPARE(&amp;htim2, TIM_CHANNEL_4, Motor_Speed);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+        HAL_TIM_PWM_Stop(&amp;htim3, TIM_CHANNEL_4);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+        // LED指示: 正转亮LED2
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+    } else {                         // 反向转
+        HAL_TIM_PWM_Stop(&amp;htim2, TIM_CHANNEL_4);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+        HAL_TIM_PWM_Start(&amp;htim3, TIM_CHANNEL_4);
+        __HAL_TIM_SET_COMPARE(&amp;htim3, TIM_CHANNEL_4, Motor_Speed);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+        // LED指示: 反转亮LED1
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+    }
+}
+
+void Motor_Stop(void) {
+    HAL_TIM_PWM_Stop(&amp;htim2, TIM_CHANNEL_4);
+    HAL_TIM_PWM_Stop(&amp;htim3, TIM_CHANNEL_4);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+    // 全灭LED
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+}</pre>
+    </div>
+
+    <h2>6 &nbsp; 按键扫描与交互控制</h2>
+    <p>
+        4路独立按键实现人机交互控制：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">4键扫描——消抖+等待释放</div>
+        <pre>uint8_t Key_Scan(void) {
+    // KEY1 (PB4): 停止
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+        HAL_Delay(10);  // 10ms消抖
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+            while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)
+                   == GPIO_PIN_RESET); // 等待释放
+            return 1;
+        }
+    }
+    // KEY2 (PB5): 方向切换
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET) {
+        HAL_Delay(10);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET) {
+            while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)
+                   == GPIO_PIN_RESET);
+            return 2;
+        }
+    }
+    // KEY3 (PB6): 加速   KEY4 (PB7): 减速
+    // ... 同理实现
+    return 0;
+}</pre>
+    </div>
+
+    <h2>7 &nbsp; OLED软件I2C显示</h2>
+    <p>
+        自实现<strong>软件I2C协议</strong>驱动SSD1306，包含6<em class="math">×</em>8最小字库、帧缓冲区刷新机制：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">SSD1306 OLED实时数据显示</div>
+        <pre>// 6x8 最小字库: 0-9, D, I, M, P, R, W, V, 空格, 冒号
+static const uint8_t font6x8[][6] = {
+    {0x00,0x00,0x00,0x00,0x00,0x00}, // &#x27; &#x27;
+    {0x00,0x36,0x36,0x00,0x00,0x00}, // &#x27;:&#x27;
+    {0x3E,0x45,0x49,0x51,0x3E,0x00}, // &#x27;0&#x27;
+    // ... 完整字库定义
+};
+
+// 帧缓冲区 128x64/8 = 1024 字节
+static uint8_t oled_buf[128 * 64 / 8];
+
+static void OLED_ShowMeas(uint16_t speed, uint8_t dir,
+                           float vin, float ia) {
+    char line1[24], line2[24], line3[24], line4[24];
+    int vin_mV = (int)(vin * 1000.0f);
+    int ia_mA  = (int)(ia  * 1000.0f);
+    snprintf(line1, sizeof(line1), &quot;PWM:%4d&quot;, speed);
+    snprintf(line2, sizeof(line2), &quot;DIR:%1d&quot;, dir ? 1 : 0);
+    snprintf(line3, sizeof(line3), &quot;V:%5d&quot;, vin_mV);
+    snprintf(line4, sizeof(line4), &quot;I:%5d&quot;, ia_mA);
+    OLED_Fill(0);          // 清屏
+    OLED_Puts(0, 7, line1); // Page7: PWM值
+    OLED_Puts(0, 5, line2); // Page5: 方向
+    OLED_Puts(0, 3, line3); // Page3: 电压(mV)
+    OLED_Puts(0, 1, line4); // Page1: 电流(mA)
+    OLED_Update();           // 刷新整个帧缓冲区到屏幕
+}</pre>
+    </div>
+
+    <h2>8 &nbsp; PI闭环控制器</h2>
+    <p>
+        PI控制器基于离散化实现，采样周期 <em class="math">T = 2</em> ms（500 Hz）：
+        </p>
+    <div class="formula">V<sub>PI</sub>(k) = K<sub>p</sub> · e(k) + K<sub>i</sub> Σ<sub>n=0</sub><sup>k</sup> e(n) · T</div>
+    <div class="code-block">
+        <div class="code-block-header">PI控制器离散实现（500Hz采样频率）</div>
+        <pre>float Kp = 0.8f;
+float T  = 0.002f;           // 采样周期 2ms = 500Hz
+float Ki = Kp / T;           // Ki = 400
+float Ve, VI = 0.0f, Vpi;
+
+// 在定时器中断中每2ms调用一次
+void PI_Control_Update(float Vin, float Vref) {
+    Ve = Vin - Vref;          // 误差 = 实际值 - 目标值
+    VI += Ki * T * Ve;        // 积分项累加
+    // 积分限幅防止windup
+    if (VI &gt; PI_MAX) VI = PI_MAX;
+    if (VI &lt; PI_MIN) VI = PI_MIN;
+    Vpi = Kp * Ve + VI;      // PI输出 = 比例项 + 积分项
+}</pre>
+    </div>
+
+    <h2>9 &nbsp; 无刷电机综合PCB——FOC矢量控制</h2>
+    <p>
+        在有刷电机综合系统基础上，进一步开发了<strong>无刷电机综合PCB</strong>，该板集成了以下功能模块：
+        </p>
+    <ul>
+        <li><strong>驱动拓扑</strong>：三相全桥逆变器，6个MOSFET开关管，支持最大电流<em class="math">≥</em>10A</li>
+        <li><strong>霍尔驱动</strong>：3路霍尔传感器接口，支持有感FOC控制，实时读取转子位置</li>
+        <li><strong>无感驱动</strong>：反电动势过零检测电路，实现无传感器FOC控制</li>
+        <li><strong>电压检测</strong>：分压ADC采样，实时监控母线电压</li>
+        <li><strong>电流检测</strong>：采样电阻+运放，实时监控相电流</li>
+        <li><strong>换相策略</strong>：六步换相<em class="math">→</em>正弦波调制（SVPWM）</li>
+        <li><strong>闭环结构</strong>：速度环（PI）<em class="math">→</em>电流环（PI）<em class="math">→</em>SVPWM输出</li>
+        <li><strong>OLED显示</strong>：SSD1306实时显示转速、电压、电流、工作模式</li>
+        <li><strong>按键交互</strong>：4路按键控制启停、调速、模式切换</li>
+    </ul>
+
+    <h2>10 &nbsp; PCB设计迭代</h2>
+    <div class="info-box">
+        <div class="info-box-title">PCB版本迭代</div>
+        <ol>
+            <li><strong>MOTOR\<sub>1</sub>023</strong>：初版有刷电机综合PCB，H桥驱动方案，基本电机控制+OLED显示功能验证</li>
+            <li><strong>MOTOR\<sub>2</sub>60305</strong>：改进版有刷综合PCB，优化电源布局、增加散热铜皮、新增电压/电流检测电路（33k/10k分压 + 0.01<em class="math">Ω</em>采样电阻 + 运放放大×20）、完善OLED显示与按键交互</li>
+            <li><strong>wushua\<sub>M</sub>OTOR</strong>：无刷电机综合PCB，三相全桥逆变器 + 霍尔传感器驱动接口 + 反电动势无感驱动电路 + 栅极驱动电路 + 电压电流检测 + OLED显示</li>
+        </ol>
+    </div>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/motor-driver/有刷电机.png" alt="有刷电机驱动板" onclick="openLightbox(this)">
+            <div class="figure-caption">有刷电机驱动板</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/motor-driver/无刷电机.png" alt="无刷电机FOC驱动板" onclick="openLightbox(this)">
+            <div class="figure-caption">无刷电机FOC驱动板</div>
+        </div>
+    </div>
+
+    <h2>11 &nbsp; 主循环控制逻辑</h2>
+    <div class="code-block">
+        <div class="code-block-header">主循环：按键响应 + 100ms周期测量刷新</div>
+        <pre>int main(void) {
+    HAL_Init();
+    SystemClock_Config();   // 72MHz HSE + PLL
+    MX_GPIO_Init();
+    MX_ADC1_Init();
+    MX_TIM2_Init();
+    MX_TIM3_Init();
+    HAL_ADCEx_Calibration_Start(&amp;hadc1); // ADC校准
+    OLED_Init();
+    Measure_Update();
+    OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                  meas_voltage_V, meas_current_A);
+
+    while (1) {
+        Key_status = Key_Scan();
+        if (Key_status != 0) {
+            switch (Key_status) {
+                case 1: Motor_Stop(); break;      // 停止
+                case 2: Motor_Dir = !Motor_Dir;    // 换向
+                        Motor_UpdateOutput(); break;
+                case 3: Motor_Speed += Motor_Speed_Step; // 加速
+                        if (Motor_Speed &gt; 2300) Motor_Speed = 2300;
+                        Motor_UpdateOutput(); break;
+                case 4: Motor_Speed -= Motor_Speed_Step; // 减速
+                        if (Motor_Speed &lt; 100) Motor_Speed = 100;
+                        Motor_UpdateOutput(); break;
+            }
+            OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                          meas_voltage_V, meas_current_A);
+        }
+        // 每100ms更新一次电压电流测量值
+        static uint32_t meas_tick = 0;
+        if (HAL_GetTick() - meas_tick &gt;= 100) {
+            meas_tick = HAL_GetTick();
+            Measure_Update();
+            OLED_ShowMeas(Motor_Speed, Motor_Dir,
+                          meas_voltage_V, meas_current_A);
+        }
+    }
+}</pre>
+    </div>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

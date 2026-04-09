@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartRobot 智能扫地机器人</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,63 +21,260 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">SmartRobot 智能扫地机器人</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025 – 2026</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>SmartRobot 智能扫地机器人</li>
-                    <li>项目背景</li>
-                    <li>硬件设计——自研PCB</li>
-                    <li>编码器与航迹推算</li>
-                    <li>PID闭环速度控制</li>
-                    <li>JY901S IMU数据解析</li>
-                    <li>系统状态机与安全响应</li>
-                    <li>蓝牙通信协议</li>
-                    <li>上位机——PyQt5实时可视化</li>
-                    <li>路径规划——Boustrophedon牛耕式全覆盖</li>
-                    <li>测试结果</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目角色</strong></td><td>核心开发</td></tr>
+        <tr><td><strong>课程</strong></td><td>微电路设计课程项目</td></tr>
+        <tr><td><strong>时间</strong></td><td>2024.09 — 2025.01</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>STM32F4, A4950, JY901S IMU, HC-05蓝牙, PyQt5</td></tr>
+        <tr><td><strong>核心功能</strong></td><td>全屋建图、自主路径规划、遥控模式、碰撞安全响应</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/sweeping-robot/pages/page_022.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/sweeping-robot/pages/page_023.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/sweeping-robot/pages/page_024.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/sweeping-robot/pages/page_025.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/sweeping-robot/pages/page_026.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/sweeping-robot/pages/page_027.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景</h2>
+    <p>
+        本项目设计并实现了一套<strong>完整的智能扫地机器人系统</strong>，涵盖自研PCB硬件设计、嵌入式底层驱动、PID闭环控制、航迹推算位姿解算以及上位机实时可视化。
+        </p>
+
+    <h2>2 &nbsp; 硬件设计——自研PCB</h2>
+    <p>
+        采用Altium Designer完成PCB设计，核心模块包括：
+        </p>
+    <table>
+        <tr><th><strong>模块</strong></th><th><strong>器件</strong></th><th><strong>功能</strong></th></tr>
+        <tr><td>电源管理</td><td>SLM6900 DC-DC + AMS1117-3.3V LDO</td><td>锂电池充放电管理</td></tr>
+        <tr><td>电机驱动</td><td>A4950 <em class="math">×</em> 2（双H桥配置）</td><td>正反转PWM调速</td></tr>
+        <tr><td>主控</td><td>STM32F407</td><td>Cortex-M4核心控制器</td></tr>
+        <tr><td>IMU</td><td>JY901S九轴</td><td>USART2, 11字节帧解析</td></tr>
+        <tr><td>蓝牙</td><td>HC-05</td><td>上位机通信</td></tr>
+        <tr><td>传感器</td><td>4路悬崖红外ADC + 2路碰撞开关</td><td>安全防护</td></tr>
+        <tr><td>辅助</td><td>74HC14 施密特触发器</td><td>编码器信号整形</td></tr>
+    </table>
+
+    <h2>3 &nbsp; 编码器与航迹推算</h2>
+    <p>
+        通过TIM2/TIM5编码器模式采集轮速，实现航迹推算（Dead Reckoning）：
+        </p>
+    <div class="formula">Δ s = (Δ s<sub>L</sub> + Δ s<sub>R</sub>)/(2),   
+Δθ = (Δ s<sub>R</sub> - Δ s<sub>L</sub>)/(D)</div>
+    <div class="formula">x<sub>k+1</sub> = x<sub>k</sub> + Δ s · cosθ<sub>k</sub> + (Δθ)/(2),   
+y<sub>k+1</sub> = y<sub>k</sub> + Δ s · sinθ<sub>k</sub> + (Δθ)/(2)</div>
+    <p>
+        其中 <em class="math">D</em> 为两轮轴距，<em class="math">Δ s<sub>L</sub></em>、<em class="math">Δ s<sub>R</sub></em> 分别为左右轮弧长增量。结合JY901S IMU的航向角进行<strong>加权融合</strong>修正累积漂移。
+        </p>
+
+    <h2>4 &nbsp; PID闭环速度控制</h2>
+    <div class="code-block">
+        <div class="code-block-header">增量式PID速度控制器（50ms采样周期）</div>
+        <pre>typedef struct {
+    float Kp, Ki, Kd;       // Kp=0.1, Ki=0.1, Kd=0.001
+    float error, last_error, prev_error;
+    float output;
+    float out_max, out_min;
+} PID_TypeDef;
+
+float PID_Incremental(PID_TypeDef *pid, float target, float actual) {
+    pid-&gt;error = target - actual;
+
+    // 增量式PID: delta_u = Kp*(e-e1) + Ki*e + Kd*(e-2e1+e2)
+    float delta = pid-&gt;Kp * (pid-&gt;error - pid-&gt;last_error)
+                + pid-&gt;Ki * pid-&gt;error
+                + pid-&gt;Kd * (pid-&gt;error - 2*pid-&gt;last_error
+                             + pid-&gt;prev_error);
+
+    pid-&gt;output += delta;
+
+    // 输出限幅，防止PWM溢出
+    if (pid-&gt;output &gt; pid-&gt;out_max) pid-&gt;output = pid-&gt;out_max;
+    if (pid-&gt;output &lt; pid-&gt;out_min) pid-&gt;output = pid-&gt;out_min;
+
+    pid-&gt;prev_error = pid-&gt;last_error;
+    pid-&gt;last_error = pid-&gt;error;
+
+    return pid-&gt;output;
+}</pre>
+    </div>
+
+    <h2>5 &nbsp; JY901S IMU数据解析</h2>
+    <div class="code-block">
+        <div class="code-block-header">JY901S串口数据帧解析（11字节帧）</div>
+        <pre>// JY901S 数据帧格式: 0x55 + TYPE + 8字节数据 + SUM
+void IMU_ParseFrame(uint8_t *buf) {
+    if (buf[0] != 0x55) return;
+
+    uint8_t type = buf[1];
+    switch (type) {
+        case 0x53:  // 欧拉角数据帧
+            // Roll/Pitch/Yaw = raw * (180.0 / 32768.0)
+            imu_data.roll  = ((int16_t)(buf[3]&lt;&lt;8|buf[2]))
+                             / 32768.0f * 180.0f;
+            imu_data.pitch = ((int16_t)(buf[5]&lt;&lt;8|buf[4]))
+                             / 32768.0f * 180.0f;
+            imu_data.yaw   = ((int16_t)(buf[7]&lt;&lt;8|buf[6]))
+                             / 32768.0f * 180.0f;
+            break;
+        case 0x51:  // 加速度数据帧
+            imu_data.ax = ((int16_t)(buf[3]&lt;&lt;8|buf[2]))
+                          / 32768.0f * 16.0f * 9.8f;
+            imu_data.ay = ((int16_t)(buf[5]&lt;&lt;8|buf[4]))
+                          / 32768.0f * 16.0f * 9.8f;
+            break;
+    }
+}</pre>
+    </div>
+
+    <h2>6 &nbsp; 系统状态机与安全响应</h2>
+    <table>
+        <tr><th><strong>状态</strong></th><th><strong>模式</strong></th><th><strong>触发条件</strong></th><th><strong>行为</strong></th></tr>
+        <tr><td>0</td><td>关机</td><td>上电默认/遥控关机</td><td>电机停止，系统待机</td></tr>
+        <tr><td>1</td><td>遥控模式</td><td>蓝牙指令切换</td><td>接收上位机速度指令</td></tr>
+        <tr><td>2</td><td>自主建图</td><td>蓝牙指令切换</td><td>牛耕式路径规划清扫</td></tr>
+    </table>
+    <p>
+        碰撞/悬崖传感器触发时执行<strong>50ms紧急制动</strong>策略：立即停止<em class="math">→</em>后退200ms<em class="math">→</em>旋转90°<em class="math">→</em>继续清扫。
+        </p>
+
+    <h2>7 &nbsp; 蓝牙通信协议</h2>
+    <table>
+        <tr><th><strong>方向</strong></th><th><strong>帧长</strong></th><th><strong>帧头</strong></th><th><strong>内容</strong></th><th><strong>校验</strong></th></tr>
+        <tr><td>上行（遥控<em class="math">→</em>下位机）</td><td>6字节</td><td>0xAA</td><td>模式+左右轮速度</td><td>校验和</td></tr>
+        <tr><td>下行（下位机<em class="math">→</em>上位机）</td><td>14字节</td><td>0xBB</td><td>编码器+IMU+传感器</td><td>校验和</td></tr>
+    </table>
+    <div class="code-block">
+        <div class="code-block-header">下行状态反馈帧封装</div>
+        <pre>// 14字节下行帧: 0xBB + 编码器(4B) + IMU(4B) + 传感器(4B) + SUM
+void SendStatusFrame(void) {
+    uint8_t frame[14];
+    frame[0] = 0xBB;  // 帧头
+    // 编码器脉冲数 (左/右)
+    frame[1] = (encoder_left &gt;&gt; 8) &amp; 0xFF;
+    frame[2] = encoder_left &amp; 0xFF;
+    frame[3] = (encoder_right &gt;&gt; 8) &amp; 0xFF;
+    frame[4] = encoder_right &amp; 0xFF;
+    // IMU 航向角
+    int16_t yaw_raw = (int16_t)(imu_data.yaw * 100);
+    frame[5] = (yaw_raw &gt;&gt; 8) &amp; 0xFF;
+    frame[6] = yaw_raw &amp; 0xFF;
+    // 传感器状态 (碰撞+悬崖)
+    frame[7] = collision_left | (collision_right &lt;&lt; 1);
+    frame[8] = cliff_sensor[0] | (cliff_sensor[1] &lt;&lt; 1)
+             | (cliff_sensor[2] &lt;&lt; 2) | (cliff_sensor[3] &lt;&lt; 3);
+    // 校验和
+    uint8_t sum = 0;
+    for (int i = 0; i &lt; 13; i++) sum += frame[i];
+    frame[13] = sum;
+    HAL_UART_Transmit(&amp;huart_bt, frame, 14, 100);
+}</pre>
+    </div>
+
+    <h2>8 &nbsp; 上位机——PyQt5实时可视化</h2>
+    <div class="code-block">
+        <div class="code-block-header">PyQt5上位机轨迹可视化核心</div>
+        <pre>class TrajectoryWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.fig, self.ax = plt.subplots(figsize=(6, 6))
+        self.canvas = FigureCanvas(self.fig)
+        self.trajectory_x = []
+        self.trajectory_y = []
+
+    def update_position(self, x, y, theta):
+        &quot;&quot;&quot;接收下位机解算的位姿，实时绘制轨迹&quot;&quot;&quot;
+        self.trajectory_x.append(x)
+        self.trajectory_y.append(y)
+        self.ax.clear()
+        self.ax.plot(self.trajectory_x, self.trajectory_y,
+                     &#x27;b-&#x27;, linewidth=1.5, label=&#x27;轨迹&#x27;)
+        # 绘制当前朝向箭头
+        dx = 0.05 * math.cos(math.radians(theta))
+        dy = 0.05 * math.sin(math.radians(theta))
+        self.ax.arrow(x, y, dx, dy, head_width=0.02,
+                      color=&#x27;red&#x27;)
+        self.ax.set_aspect(&#x27;equal&#x27;)
+        self.ax.legend()
+        self.canvas.draw()</pre>
+    </div>
+
+    <h2>9 &nbsp; 路径规划——Boustrophedon牛耕式全覆盖</h2>
+    <ol>
+        <li><strong>贴墙建图阶段</strong>：启动后沿墙壁行驶，通过碰撞传感器检测墙体，编码器+IMU融合记录轮廓</li>
+        <li><strong>边界构建</strong>：贴墙行驶一圈后闭合轮廓，生成环境边界多边形</li>
+        <li><strong>牛耕模式</strong>：沿直线前进至碰墙<em class="math">→</em>横移一个清扫宽度<em class="math">→</em>反向行驶，形成"弓"字形覆盖</li>
+        <li><strong>航向修正</strong>：IMU实时监测航向偏差，PID闭环修正保持直线精度</li>
+        <li><strong>覆盖率统计</strong>：上位机计算已清扫面积占比</li>
+    </ol>
+
+    <h2>10 &nbsp; 测试结果</h2>
+    <div class="info-box">
+        <div class="info-box-title">性能指标</div>
+    <table>
+        <tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr>
+        <tr><td>直线100cm偏角</td><td><em class="math"><5°</em></td></tr>
+        <tr><td>直线距离偏差</td><td><em class="math"><2</em> cm</td></tr>
+        <tr><td>90°旋转误差</td><td><em class="math"><2°</em></td></tr>
+        <tr><td>碰撞响应延迟</td><td><em class="math"><50</em> ms</td></tr>
+        <tr><td>贴墙建图完整度</td><td>完整闭合</td></tr>
+    </table>
+    </div>
+    <div class="info-box">
+        <div class="info-box-title">版本迭代</div>
+        <ol>
+            <li><strong>面包板原型</strong>：Arduino + L298N验证电机驱动基本功能</li>
+            <li><strong>自研PCB V1</strong>：Altium Designer绘制PCB，集成SLM6900电源+A4950驱动，嘉立创打样</li>
+            <li><strong>闭环控制</strong>：引入编码器反馈+增量式PID，直线偏差从<em class="math">></em>10cm收敛至<em class="math"><</em>2cm</li>
+            <li><strong>IMU融合</strong>：集成JY901S，编码器+IMU加权融合，旋转精度从<em class="math">±</em>8°提升至<em class="math">±</em>2°</li>
+            <li><strong>自主建图</strong>：实现贴墙建图+牛耕路径规划+PyQt5上位机实时可视化</li>
+        </ol>
+    </div>
 
 
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">全屋 SLAM 建图</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/speedybot-slam.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 全屋 SLAM 建图过程</div>
     </div>
-    <div class="video-container">
-        <p class="figure-caption">自主导航与避障</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/speedybot-nav.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 自主导航与避障演示</div>
     </div>
-    <div class="video-container">
-        <p class="figure-caption">自研通信协议调试</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/speedybot-comm.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 自研通信协议调试</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

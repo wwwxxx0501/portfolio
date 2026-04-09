@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工程原理——激光雷达路径规划系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,35 +21,104 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">工程原理——激光雷达路径规划系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2024</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>工程原理——激光雷达路径规划系统</li>
-                    <li>项目概述</li>
-                    <li>激光雷达数据采集与解析</li>
-                    <li>圆柱障碍物检测——类RANSAC算法</li>
-                    <li>电机驱动与舵机控制</li>
-                    <li>MATLAB上位机与路径可视化</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>工程原理课程项目</td></tr>
+        <tr><td><strong>项目角色</strong></td><td>核心开发</td></tr>
+        <tr><td><strong>核心工具</strong></td><td>STM32 / 激光雷达 / MATLAB / Altium Designer</td></tr>
+        <tr><td><strong>关键技术</strong></td><td>雷达数据解析、RANSAC圆检测、路径规划</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/pathplan/pages/page_081.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/pathplan/pages/page_082.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/pathplan/pages/page_083.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目概述</h2>
+    <p>
+        本项目基于STM32与激光雷达，实现室内环境下的障碍物检测、地图构建与路径规划。系统由STM32采集雷达数据，MATLAB端进行可视化与路径优化，最终规划最优路径引导小车自主导航。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/pathplan/pathplan_4.png" alt="路径规划系统功能框图" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 路径规划系统功能框图</div>
+    </div>
+
+    <h2>2 &nbsp; 激光雷达数据采集与解析</h2>
+    <p>
+        系统采用360°激光雷达，每圈输出1440个极坐标点（角度+距离）。雷达通过串口向STM32发送数据包，帧格式如下：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/pathplan/pathplan_8.png" alt="激光雷达数据帧格式" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; 激光雷达数据帧格式</div>
+    </div>
+    <p>
+        STM32通过UART接收并解析帧头（0xA5 0x5A）、起止角度、距离数组与CRC校验，将数据传输至上位机。
+        </p>
+
+    <h2>3 &nbsp; 圆柱障碍物检测——类RANSAC算法</h2>
+    <p>
+        为从稀疏点云中识别圆柱形障碍物，采用类RANSAC（Random Sample Consensus）方法：
+        </p>
+    <ol>
+        <li>将360个极坐标障碍物点转换为笛卡尔坐标</li>
+        <li>对每个障碍物点向外延伸圆半径长度，生成假定圆心候选点</li>
+        <li>统计各候选圆心附近的内点（inlier）数量</li>
+        <li>内点数最多的候选即为检测到的圆柱中心</li>
+    </ol>
+    <div class="figure">
+        <img src="../assets/images/pathplan/pathplan_1.png" alt="类RANSAC圆柱检测算法流程" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 类RANSAC圆柱检测算法流程</div>
+    </div>
+
+    <h2>4 &nbsp; 电机驱动与舵机控制</h2>
+    <p>
+        驱动模块采用AT8236双H桥芯片，通过STM32 PWM控制电机转速，支持正反转与制动。舵机用于前轮转向控制。
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/pathplan/pathplan_5.png" alt="AT8236电机驱动原理图" onclick="openLightbox(this)">
+            <div class="figure-caption">AT8236电机驱动原理图</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/pathplan/pathplan_3.png" alt="系统信号流框图" onclick="openLightbox(this)">
+            <div class="figure-caption">系统信号流框图</div>
+        </div>
+    </div>
+
+    <h2>5 &nbsp; MATLAB上位机与路径可视化</h2>
+    <p>
+        STM32将处理后的雷达数据通过串口导出至MATLAB，上位机负责：
+        </p>
+    <ul>
+        <li>极坐标<em class="math">→</em>笛卡尔坐标转换与全图拼接</li>
+        <li>障碍物检测结果叠加显示</li>
+        <li>基于检测结果的路径规划与可视化</li>
+    </ul>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

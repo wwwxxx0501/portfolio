@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,69 +21,286 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>课程</strong></td><td>数学物理方法——综合实践2</td></tr>
+        <tr><td><strong>研究课题</strong></td><td>垂直振荡容器中流体悬浮（Levitating Fluid）的物理机制与参数影响</td></tr>
+        <tr><td><strong>核心方法</strong></td><td>理论推导 / 硅油振荡实验 / COMSOL Multiphysics多相流仿真</td></tr>
+        <tr><td><strong>关键词</strong></td><td>Rayleigh–Taylor不稳定性 / Kapitza效应 / Bjerknes力 / 法拉第不稳定性</td></tr>
+    </table>
+    </div>
+
+    <h2>1 &nbsp; 研究背景与课题分析</h2>
+    <p>
+        当部分装满液体的容器进行垂直振荡并在底部注入空气时，液体可以稳定地"悬浮"在空气层之上。这一反直觉的现象涉及流体动力学与多相流稳定性的核心问题。2020年Apffel等人在<em>Nature</em>上发表的研究表明，通过精确校准的垂直振荡，不仅可以使液体层悬浮，甚至可以在悬浮液体的下界面实现"倒置浮力"——物体能够在液体下方倒挂漂浮。
+        </p>
+    <p>
+        课题要求系统研究以下因素对流体悬浮现象的影响：
+        </p>
+    <ul>
+        <li>容器的形状、大小等几何参数</li>
+        <li>液体的动力粘度和种类（硅油、甘油等）</li>
+        <li>振动的频率、幅度和波形</li>
+        <li>注入空气的压力、流速和注射位置</li>
+        <li>液体的初始填充量</li>
+    </ul>
+
+    <h2>2 &nbsp; 理论分析</h2>
+
+    <h3>2.1 &nbsp; Rayleigh–Taylor不稳定性与静态分析</h3>
+    <p>
+        当密度较大的流体位于密度较小的流体上方时，界面会发生Rayleigh–Taylor（RT）不稳定性。在静态情况下，液体位于气体下方时的正常界面满足重力–毛细管色散关系：
+        </p>
+    <div class="formula">ω<sub>0</sub><sup>2</sup>(k) = gk + (γ k<sup>3</sup>)/(ρ<sub>l</sub>)</div>
+    <p>
+        其中<em class="math">ω<sub>0</sub></em>为自然振荡频率，<em class="math">k</em>为波数，<em class="math">γ</em>为表面张力系数，<em class="math">ρ<sub>l</sub></em>为液体密度。重力和毛细力均为正值，界面稳定。
+        </p>
+    <p>
+        当液体位于气体上方（倒置构型）时：
+        </p>
+    <div class="formula">ω<sub>0</sub><sup>2</sup>(k) = -gk + (γ k<sup>3</sup>)/(ρ<sub>l</sub>)</div>
+    <p>
+        对于小波数<em class="math">k</em>（长波），重力项<em class="math">-gk</em>占主导，使<em class="math">ω<sub>0</sub><sup>2</sup>(k)<0</em>，界面扰动随时间呈指数增长，液体最终坍塌。最不稳定的波数<em class="math">k^*</em>由<em class="math">ω<sub>0</sub><sup>2</sup>(k)</em>取极小值确定，对于大波矢量（短波），毛细力占主导并具有稳定作用。
+        </p>
+
+    <h3>2.2 &nbsp; Kapitza效应与动态稳定化</h3>
+    <p>
+        实验体系的核心思想类比<strong>卡皮察倒立摆</strong>（Stephenson–Kapitza pendulum）：通过高频垂直振荡在时间平均意义上产生"振动力"，从而稳定原本不稳定的倒置构型。
+        </p>
+    <p>
+        假设液体受到垂直振荡<em class="math">z<sub>b</sub>(t) = Acos(ω t)</em>，液体的等效加速度为：
+        </p>
+    <div class="formula">g<sub>eff</sub>(t) = g - Aω<sup>2</sup>cos(ω t)</div>
+    <p>
+        将线性化的Bernoulli方程应用于界面变形<em class="math">zeta</em>，得到受迫振子方程：
+        </p>
+    <div class="formula">ddotzeta + ω<sub>0</sub><sup>2</sup>(k) zeta = -kA<sub>1</sub>ω<sup>2</sup>cos(ω t) zeta</div>
+    <p>
+        其中<em class="math">A<sub>1</sub></em>为液层的振荡幅度。按照Kapitza分析方法，将<em class="math">zeta</em>分解为慢分量<em class="math">zeta<sub>s</sub></em>与快分量<em class="math">zeta<sub>f</sub></em>：
+        </p>
+    <div class="formula">zeta = zeta<sub>s</sub> + zeta<sub>f</sub></div>
+    <p>
+        对方程取时间平均（利用<em class="math">langlecos<sup>2</sup>(ω t)rangle = 1/2</em>），得到慢分量的有效运动方程：
+        </p>
+    <div class="formula">ddotzeta<sub>s</sub> + ω<sub>0</sub><sup>2</sup>(k) zeta<sub>s</sub> = -(k<sup>2</sup>A<sub>1</sub><sup>2</sup>)/(2)ω<sup>2</sup> zeta<sub>s</sub></div>
+    <p>
+        右端项<em class="math">-(k<sup>2</sup>A<sub>1</sub><sup>2</sup>)/(2)ω<sup>2</sup>zeta<sub>s</sub></em>类比弹簧恢复力，是振动引起的<strong>平均稳定化效应</strong>。当<em class="math">zeta<sub>s</sub></em>偏离平衡位置时，该项提供抑制力，阻止界面变形进一步发展。
+        </p>
+    <p>
+        <strong>稳定化条件推导</strong>：为使倒置界面稳定，振动稳定化项必须克服重力不稳定项：
+        </p>
+    <div class="formula">(k<sup>2</sup>A<sub>1</sub><sup>2</sup>)/(2)ω<sup>2</sup> > |ω<sub>0</sub><sup>2</sup>(k)|</div>
+    <p>
+        对于不稳定模式<em class="math">ω<sub>0</sub><sup>2</sup>(k)<0</em>，且小<em class="math">k</em>时<em class="math">|ω<sub>0</sub><sup>2</sup>(k)|≈ gk</em>，简化得：
+        </p>
+    <div class="formula">k > (2g)/(A<sub>1</sub><sup>2</sup>ω<sup>2</sup>)</div>
+    <p>
+        对于横截面积尺度为<em class="math">L</em>的容器，可激发的最小波数为<em class="math">k<sub>min</sub> = π/L</em>，因此必须满足：
+        </p>
+    <div class="formula">boxedA<sub>1</sub>ω > √(2gL)/(π)</div>
+    <p>
+        该条件给出了实现悬浮所需的最小激励速度，且与容器横截面长度<em class="math">L</em>的平方根成正比。
+        </p>
+
+    <h3>2.3 &nbsp; 气泡临界下沉深度</h3>
+    <p>
+        在振荡液柱中，气泡受到加速度调制<em class="math">g<sub>eff</sub></em>和压强调制<em class="math">P(t)</em>的联合作用。对气泡体积进行泰勒展开分析表明，除了常规的阿基米德浮力外，还存在额外的<strong>Bjerknes力</strong>——一种由压力梯度振荡引起的时间平均力。
+        </p>
+    <p>
+        气泡的平衡方程考虑以下力的贡献：
+        </p>
+    <ul>
+        <li>重力：<em class="math">F<sub>g</sub> = -ρ<sub>b</sub> V g</em></li>
+        <li>浮力：<em class="math">F<sub>b</sub> = ρ<sub>l</sub> V g</em></li>
+        <li>粘性阻力：<em class="math">F<sub>d</sub> = -(1)/(2)π r<sup>2</sup> ρ<sub>l</sub> C<sub>d</sub> u<sup>2</sup></em>，其中<em class="math">C<sub>d</sub></em>为阻力系数</li>
+        <li>Basset力：<em class="math">F<sub>B</sub> = K<sub>B</sub> · 6π r μ ∫<sub>0</sub><sup>t</sup> (dotu(tau))/(√πnu(t-tau)) dtau</em>，其中<em class="math">K<sub>B</sub></em>为Basset力经验系数</li>
+        <li>附加质量力：<em class="math">F<sub>m</sub> = K<sub>m</sub> · (1)/(2)ρ<sub>l</sub> V dotu</em>，其中<em class="math">K<sub>m</sub></em>为附加质量力经验系数</li>
+    </ul>
+    <p>
+        实验表明气泡的临界下沉深度<em class="math">d^*</em>与振幅<em class="math">A</em>的关系满足：
+        </p>
+    <div class="formula">d^* = (2gP<sub>0</sub>)/(ρ<sub>l</sub> A<sup>2</sup> ω<sup>4</sup>) · C</div>
+    <p>
+        其中特征体积<em class="math">C</em>与气泡半径的平方和体积调制有关。高粘度液体不容易出现法拉第不稳定性，且Basset力会减弱浮力，有利于气泡保持稳定。
+        </p>
+
+    <h3>2.4 &nbsp; 负重力效应与倒置浮力</h3>
+    <p>
+        在悬浮液层的下界面，振动不仅抑制了RT不稳定性，还产生了"负重力"效应。浮体在振动液体界面上的动态稳定条件为：
+        </p>
+    <div class="formula">ω<sub>buoy</sub><sup>2</sup>(1+α) > 0,    α = (ω<sub>buoy</sub><sup>2</sup>)/(2)(Aω)/(g)<sup>2</sup></div>
+    <p>
+        当振动足够强时，动态稳定化项<em class="math">α</em>使原本为负的有效势能变为极小值，物体可以在悬浮液体的下界面"倒置漂浮"。
+        </p>
+
+    <h2>3 &nbsp; 预实验</h2>
+    <p>
+        预实验采用注射器容器验证基本原理：
+        </p>
+    <ul>
+        <li>取9 mL、100 cst硅油加入注射器中</li>
+        <li>接入波形发生器，设置频率100 Hz、幅值20 Vpp、正弦波</li>
+        <li>通过底部缓慢注入空气</li>
+        <li>观察到气体上升速度减缓，但未能实现稳定悬浮</li>
+    </ul>
+    <p>
+        预实验结果表明，注射器容器的横截面积较小，振动条件接近但未完全满足稳定化阈值。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_20_51.png" alt="实验装置：注射器安装在克拉尼图形演示仪振动台上" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 实验装置：注射器安装在克拉尼图形演示仪振动台上</div>
+    </div>
+
+    <h2>4 &nbsp; 实验验证</h2>
+
+    <h3>4.1 &nbsp; 实验器材与方法</h3>
+    <p>
+        实验器材包括：有机玻璃容器、克拉尼图形演示仪振动台、波形发生器、功率放大器、硅油/甘油（100 cst）以及注射器。判定标准为：
+        </p>
+    <ul>
+        <li><strong>液面稳定</strong>：在30 s（或更长时间）内保持同一状态，气泡位置和大小不发生变动</li>
+        <li><strong>坍塌</strong>：气体层从一侧开始坍塌，气泡上浮</li>
+    </ul>
+
+    <h3>4.2 &nbsp; 频率影响实验</h3>
+    <p>
+        控制注入悬浮气体体积约1 mL，改变振动频率范围70–250 Hz。实验发现存在一个临界频率，低于该频率时液层无法保持悬浮，高于该频率时稳定性随频率增大而增强。在更高频率区间，当达到法拉第不稳定性阈值时，界面会出现反对称模式——空气层体积不再恒定，上层液体在摇摆中最终坍塌。
+        </p>
+
+    <h3>4.3 &nbsp; 横截面积影响实验</h3>
+    <p>
+        保持不同横截面容器中液面高度一致，实验验证了理论预测<em class="math">A<sub>1</sub>ω > √2gL/π</em>：横向尺度<em class="math">L</em>越大，所需激发速度<em class="math">A<sub>1</sub>ω</em>越大。实验数据与模型曲线<em class="math">A<sub>1</sub>ω = √2gL/π</em>吻合良好。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_28_74.png" alt="容器横截面长度<em class="math">L</em>与临界激发速度<em class="math">A<sub>1</sub>ω</em>的关系：实验数据（蓝点）与理论模型（红色虚线）对比" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; 容器横截面长度<em class="math">L</em>与临界激发速度<em class="math">A<sub>1</sub>ω</em>的关系：实验数据（蓝点）与理论模型（红色虚线）对比</div>
+    </div>
+
+    <h3>4.4 &nbsp; 注射深度与临界深度</h3>
+    <p>
+        改变空气注入深度测定临界深度<em class="math">d^*</em>。实验表明临界深度与<em class="math">1/A<sup>2</sup></em>拟合良好，验证了理论预测公式中振幅<em class="math">A</em>的反比平方依赖关系。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_27_70.png" alt="临界深度$d^*_mathrmth" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 临界深度$d^*_mathrmth</div>
+    </div>
+
+    <h2>5 &nbsp; COMSOL多相流仿真</h2>
+
+    <h3>5.1 &nbsp; 仿真建模</h3>
+    <p>
+        结合理论分析，使用COMSOL Multiphysics进行二维多相流仿真建模，前提条件包括：
+        </p>
+    <ul>
+        <li>采用二维模型简化计算</li>
+        <li>将振动激励施加在容器最下层边界，模拟实验中的振动台效果</li>
+        <li>考虑液体与容器壁之间的接触和粘滞效应</li>
+    </ul>
+
+    <h3>5.2 &nbsp; 频率对比验证</h3>
+    <p>
+        仿真分别计算了70 Hz和100 Hz两种频率下的流场状态，与实验现象定性吻合：低频时悬浮不稳定，高频时气液界面保持平整。
+        </p>
+
+    <h3>5.3 &nbsp; 横截面积对比验证</h3>
+    <p>
+        仿真中改变容器横截面尺寸，大面积容器需要更高的激发速度才能维持悬浮，与理论公式<em class="math">A<sub>1</sub>ω propto √L</em>一致。
+        </p>
+
+    <h3>5.4 &nbsp; 注射深度对比验证</h3>
+    <p>
+        仿真比较了不同注射深度的情形：注射较深时气泡能够稳定悬浮，注射较浅时气泡趋于上浮。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_33_92.png" alt="COMSOL仿真：空气体积分数分布（<em class="math">t=1</em> s），清晰显示气–液界面位置" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; COMSOL仿真：空气体积分数分布（<em class="math">t=1</em> s），清晰显示气–液界面位置</div>
+    </div>
+
+    <h3>5.5 &nbsp; 界面特征深入分析</h3>
+    <p>
+        对仿真结果的进一步分析揭示了两个重要特征：
+        </p>
+    <ol>
+        <li><strong>界面浑浊现象的解释</strong>：空气体积分数分布图显示，气–液界面处并非锐利的零–一跃迁，而是存在一个过渡区域，体积分数在0.1–0.9之间渐变，这解释了实验中观察到的界面浑浊现象。</li>
+        <li><strong>壁面速度极值</strong>：速度等值线分布图显示，在气–液界面<strong>靠近容器壁</strong>的区域存在明显的速度极值点（最大速度<em class="math">~</em>0.034 m/s），远高于流场中心区域（<em class="math">~</em>4<em class="math">×10<sup>-5</sup></em> m/s）。</li>
+    </ol>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_34_95.png" alt="速度等值线分布：壁面处速度极值清晰可见，最大值0.034 m/s" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; 速度等值线分布：壁面处速度极值清晰可见，最大值0.034 m/s</div>
+    </div>
+
+    <h2>6 &nbsp; 气泡行为观察</h2>
+    <p>
+        实验中还观察到气泡在振荡液柱中的典型行为：当注射深度<em class="math">d<d^*</em>时，气泡能够稳定悬浮并随时间保持位置不变；当<em class="math">d>d^*</em>时，气泡无法维持稳定而缓慢下沉，最终到达容器底部。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/fluid-levitation/levitating_27_69.png" alt="气泡在不同注射深度下的行为：<em class="math">d<d^*</em>时稳定悬浮（上）；<em class="math">d>d^*</em>时逐渐下沉（下）" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 6 &nbsp; 气泡在不同注射深度下的行为：<em class="math">d<d^*</em>时稳定悬浮（上）；<em class="math">d>d^*</em>时逐渐下沉（下）</div>
+    </div>
+
+    <h2>7 &nbsp; 误差分析与不足</h2>
+    <ul>
+        <li>未对不同注射深度带来的动力学过渡过程进行定量分析</li>
+        <li>注射器针管材料对气泡上升过程中表面张力的影响未考虑</li>
+        <li>未讨论注入气体种类（空气、氮气等）对悬浮稳定性的差异</li>
+        <li>气体注射流速未进行精确量化控制</li>
+        <li>仅使用硅油进行实验，未对多种液体（甘油、FC-70等）进行对比</li>
+        <li>液体中悬浮小气泡对主气层稳定性的干扰效应未评估</li>
+    </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目成果</div>
         <ul>
-                <li>数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究</li>
-                    <li>研究背景与课题分析</li>
-                    <li>理论分析</li>
-                        <li>Rayleigh–Taylor不稳定性与静态分析</li>
-                        <li>Kapitza效应与动态稳定化</li>
-                        <li>气泡临界下沉深度</li>
-                        <li>负重力效应与倒置浮力</li>
-                    <li>预实验</li>
-                    <li>实验验证</li>
-                        <li>实验器材与方法</li>
-                        <li>频率影响实验</li>
-                        <li>横截面积影响实验</li>
-                        <li>注射深度与临界深度</li>
-                    <li>COMSOL多相流仿真</li>
-                        <li>仿真建模</li>
-                        <li>频率对比验证</li>
-                        <li>横截面积对比验证</li>
-                        <li>注射深度对比验证</li>
-                        <li>界面特征深入分析</li>
-                    <li>气泡行为观察</li>
-                    <li>误差分析与不足</li>
+            <li>系统建立了振荡容器中流体悬浮现象的理论框架：从Rayleigh–Taylor不稳定性出发，通过Kapitza效应推导出动态稳定化条件<em class="math">A<sub>1</sub>ω > √2gL/π</em></li>
+            <li>完成了分析气泡受力的完整模型，涵盖重力、浮力、粘性阻力、Basset力、附加质量力及Bjerknes力</li>
+            <li>实验验证了激发速度与容器横截面积、临界深度与振幅的理论关系</li>
+            <li>基于COMSOL Multiphysics建立二维多相流仿真模型，频率/横截面积/注射深度三个维度均与实验定性吻合</li>
+            <li>仿真揭示了界面浑浊的体积分数过渡机制及壁面速度极值现象</li>
+            <li>观察到新现象：上表面出现稳定圆环结构</li>
         </ul>
     </div>
 
-    <img src="../assets/images/fluid-levitation/pages/page_105.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_106.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_107.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_108.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_109.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_110.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_111.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/fluid-levitation/pages/page_112.png" alt="PDF Page" class="pdf-page">
 
-
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">实验流程</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/fluid-levitation/experiment-process.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 实验流程</div>
     </div>
-    <div class="video-container">
-        <p class="figure-caption">实验现象</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/fluid-levitation/experiment-phenomenon.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 实验现象</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

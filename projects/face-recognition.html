@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCA + SVM 人脸识别系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,44 +21,233 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">PCA + SVM 人脸识别系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2024</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>PCA + SVM 人脸识别系统</li>
-                    <li>项目背景</li>
-                    <li>算法流程</li>
-                    <li>核心代码实现</li>
-                        <li>数据读取与预处理</li>
-                        <li>PCA主成分分析</li>
-                        <li>Min-Max特征归一化</li>
-                        <li>One-vs-All多分类SVM训练</li>
-                        <li>Bagging概率投票预测</li>
-                        <li>单图预测接口</li>
-                    <li>MATLAB App界面</li>
-                    <li>迭代优化历程</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>线性代数课程拓展项目</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>MATLAB, PCA, SVM, MATLAB App Designer</td></tr>
+        <tr><td><strong>核心功能</strong></td><td>27人人脸识别、实时摄像头采集、GUI应用</td></tr>
+        <tr><td><strong>数据规模</strong></td><td>27人 <em class="math">×</em> 6–8张/人，56<em class="math">×</em>46像素灰度图</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/face-recognition/pages/page_041.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/face-recognition/pages/page_042.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/face-recognition/pages/page_043.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/face-recognition/pages/page_044.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/face-recognition/pages/page_045.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/face-recognition/pages/page_046.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景</h2>
+    <p>
+        本项目在MATLAB环境下构建了一套完整的<strong>PCA降维 + One-vs-All多分类SVM</strong>人脸识别系统，支持27人识别分类，并通过MATLAB App Designer开发了图形化应用界面，支持摄像头实时采集和马赛克特效。
+        </p>
+
+    <h2>2 &nbsp; 算法流程</h2>
+    <ol>
+        <li><strong>数据读取</strong>（ReadFace.m）：读取56<em class="math">×</em>46灰度图，展平为2576维行向量，标注类别标签</li>
+        <li><strong>PCA降维</strong>（PCA.m）：中心化<em class="math">→</em>协方差矩阵<em class="math">→</em>特征分解<em class="math">→</em>投影至<em class="math">k</em>维子空间</li>
+        <li><strong>特征归一化</strong>（scaling.m）：Min-Max缩放至<em class="math">[-1, 1]</em>区间，消除量纲影响</li>
+        <li><strong>SVM训练</strong>（multiSVMtrain.m）：27个One-vs-All二分类SVM模型（<code>fitcsvm</code>）</li>
+        <li><strong>预测推理</strong>（multiSVM.m）：Bagging后验概率投票选出类别</li>
+        <li><strong>GUI应用</strong>（xtw.mlapp）：MATLAB App Designer界面，集成拍照+预测</li>
+    </ol>
+
+    <h2>3 &nbsp; 核心代码实现</h2>
+
+    <h3>3.1 &nbsp; 数据读取与预处理</h3>
+    <div class="code-block">
+        <div class="code-block-header">ReadFace.m – 批量读取人脸样本并展平</div>
+        <pre>function [trainData, trainLabel, testData, testLabel] = ReadFace()
+    n_person = 27;    % 27个人
+    n_train = 6;      % 每人6张训练
+    n_test = 2;       % 每人2张测试
+    img_h = 56; img_w = 46;
+    dim = img_h * img_w;  % 2576维
+
+    trainData = zeros(n_person*n_train, dim);
+    trainLabel = zeros(n_person*n_train, 1);
+
+    for p = 1:n_person
+        for s = 1:n_train
+            filename = sprintf(&#x27;照片库/z%d_%d.jpg&#x27;, p, s);
+            img = imread(filename);
+            if size(img, 3) == 3
+                img = rgb2gray(img);
+            end
+            img = imresize(img, [img_h, img_w]);
+            trainData((p-1)*n_train+s, :) = ...
+                double(reshape(img, 1, []));
+            trainLabel((p-1)*n_train+s) = p;
+        end
+    end
+    % 测试集同理...
+end</pre>
+    </div>
+
+    <h3>3.2 &nbsp; PCA主成分分析</h3>
+    <div class="code-block">
+        <div class="code-block-header">PCA.m – 协方差矩阵特征分解降维</div>
+        <pre>function [pcaA, V, conVec] = PCA(A, k)
+% 输入: A -- 样本矩阵(N x 2576), k -- 目标维度
+% 输出: pcaA -- 降维后特征, V -- 主成分向量
+
+[row, col] = size(A);
+
+% Step 1: 去除均值（中心化）
+meanA = mean(A);
+meanVec = A - meanA;
+
+% Step 2: 计算协方差矩阵 (使用 A&#x27;A 替代 AA&#x27; 加速)
+conVec = meanVec&#x27; * meanVec / row;
+
+% Step 3: 计算前k个最大特征值对应的特征向量
+[V, D] = eigs(conVec, k);
+
+% Step 4: 特征向量归一化为单位向量
+for i = 1:k
+    V(:,i) = V(:,i) / norm(V(:,i));
+end
+
+% Step 5: 将原始样本投影到k维子空间
+pcaA = meanVec * V;</pre>
+    </div>
+    <p>
+        PCA的数学原理：设样本矩阵 <em class="math"><strong>X</strong> ∈ mathbbR<sup>N × d</sup></em>（<em class="math">d=2576</em>），中心化后的协方差矩阵：
+        </p>
+    <div class="formula"><strong>C</strong> = (1)/(N) bar<strong>X</strong><sup>T</sup> bar<strong>X</strong> ∈ mathbbR<sup>d × d</sup></div>
+    <p>
+        取前<em class="math">k</em>个最大特征值对应的特征向量 <em class="math"><strong>V</strong> = [<strong>v</strong><sub>1</sub>, …, <strong>v</strong><sub>k</sub>]</em>，降维结果：
+        </p>
+    <div class="formula"><strong>Y</strong> = bar<strong>X</strong> · <strong>V</strong> ∈ mathbbR<sup>N × k</sup></div>
+
+    <h3>3.3 &nbsp; Min-Max特征归一化</h3>
+    <div class="code-block">
+        <div class="code-block-header">scaling.m – Min-Max归一化至[-1,1]</div>
+        <pre>function [scaledData, minVals, maxVals] = scaling(data)
+    minVals = min(data);
+    maxVals = max(data);
+    range = maxVals - minVals;
+    range(range == 0) = 1;  % 避免除零
+    scaledData = 2 * (data - minVals) ./ range - 1;
+end</pre>
+    </div>
+
+    <h3>3.4 &nbsp; One-vs-All多分类SVM训练</h3>
+    <div class="code-block">
+        <div class="code-block-header">multiSVMtrain.m – 27个二分类SVM训练</div>
+        <pre>function models = multiSVMtrain(X_train, y_train)
+    y_labels = unique(y_train);
+    n_class = length(y_labels);  % 27
+    models = cell(n_class, 1);
+
+    for i = 1:n_class
+        % 构建二分类标签: 当前类=1, 其余=-1
+        y_binary = -1 * ones(size(y_train));
+        y_binary(y_train == y_labels(i)) = 1;
+
+        % 训练SVM (线性核 + 后验概率)
+        models{i} = fitcsvm(X_train, y_binary, ...
+            &#x27;KernelFunction&#x27;, &#x27;linear&#x27;, ...
+            &#x27;FitPosterior&#x27;, true);
+        disp([&#x27;已训练: 类别 &#x27;, num2str(y_labels(i)), ...
+              &#x27; (&#x27;, num2str(i), &#x27;/&#x27;, num2str(n_class), &#x27;)&#x27;]);
+    end
+end</pre>
+    </div>
+
+    <h3>3.5 &nbsp; Bagging概率投票预测</h3>
+    <div class="code-block">
+        <div class="code-block-header">multiSVM.m – Bagging后验概率投票</div>
+        <pre>function [pred, acc] = multiSVM(X_test, testlabel, y_train, models)
+    y_labels = unique(y_train);
+    n_class = 27;
+    test_num = size(X_test, 1);
+    y_predict = zeros(test_num, 1);
+
+    for i = 1:test_num
+        bagging = zeros(n_class, 1);
+        for j = 1:n_class
+            model = models{j};
+            [~, rat] = predict(model, X_test(i,:));
+            bagging(j) = bagging(j) + rat(2);
+        end
+        [~, maxp] = max(bagging);
+        y_predict(i) = y_labels(maxp);
+    end
+
+    right = sum(y_predict == testlabel);
+    acc = right / test_num;
+    pred = y_predict;
+    fprintf(&#x27;识别准确率: %.2f%%\n&#x27;, acc * 100);
+end</pre>
+    </div>
+
+    <h3>3.6 &nbsp; 单图预测接口</h3>
+    <div class="code-block">
+        <div class="code-block-header">PredictImg.m – 新图像预测</div>
+        <pre>function name = PredictImg(img_path, V, meanA, models, y_train)
+    names = {&#x27;赵某某&#x27;,&#x27;肖某某&#x27;,&#x27;陈某某&#x27;, ...
+             &#x27;薛雅文&#x27;, ...}; % 27人姓名列表
+
+    img = imread(img_path);
+    img = rgb2gray(img);
+    img = imresize(img, [56, 46]);
+    vec = double(reshape(img, 1, []));
+
+    % PCA投影到训练时的子空间
+    vec_centered = vec - meanA;
+    feature = vec_centered * V;
+
+    % 归一化 + SVM预测
+    [pred, ~] = multiSVM(feature, 0, y_train, models);
+    name = names{pred};
+    fprintf(&#x27;识别结果: %s\n&#x27;, name);
+end</pre>
+    </div>
+
+    <h2>4 &nbsp; MATLAB App界面</h2>
+    <p>
+        通过<strong>MATLAB App Designer</strong>开发GUI应用（xtw.mlapp），功能包括：
+        </p>
+    <ul>
+        <li>摄像头实时采集人脸图像（<code>paizhao.m</code>）</li>
+        <li>一键识别按钮调用PCA+SVM流程</li>
+        <li>马赛克特效处理（<code>mosaic.m</code>）</li>
+        <li>识别结果显示27人姓名</li>
+    </ul>
+
+    <h2>5 &nbsp; 迭代优化历程</h2>
+    <div class="info-box">
+        <div class="info-box-title">版本迭代</div>
+        <ol>
+            <li><strong>基础PCA + 最近邻</strong>：仅PCA降维+欧氏距离KNN分类，准确率<em class="math">~</em>70%</li>
+            <li><strong>引入SVM</strong>：One-vs-All策略训练27个线性SVM，准确率显著提升</li>
+            <li><strong>Bagging投票</strong>：后验概率Bagging替代硬标签投票，提高鲁棒性</li>
+            <li><strong>GUI应用</strong>：MATLAB App Designer图形界面+摄像头实时采集+马赛克特效</li>
+        </ol>
+    </div>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

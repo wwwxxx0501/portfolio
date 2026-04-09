@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>机器人色块识别与抓取</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,33 +21,124 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">机器人色块识别与抓取</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2024</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>机器人色块识别与抓取</li>
-                    <li>视觉系统——多色HSV识别</li>
-                    <li>视觉伺服闭环控制</li>
-                    <li>六步抓取流程</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>机器人基础课程设计</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>OpenCV, Python, PID控制, 视觉伺服</td></tr>
+        <tr><td><strong>核心功能</strong></td><td>4色HSV识别 + 闭环视觉伺服 + 机械臂6步抓取</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/color-grabbing/pages/page_068.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/color-grabbing/pages/page_069.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/color-grabbing/pages/page_070.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 视觉系统——多色HSV识别</h2>
+    <div class="code-block">
+        <div class="code-block-header">OpenCV多色HSV空间色块检测</div>
+        <pre>import cv2
+import numpy as np
+
+# 四种颜色HSV阈值范围
+color_ranges = {
+    &#x27;red&#x27;:   ([0, 100, 100],   [10, 255, 255]),
+    &#x27;green&#x27;: ([35, 100, 100],  [85, 255, 255]),
+    &#x27;blue&#x27;:  ([100, 100, 100], [130, 255, 255]),
+    &#x27;yellow&#x27;:([20, 100, 100],  [35, 255, 255]),
+}
+
+def detect_blocks(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    results = []
+
+    for color_name, (lower, upper) in color_ranges.items():
+        mask = cv2.inRange(hsv, np.array(lower),
+                           np.array(upper))
+        # 形态学处理: 开运算去噪 + 闭运算填充
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE, (5, 5))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+        # 轮廓检测
+        contours, _ = cv2.findContours(
+            mask, cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area &gt; 500:  # 最小面积过滤
+                x, y, w, h = cv2.boundingRect(cnt)
+                cx, cy = x + w//2, y + h//2
+                results.append({
+                    &#x27;color&#x27;: color_name,
+                    &#x27;center&#x27;: (cx, cy),
+                    &#x27;area&#x27;: area,
+                    &#x27;bbox&#x27;: (x, y, w, h)
+                })
+    return results</pre>
+    </div>
+
+    <h2>2 &nbsp; 视觉伺服闭环控制</h2>
+    <p>
+        将色块中心偏差作为PID输入，控制底盘运动趋近目标：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">视觉伺服PID闭环底盘控制</div>
+        <pre>class VisualServoPID:
+    def __init__(self):
+        self.Kp_x = 0.003   # 水平偏差比例增益
+        self.Kp_d = 0.005   # 距离比例增益
+        self.target_cx = 320 # 图像中心x (640/2)
+        self.target_area = 5000 # 目标面积 (对应期望距离)
+
+    def compute(self, cx, area):
+        # 水平偏差 -&gt; 旋转速度
+        error_x = cx - self.target_cx
+        omega = -self.Kp_x * error_x
+
+        # 面积偏差 -&gt; 前进速度
+        error_d = self.target_area - area
+        velocity = self.Kp_d * error_d
+
+        return velocity, omega</pre>
+    </div>
+
+    <h2>3 &nbsp; 六步抓取流程</h2>
+    <table>
+        <tr><th><strong>步骤</strong></th><th><strong>动作</strong></th><th><strong>控制方式</strong></th></tr>
+        <tr><td>1</td><td>视觉检测目标色块</td><td>OpenCV HSV分割+轮廓检测</td></tr>
+        <tr><td>2</td><td>像素<em class="math">→</em>世界坐标</td><td>相机标定+坐标映射</td></tr>
+        <tr><td>3</td><td>底盘PID趋近</td><td>视觉伺服闭环驱动</td></tr>
+        <tr><td>4</td><td>精细位姿对准</td><td>小步微调，消除残差</td></tr>
+        <tr><td>5</td><td>机械臂夹取</td><td>舵机控制夹爪闭合</td></tr>
+        <tr><td>6</td><td>搬运至目标区域</td><td>导航到放置点<em class="math">→</em>释放</td></tr>
+    </table>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

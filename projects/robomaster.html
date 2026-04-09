@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RoboMaster 视觉伺服引擎（rm-engine）</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,66 +21,411 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">RoboMaster 视觉伺服引擎（rm-engine）</h1>
+        <div class="article-meta">
+            <span>薛雅文（第一负责人 / 视觉算法与引擎架构开发）</span><span>重庆大学 RoboMaster 战队</span><span>2024.09 – 2025.08</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>RoboMaster 视觉伺服引擎（rm-engine）</li>
-                    <li>项目背景与目标</li>
-                    <li>硬件平台配置</li>
-                    <li>rm-engine 跨平台引擎框架</li>
-                        <li>引擎架构分层</li>
-                        <li>Premake5 跨平台构建系统</li>
-                        <li>多线程模块化运行</li>
-                    <li>完整视觉伺服流水线</li>
-                        <li>Stage 1–2：鱼眼采集与双色彩空间分割</li>
-                        <li>Stage 3–4：边缘增强与多准则轮廓过滤</li>
-                        <li>Stage 5：最小包围圆(MEC)关键点提取</li>
-                        <li>Stage 6：PnP位姿估计与手眼坐标变换</li>
-                    <li>解析逆运动学求解器</li>
-                        <li>求解算法</li>
-                    <li>轨迹插值与串口闭环控制</li>
-                    <li>深度学习方案对比分析：为什么回退到传统视觉</li>
-                    <li>迭代优化历程</li>
-                    <li>端到端性能指标</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目角色</strong></td><td>第一负责人 · 视觉算法与引擎架构开发</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>C++17, OpenCV 4.11, OpenGL, Dear ImGui, PyBind11, Eigen</td></tr>
+        <tr><td><strong>硬件平台</strong></td><td>Intel NUC i5-1135G7（无独立GPU，纯CPU边缘计算）</td></tr>
+        <tr><td><strong>竞赛成果</strong></td><td>RoboMaster 2025全国赛三等奖、区域赛二等奖</td></tr>
+        <tr><td><strong>学术成果</strong></td><td>第一作者IEEE会议论文 <em>LightViServo</em>（在投）</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/robomaster/pages/page_008.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_009.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_010.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_011.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_012.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_013.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_014.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_015.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_016.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_017.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_018.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_019.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_020.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/robomaster/pages/page_021.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景与目标</h2>
+    <p>
+        RoboMaster机甲大师赛要求工程机器人在高速对抗环境下实现自主"取矿–兑换"操作。核心挑战在于：机械臂末端需精准对准兑换站上的4个L形蓝色LED标记（30<em class="math">×</em>30cm正方形四角），完成6-DoF位姿估计后驱动4连杆机械臂执行抓取，整个闭环延迟须低于20ms才能满足实时性要求。
+        </p>
+    <p>
+        本项目自研了一套<strong>跨平台C++17视觉伺服引擎框架</strong>（rm-engine），在不依赖GPU加速的Intel NUC边缘设备上，实现了从鱼眼图像采集、传统视觉检测、6-DoF PnP位姿估计、解析逆运动学求解、笛卡尔轨迹插值到CRC16串口闭环反馈的<strong>全链路自动操控</strong>，端到端延迟仅<strong>13.5ms</strong>（<em class="math">~</em>74 FPS）。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_robot.png" alt="工程机器人全貌——标注鱼眼相机（Eye-in-hand构型）与4连杆机械臂" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 工程机器人全貌——标注鱼眼相机（Eye-in-hand构型）与4连杆机械臂</div>
+    </div>
+
+    <h2>2 &nbsp; 硬件平台配置</h2>
+    <table>
+        <caption>系统硬件规格</caption>
+        <tr><th><strong>组件</strong></th><th><strong>型号/规格</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>计算单元</td><td>Intel NUC i5-1135G7, 16GB RAM</td><td>无独立GPU，纯CPU计算</td></tr>
+        <tr><td>工业相机</td><td>迈德威视 + 3.37mm F2.8鱼眼镜头</td><td>Eye-in-hand构型</td></tr>
+        <tr><td>分辨率/帧率</td><td>1280<em class="math">×</em>1024, 最高120FPS</td><td>实际处理74FPS</td></tr>
+        <tr><td>机械臂</td><td>4连杆构型 (<em class="math">l<sub>1</sub> = l<sub>2</sub> = 28</em>cm)</td><td>2-DoF平面臂 + 升降 + 3-DoF腕部</td></tr>
+        <tr><td>控制器</td><td>STM32F407</td><td>USB-UART 9600 baud</td></tr>
+        <tr><td>目标标记</td><td>4个L形蓝色LED</td><td>30<em class="math">×</em>30cm正方形四角</td></tr>
+    </table>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_camera.png" alt="迈德威视工业相机——3.37mm F2.8鱼眼镜头" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; 迈德威视工业相机——3.37mm F2.8鱼眼镜头</div>
+    </div>
+
+    <h2>3 &nbsp; rm-engine 跨平台引擎框架</h2>
+    <p>
+        rm-engine是本项目的核心软件产出，设计为一个<strong>分层模块化、跨平台</strong>的C++17引擎框架，借鉴游戏引擎架构思想，将视觉伺服系统组织为可复用的模块化组件：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">rm-engine 引擎门面头文件（rmengine.h）</div>
+        <pre>#pragma once
+// === Core ===
+#include &quot;core/core.h&quot;
+#include &quot;core/application.h&quot;        // 应用生命周期管理
+#include &quot;core/log.h&quot;                // spdlog日志系统
+#include &quot;core/layer.h&quot;              // 图层栈(Layer Stack)
+#include &quot;core/timestep.h&quot;           // 帧间时间步
+
+// === Events &amp; Input ===
+#include &quot;events/event.h&quot;            // 事件系统
+#include &quot;events/application-event.h&quot;
+#include &quot;events/key-event.h&quot;
+#include &quot;core/input.h&quot;              // 平台无关输入
+#include &quot;core/key-codes.h&quot;
+
+// === Renderer ===
+#include &quot;renderer/renderer.h&quot;       // OpenGL渲染器
+#include &quot;renderer/render-command.h&quot;
+#include &quot;renderer/buffer.h&quot;
+#include &quot;renderer/shader.h&quot;
+#include &quot;renderer/texture.h&quot;
+#include &quot;renderer/vertex-array.h&quot;
+#include &quot;renderer/orthographic-camera.h&quot;
+#include &quot;renderer/frame-buffer.h&quot;   // 帧缓冲(FBO)
+
+// === ImGui ===
+#include &quot;imgui/imgui-layer.h&quot;       // Dear ImGui调参界面</pre>
+    </div>
+
+    <h3>3.1 &nbsp; 引擎架构分层</h3>
+    <p>
+        引擎源码组织为以下分层架构，所有代码位于<code>Mechax</code>命名空间：
+        </p>
+    <table>
+        <caption>rm-engine 分层架构</caption>
+        <tr><th><strong>层级</strong></th><th><strong>模块</strong></th><th><strong>职责与技术</strong></th></tr>
+        <tr><td><strong>基础层</strong></td><td><code>core/</code></td><td>Application生命周期、Layer图层栈、多线程管理、Timer性能分析、spdlog日志（5级：TRACE/DEBUG/INFO/WARN/ERROR）</td></tr>
+        <tr><td><strong>事件层</strong></td><td><code>events/</code></td><td>事件分发系统（键盘/鼠标/窗口事件），平台无关输入抽象</td></tr>
+        <tr><td><strong>渲染层</strong></td><td><code>renderer/</code></td><td>OpenGL渲染管线：Shader/Buffer/Texture/VAO/FBO，2D渲染器，正交相机</td></tr>
+        <tr><td><strong>模块层</strong></td><td><code>modules/</code></td><td>相机采集（MindVision/Intel RealSense）、DH坐标系、串口通信、图像处理流水线</td></tr>
+        <tr><td><strong>数学层</strong></td><td><code>RMECV/</code></td><td>自定义矩阵库（<code>mat.h</code>），轻量级替代Eigen用于关键路径</td></tr>
+        <tr><td><strong>绑定层</strong></td><td><code>python/</code></td><td>PyBind11 C++<em class="math">→</em>Python绑定，支持Python脚本调用引擎API</td></tr>
+        <tr><td><strong>可视化</strong></td><td><code>imgui/</code></td><td>Dear ImGui集成，实时HSV阈值调参、PnP结果可视化</td></tr>
+        <tr><td><strong>平台层</strong></td><td><code>platform/</code></td><td>Windows（<code>win-window.h</code>）、Linux（GLFW窗口系统）平台适配</td></tr>
+    </table>
+
+    <h3>3.2 &nbsp; Premake5 跨平台构建系统</h3>
+    <p>
+        构建系统采用<strong>Premake5</strong>（Lua脚本驱动），通过一套配置文件生成Windows（VS2022 <code>.sln</code>）和Linux（<code>gmake2 Makefile</code>）工程，实现<strong>跨平台一键编译</strong>：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">premake5.lua 核心构建配置</div>
+        <pre>workspace &quot;RM Engine&quot;
+    architecture &quot;x64&quot;
+    configurations { &quot;debug&quot;, &quot;release&quot;, &quot;dist&quot; }
+
+-- 第三方依赖目录
+includeDir[&quot;glfw&quot;]      = &quot;robomaster-engine/vendor/glfw/include&quot;
+includeDir[&quot;glad&quot;]      = &quot;robomaster-engine/vendor/glad/include&quot;
+includeDir[&quot;imgui&quot;]     = &quot;robomaster-engine/vendor/imgui&quot;
+includeDir[&quot;glm&quot;]       = &quot;robomaster-engine/vendor/glm&quot;
+includeDir[&quot;spdlog&quot;]    = &quot;robomaster-engine/vendor/spdlog/include&quot;
+includeDir[&quot;serial&quot;]    = &quot;robomaster-engine/vendor/serial&quot;
+includeDir[&quot;MV&quot;]        = &quot;robomaster-engine/vendor/mindvision&quot;
+includeDir[&quot;realsense&quot;] = &quot;robomaster-engine/vendor/intel_realsense&quot;
+includeDir[&quot;pybind11&quot;]  = &quot;robomaster-engine/vendor/pybind11&quot;</pre>
+    </div>
+    <p>
+        Lua扩展脚本体系实现环境自适应：
+        </p>
+    <ul>
+        <li><code>lua/env.lua</code>：自动检测Anaconda/系统Python环境，维护<code>python.ini</code>跨平台路径配置</li>
+        <li><code>lua/python-need.lua</code>：Python C++编译环境（Windows: python310.lib / Linux: python3.10.so）</li>
+        <li><code>lua/opencv-need.lua</code>：OpenCV 4.11.0（Windows: DLL自动拷贝 / Linux: SO + RPATH链接）</li>
+        <li><code>lua/openvino-need.lua</code>：Intel OpenVINO推理框架（ONNX、PyTorch前端、Linux OpenCL加速）</li>
+    </ul>
+    <div class="code-block">
+        <div class="code-block-header">跨平台构建命令</div>
+        <pre># Windows (Anaconda + VS2022)
+premake5 --python=&quot;D:\anaconda3\envs\rm&quot; --is_conda=true vs2022
+
+# Linux (Conda + gmake2)
+premake5 --python=&quot;/home/user/miniconda3/envs/rm&quot; \
+         --is_conda=true gmake2
+
+# Docker部署
+sudo docker exec -it &lt;container_id&gt; /bin/bash</pre>
+    </div>
+
+    <h3>3.3 &nbsp; 多线程模块化运行</h3>
+    <p>
+        引擎采用<strong>多线程流水线</strong>运行模型，每个功能模块继承自<code>modules</code>基类，可选择独立线程或主线程运行：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">多线程模块注册与启动</div>
+        <pre>// 主线程控制
+Application&amp; app = Application::Get();
+app.PushMultiThreadToCurrent(new VisualModule());
+app.PushMultiThreadToCurrent(new IKSolverModule());
+
+// 宏控制多线程启停
+#define ENABLE_MULTITHREADING 1
+#if ENABLE_MULTITHREADING
+  pool.enqueue(module_visual);
+  pool.enqueue(module_ik);
+#else
+  module_visual();
+  module_ik();
+#endif</pre>
+    </div>
+    <p>
+        性能分析采用Chrome Tracing格式，通过<code>ROBOT\<sub>P</sub>ROFILE\<sub>F</sub>UNCTION()</code>和<code>ROBOT\<sub>P</sub>ROFILE\<sub>S</sub>COPE("name")</code>宏标注热点，输出JSON时序数据供<code>chrome://tracing</code>可视化分析。
+        </p>
+
+    <h2>4 &nbsp; 完整视觉伺服流水线</h2>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_pipeline.png" alt="视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取</div>
+    </div>
+    <p>
+        端到端流水线分为以下阶段，每帧总延迟仅<strong>13.5ms</strong>：
+        </p>
+
+    <h3>4.1 &nbsp; Stage 1–2：鱼眼采集与双色彩空间分割</h3>
+    <p>
+        采用HSV与灰度<strong>联合过滤</strong>隔离蓝色LED区域，有效抑制镜面反射与彩色背景干扰：
+        </p>
+    <div class="formula"><strong>M</strong> = <strong>M</strong><sub>HSV</sub> ∩ <strong>M</strong><sub>gray</sub>,   
+<strong>M</strong><sub>HSV</sub> = <strong>1</strong>[H ∈ [38,179] wedge S ∈ [135,255] wedge V ∈ [100,255]]</div>
+    <p>
+        鱼眼相机内参与Brown-Conrady畸变系数（<em class="math">k<sub>1</sub> = -0.339</em>的强负值反映桶形畸变特征）：
+        </p>
+    <div class="formula"><strong>K</strong> =  501.36 & 0 & 635.69 <br> 0 & 501.26 & 488.57 <br> 0 & 0 & 1 ,   
+<strong>d</strong> = [-0.339,  0.152,  -1.14×10<sup>-5</sup>,  -3.30×10<sup>-5</sup>,  -0.036]</div>
+
+    <h3>4.2 &nbsp; Stage 3–4：边缘增强与多准则轮廓过滤</h3>
+    <div class="formula"><strong>E</strong> = Dilate<sub>5×5</sub>CannyGaussBlur<sub>7×7,σ=5</sub>(<strong>M</strong>),  50,  100</div>
+    <p>
+        通过<strong>四个几何准则</strong>筛选有效的L形轮廓：
+        </p>
+    <ol>
+        <li><strong>面积约束</strong>：<em class="math">A<sub>c</sub> > 200</em> px<em class="math"><sup>2</sup></em>（剔除噪声）</li>
+        <li><strong>长宽比</strong>：<em class="math">0.4 < AR < 3.5</em>（剔除细长伪影）</li>
+        <li><strong>多边形顶点数</strong>：<em class="math">4 ≤ N<sub>poly</sub> ≤ 15</em>（匹配L形几何，<em class="math">ε = 0.02 ×</em>周长）</li>
+        <li><strong>填充率</strong>：<em class="math">0.35 ≤ A<sub>c</sub>/(w × h) ≤ 0.75</em>（匹配L形面积比）</li>
+    </ol>
+    <div class="code-block">
+        <div class="code-block-header">HSV分割+Canny边缘+多准则轮廓过滤</div>
+        <pre>// 双色彩空间分割
+cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+cv::inRange(hsv, cv::Scalar(38,135,100),
+            cv::Scalar(179,255,255), mask_hsv);
+cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+cv::threshold(gray, mask_gray, 100, 200, cv::THRESH_BINARY);
+cv::bitwise_and(mask_hsv, mask_gray, mask);
+
+// 边缘增强: 高斯模糊 -&gt; Canny -&gt; 膨胀
+cv::GaussianBlur(mask, mask, cv::Size(7,7), 5);
+cv::Canny(mask, edges, 50, 100);
+cv::dilate(edges, edges,
+    cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5)));
+
+// 多准则轮廓过滤
+for (const auto&amp; c : contours) {
+    double area = cv::contourArea(c);
+    if (area &lt; 200) continue;  // 面积约束
+    auto rrect = cv::minAreaRect(c);
+    float ar = std::max(rrect.size.width, rrect.size.height)
+             / std::min(rrect.size.width, rrect.size.height);
+    if (ar &gt; 3.5f || ar &lt; 0.4f) continue;  // 长宽比
+    double extent = area/(rrect.size.width*rrect.size.height);
+    if (extent &lt; 0.35 || extent &gt; 0.75) continue; // 填充率
+    valid_contours.push_back(c);
+}</pre>
+    </div>
+
+    <h3>4.3 &nbsp; Stage 5：最小包围圆(MEC)关键点提取</h3>
+    <p>
+        对通过过滤的<em class="math">N</em>个轮廓，枚举所有<em class="math">binomN4</em>个四元组，选择全局包围圆面积最小的组合，从4个选中圆的边界提取最远点作为关键点：
+        </p>
+    <div class="formula">P<sub>i</sub><sup>far</sup> = c<sub>i</sub> + r<sub>i</sub> · (c<sub>i</sub> - C^*)/(\|c<sub>i</sub> - C^*\|)</div>
+    <p>
+        4个关键点按极角<em class="math">α<sub>i</sub> = atan2(Δ y, Δ x)</em>升序排列，标注为A、B、C、D，确保与3D模型点一一对应后送入PnP求解。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_success.png" alt="MEC关键点提取成功——极角排序标注A/B/C/D，Extent值与包围圆可视化" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; MEC关键点提取成功——极角排序标注A/B/C/D，Extent值与包围圆可视化</div>
+    </div>
+
+    <h3>4.4 &nbsp; Stage 6：PnP位姿估计与手眼坐标变换</h3>
+    <p>
+        使用<code>cv::solvePnP</code>（ITERATIVE模式）在求解过程中内联处理Brown-Conrady畸变校正，恢复6-DoF位姿后，通过<strong>手眼标定外参偏移</strong>将相机坐标系转换到机械臂基座坐标系：
+        </p>
+    <div class="formula">a<sub>x</sub> = t<sub>z</sub> - 36,    a<sub>y</sub> = -t<sub>x</sub> - 5,    a<sub>z</sub> = -t<sub>y</sub> + 55    (单位: cm)</div>
+    <p>
+        姿态角直接传递：<em class="math">a<sub>pitch</sub> = r<sub>x</sub></em>，<em class="math">a<sub>yaw</sub> = -r<sub>y</sub></em>，<em class="math">a<sub>roll</sub> = r<sub>z</sub></em>。
+        </p>
+
+    <h2>5 &nbsp; 解析逆运动学求解器</h2>
+    <p>
+        4连杆机械臂（<em class="math">l<sub>1</sub> = l<sub>2</sub> = 28</em>cm，<em class="math">l<sub>3</sub> = 7</em>cm，<em class="math">l<sub>4</sub> = 12</em>cm）的自由度分配为：大臂<em class="math">θ<sub>1</sub></em>（X方向）、小臂<em class="math">θ<sub>2</sub></em>（Y方向）、底座升降（Z轴）、腕部3-DoF（<em class="math">ψ, φ, ρ</em>）。
+        </p>
+
+    <h3>5.1 &nbsp; 求解算法</h3>
+    <p>
+        <strong>Step 1：腕部中心解耦</strong>
+        </p>
+    <div class="formula">x<sub>w</sub> = a<sub>x</sub> - (l<sub>3</sub> + l<sub>4</sub>cosφ)cosψ,   
+y<sub>w</sub> = a<sub>y</sub> - (l<sub>3</sub> + l<sub>4</sub>cosφ)sinψ,   
+z<sub>w</sub> = a<sub>z</sub> - l<sub>4</sub>sinφ</div>
+    <p>
+        <strong>Step 2：余弦定理求解</strong>——平面到达距离<em class="math">r = √x<sub>w</sub><sup>2</sup> + y<sub>w</sub><sup>2</sup></em>，工作空间约束<em class="math">|l<sub>1</sub> - l<sub>2</sub>| ≤ r ≤ l<sub>1</sub> + l<sub>2</sub></em>：
+        </p>
+    <div class="formula">cosθ<sub>2</sub> = clamp(r<sup>2</sup> - l<sub>1</sub><sup>2</sup> - l<sub>2</sub><sup>2</sup>)/(2l<sub>1</sub> l<sub>2</sub>),  -1,  1</div>
+    <div class="formula">θ<sub>1</sub> = atan2(y<sub>w</sub>, x<sub>w</sub>) ± arccosclamp(l<sub>1</sub><sup>2</sup> + r<sup>2</sup> - l<sub>2</sub><sup>2</sup>)/(2l<sub>1</sub> r),  -1,  1</div>
+    <p>
+        <strong>Step 3：双分支消歧与正运动学验证</strong>——<em class="math">θ<sub>1</sub></em>和<em class="math">θ<sub>2</sub></em>的<em class="math">±</em>组合产生最多4个候选解，通过关节限位（<em class="math">θ<sub>1</sub> ∈ [π/2, π]</em>，<em class="math">θ<sub>2</sub> ∈ [-π, 2π]</em>）和正运动学验证（末端误差<em class="math">< 0.5</em>cm）筛选，最终调整偏航角<em class="math">ψ<sub>final</sub> = ψ - θ<sub>1</sub> - θ<sub>2</sub></em>。
+        </p>
+    <p>
+        <strong>Step 4：工作空间扩展</strong>——当<em class="math">r > 80</em>cm时触发底盘前移补偿；若IK仍失败则复位至安全构型。
+        </p>
+    <table>
+        <caption>解析IK求解器性能（不同距离）</caption>
+        <tr><th><strong>距离(cm)</strong></th><th><strong>平均误差(cm)</strong></th><th><strong>最大误差(cm)</strong></th><th><strong>求解率</strong></th><th><strong>耗时(<em class="math">μ</em>s)</strong></th></tr>
+        <tr><td>20</td><td>0.02</td><td>0.08</td><td>100%</td><td>1.2</td></tr>
+        <tr><td>40</td><td>0.05</td><td>0.18</td><td>100%</td><td>1.3</td></tr>
+        <tr><td>60</td><td>0.12</td><td>0.41</td><td>98.5%</td><td>1.4</td></tr>
+        <tr><td>80</td><td>0.31</td><td>0.49</td><td>94.2%</td><td>1.5</td></tr>
+        <tr><td><em class="math">></em>80(含底盘)</td><td>0.28</td><td>0.47</td><td>91.8%</td><td>2.1</td></tr>
+    </table>
+
+    <h2>6 &nbsp; 轨迹插值与串口闭环控制</h2>
+    <p>
+        解出目标关节角后，在笛卡尔空间（而非关节空间）进行<em class="math">N=10</em>步线性插值，保证末端轨迹平滑。逼近距离<em class="math">d = -40</em>cm，每个航点均进行IK求解，<strong>仅当全部航点有效时才执行轨迹</strong>。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_arm_target.png" alt="机械臂对准兑换站目标——L形蓝色LED标记与串口闭环反馈" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; 机械臂对准兑换站目标——L形蓝色LED标记与串口闭环反馈</div>
+    </div>
+    <p>
+        CRC16串口协议帧格式：
+        </p>
+    <table>
+        <tr><th><strong>字节位置</strong></th><th><strong>字段</strong></th><th><strong>类型</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>0</td><td>帧头SOF</td><td>uint8</td><td>发送0xA5 / 接收0xB5</td></tr>
+        <tr><td>1–8</td><td><em class="math">θ<sub>1</sub>, θ<sub>2</sub></em></td><td>2<em class="math">×</em>float</td><td>关节1</td><td>2角度</td></tr>
+        <tr><td>9–12</td><td>z\<sub>h</sub>eight</td><td>float</td><td>升降高度（<em class="math">×</em>1.25缩放）</td></tr>
+        <tr><td>13–24</td><td><em class="math">ψ, φ, ρ</em></td><td>3<em class="math">×</em>float</td><td>腕部姿态角</td></tr>
+        <tr><td>25–36</td><td>fwd, bwd, cw</td><td>3<em class="math">×</em>float</td><td>底盘运动指令</td></tr>
+        <tr><td>37</td><td>CRC16</td><td>uint16</td><td>多项式0xA001校验</td></tr>
+    </table>
+    <p>
+        闭环反馈控制（最多100次迭代）：发送关节命令<em class="math">→</em>读取反馈角度<em class="math">→</em>检查收敛条件<em class="math">|θ<sub>i</sub><sup>fb</sup> - θ<sub>i</sub><sup>cmd</sup>| < 0.1</em> rad<em class="math">→</em>收敛后前进至下一航点。
+        </p>
+
+    <h2>7 &nbsp; 深度学习方案对比分析：为什么回退到传统视觉</h2>
+    <p>
+        项目前期尝试了YOLOv11n-Pose关键点检测方案，在OpenVINO INT8量化后实际部署中遇到了三个核心问题，最终决策回退至传统视觉：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/robomaster/fig_yolo_fail.png" alt="YOLOv11-Pose检测失败案例——近距离L形标记面积过大导致误检" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 6 &nbsp; YOLOv11-Pose检测失败案例——近距离L形标记面积过大导致误检</div>
+    </div>
+    <table>
+        <caption>传统视觉 vs YOLOv11-Pose 工程对比</caption>
+        <tr><th><strong>指标</strong></th><th><strong>传统视觉</strong></th><th><strong>YOLOv11-Pose</strong></th></tr>
+        <tr><td>训练数据需求</td><td><strong>无</strong></td><td>大量标注数据</td></tr>
+        <tr><td>检测延迟</td><td><strong>6.7ms</strong></td><td>12.8ms</td></tr>
+        <tr><td>端到端延迟</td><td><strong>13.5ms</strong></td><td><em class="math">~</em>22ms+</td></tr>
+        <tr><td>光照变化稳定性</td><td>高（几何先验）</td><td>低（数据不足）</td></tr>
+        <tr><td>关键点精度</td><td>亚像素级</td><td>偏差较大</td></tr>
+        <tr><td>GPU依赖</td><td><strong>无</strong></td><td>需要（CPU低效）</td></tr>
+    </table>
+    <p>
+        <strong>核心结论</strong>：在数据有限、场景结构化的RoboMaster赛场条件下，传统视觉方法是更稳健的工程选择。深度学习方案受限于训练数据多样性不足（竞赛场地光照、视角变化难以充分覆盖），模型泛化能力有限。
+        </p>
+
+    <h2>8 &nbsp; 迭代优化历程</h2>
+    <div class="info-box">
+        <div class="info-box-title">版本迭代</div>
+        <ol>
+            <li><strong>原型验证</strong>（Python + OpenCV）：单线程检测原型，帧率仅<em class="math">~</em>15 FPS，但验证了HSV分割+轮廓过滤+PnP的算法可行性</li>
+            <li><strong>C++17引擎重构</strong>：设计rm-engine分层模块化架构（Core/Events/Renderer/Modules/ImGui），引入Layer图层栈与事件分发系统，帧率提升至<em class="math">~</em>40 FPS</li>
+            <li><strong>深度学习实验</strong>：训练YOLOv11n-Pose关键点检测模型，OpenVINO INT8量化部署。发现训练数据不足导致泛化差、关键点精度不满足PnP需求、推理延迟12.8ms超出预算</li>
+            <li><strong>传统视觉回退优化</strong>：设计六阶段流水线——双色彩空间分割+Canny边缘+四准则过滤+MEC关键点+PnP，帧率突破<em class="math">~</em>74 FPS，延迟降至<strong>13.5ms</strong></li>
+            <li><strong>IK求解器迭代</strong>：初版采用Ceres Solver非线性优化（梯度下降），耗时<em class="math">~</em>20<em class="math">μ</em>s；重构为余弦定理解析解+双分支消歧+FK验证，耗时降至<em class="math"><</em>2.1<em class="math">μ</em>s（提速<em class="math">~</em>10<em class="math">×</em>）</li>
+            <li><strong>跨平台构建系统</strong>：Premake5 Lua脚本体系，自动检测Python/OpenCV/OpenVINO环境，一键生成VS2022（Windows）/ gmake2（Linux）工程，支持Docker部署</li>
+            <li><strong>工程化完善</strong>：集成Dear ImGui可视化调参界面（HSV阈值、轮廓参数实时滑块）、PyBind11 Python绑定、多相机驱动热插拔（MindVision/Intel RealSense）、spdlog 5级日志、Chrome Tracing性能分析</li>
+            <li><strong>论文输出</strong>：系统总结为IEEE会议论文<em>LightViServo: Real-Time Visual Servoing for Robotic Arm Manipulation via Traditional Vision on Edge Devices</em>，第一作者，在投</li>
+        </ol>
+    </div>
+
+    <h2>9 &nbsp; 端到端性能指标</h2>
+    <div class="info-box">
+        <div class="info-box-title">测试结果（Intel NUC i5-1135G7，无GPU）</div>
+    <table>
+        <tr><th><strong>处理阶段</strong></th><th><strong>延迟(ms)</strong></th><th><strong>占比</strong></th></tr>
+        <tr><td>图像采集</td><td>2.1</td><td>19.6%</td></tr>
+        <tr><td>HSV+灰度分割</td><td>0.8</td><td>7.5%</td></tr>
+        <tr><td>高斯+Canny+膨胀</td><td>1.2</td><td>11.2%</td></tr>
+        <tr><td>轮廓提取+过滤</td><td>1.5</td><td>14.0%</td></tr>
+        <tr><td>MEC+关键点提取</td><td>1.8</td><td>16.8%</td></tr>
+        <tr><td>PnP位姿估计</td><td>1.4</td><td>13.1%</td></tr>
+        <tr><td>坐标变换</td><td>0.2</td><td>1.9%</td></tr>
+        <tr><td>IK求解</td><td><em class="math"><</em>0.01</td><td><em class="math"><</em>0.1%</td></tr>
+        <tr><td>轨迹规划</td><td>0.4</td><td>3.7%</td></tr>
+        <tr><td>串口通信</td><td>1.2</td><td>11.2%</td></tr>
+        <tr><td><strong>合计</strong></td><td><strong><em class="math">~</em>10.7</strong></td><td>—</td></tr>
+        <tr><td><strong>实际(含ImGui)</strong></td><td><strong><em class="math">~</em>13.5</strong></td><td><strong><em class="math">~</em>74 FPS</strong></td></tr>
+    </table>
+    </div>
+    <table>
+        <caption>操控成功率与失败原因分析</caption>
+        <tr><th><strong>指标</strong></th><th><strong>数值</strong></th><th><strong>占比</strong></th></tr>
+        <tr><td>静态场景操控成功率</td><td><em class="math">></em>80%</td><td>—</td></tr>
+        <tr><td>近距离检测失败</td><td>—</td><td>35%</td></tr>
+        <tr><td>光照干扰失败</td><td>—</td><td>30%</td></tr>
+        <tr><td>工作空间边界IK无解</td><td>—</td><td>20%</td></tr>
+        <tr><td>通信/反馈超时</td><td>—</td><td>15%</td></tr>
+    </table>
+    <div class="figure">
+        <img src="../assets/images/robomaster/MVIMG_20250428_151002.jpg" alt="RoboMaster测试现场" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 7 &nbsp; RoboMaster测试现场</div>
+    </div>
 
 
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">RoboMaster 视觉伺服演示</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/robomaster.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 机械臂视觉伺服系统实际运行演示</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

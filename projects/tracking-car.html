@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工创赛——K210智能垃圾分类识别系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,40 +21,190 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">工创赛——K210智能垃圾分类识别系统</h1>
+        <div class="article-meta">
+            <span>薛雅文（队长）</span><span>2024 – 2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>工创赛——K210智能垃圾分类识别系统</li>
-                    <li>项目背景</li>
-                    <li>技术方案与实现步骤</li>
-                        <li>Step 1: 数据集采集与标注</li>
-                        <li>Step 2: MaixHub云端模型训练</li>
-                        <li>Step 3: MaixPy IDE串口调试与测试</li>
-                        <li>Step 4: 串口通信与舵机执行机构</li>
-                        <li>Step 5: TF卡烧录独立运行</li>
-                    <li>迭代优化历程</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目角色</strong></td><td>队长 · 视觉开发</td></tr>
+        <tr><td><strong>竞赛</strong></td><td>第九届中国大学生工程实践与创新能力大赛</td></tr>
+        <tr><td><strong>竞赛成果</strong></td><td><strong>校级铜奖</strong></td></tr>
+        <tr><td><strong>技术栈</strong></td><td>K210 边缘AI芯片, MaixHub, MaixPy IDE, 卷积神经网络</td></tr>
+        <tr><td><strong>时间</strong></td><td>2024.11</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/tracking-car/pages/page_028.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/tracking-car/pages/page_029.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/tracking-car/pages/page_030.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/tracking-car/pages/page_031.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/tracking-car/pages/page_032.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景</h2>
+    <p>
+        中国大学生工程实践与创新能力大赛（工创赛）要求在边缘设备上实现智能垃圾分类。本项目基于<strong>嘉楠K210</strong>边缘AI芯片，通过数据采集、云端训练、本地部署的完整流程，实现了四类垃圾的实时识别分类。
+        </p>
+
+    <h2>2 &nbsp; 技术方案与实现步骤</h2>
+
+    <h3>2.1 &nbsp; Step 1: 数据集采集与标注</h3>
+    <p>
+        收集四种类型垃圾的数据集：
+        </p>
+    <table>
+        <tr><th><strong>类别</strong></th><th><strong>垃圾类型</strong></th><th><strong>样本数量</strong></th></tr>
+        <tr><td>0</td><td>可回收垃圾</td><td>200+ 张</td></tr>
+        <tr><td>1</td><td>有害垃圾</td><td>200+ 张</td></tr>
+        <tr><td>2</td><td>厨余垃圾</td><td>200+ 张</td></tr>
+        <tr><td>3</td><td>其他垃圾</td><td>200+ 张</td></tr>
+    </table>
+    <p>
+        采用K210摄像头模块进行多角度、多光照条件下的样本采集，使用标注工具进行bounding box标注。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/tracking-car/数据集.png" alt="垃圾分类数据集样本示例" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 垃圾分类数据集样本示例</div>
+    </div>
+
+    <h3>2.2 &nbsp; Step 2: MaixHub云端模型训练</h3>
+    <p>
+        将标注完成的数据集上传至<strong>MaixHub</strong>平台进行云端训练：
+        </p>
+    <ol>
+        <li>创建MaixHub项目，上传标注数据集</li>
+        <li>选择适配K210的轻量级CNN网络结构</li>
+        <li>配置训练参数：学习率、epoch数、batch size</li>
+        <li>云端训练完成后下载<code>.kmodel</code>模型文件</li>
+    </ol>
+    <div class="figure">
+        <img src="../assets/images/tracking-car/训练集准确率.png" alt="MaixHub模型训练准确率曲线" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; MaixHub模型训练准确率曲线</div>
+    </div>
+
+    <h3>2.3 &nbsp; Step 3: MaixPy IDE串口调试与测试</h3>
+    <p>
+        使用<strong>MaixPy IDE</strong>连接K210开发板进行调试：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">MaixPy K210目标检测推理代码</div>
+        <pre>import sensor, image, lcd, KPU
+from machine import UART
+
+# 初始化摄像头
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)  # 320x240
+sensor.run(1)
+
+# 加载 kmodel 模型
+task = KPU.load(&quot;/sd/model.kmodel&quot;)
+anchor = (1.889, 2.525, 2.947, 3.941, 4.0, 5.366,
+          5.588, 6.750, 7.840, 9.606)
+KPU.init_yolo2(task, 0.5, 0.3, 5, anchor)
+
+# 初始化串口 (与主控通信)
+uart = UART(UART.UART1, baudrate=115200)
+
+lcd.init()
+
+while True:
+    img = sensor.snapshot()
+    objects = KPU.run_yolo2(task, img)
+
+    if objects:
+        for obj in objects:
+            # 绘制检测框
+            img.draw_rectangle(obj.rect())
+            class_id = obj.classid()
+            confidence = obj.value()
+            class_names = [&quot;可回收&quot;, &quot;有害&quot;, &quot;厨余&quot;, &quot;其他&quot;]
+            img.draw_string(obj.x(), obj.y(),
+                class_names[class_id], scale=2)
+            # 串口发送分类结果
+            uart.write(str(class_id) + &#x27;\n&#x27;)
+
+    lcd.display(img)</pre>
+    </div>
+
+    <h3>2.4 &nbsp; Step 4: 串口通信与舵机执行机构</h3>
+    <p>
+        K210识别出垃圾类别后，通过串口将分类编号（0–3）发送给STM32主控MCU。MCU接收分类数字后，驱动舵机旋转到对应角度，控制分类挡板将垃圾导入对应的收集桶：
+        </p>
+    <table>
+        <tr><th><strong>class\<sub>i</sub>d</strong></th><th><strong>垃圾类型</strong></th><th><strong>舵机角度</strong></th><th><strong>对应桶位</strong></th></tr>
+        <tr><td>0</td><td>可回收垃圾</td><td>0°</td><td>1号桶</td></tr>
+        <tr><td>1</td><td>有害垃圾</td><td>90°</td><td>2号桶</td></tr>
+        <tr><td>2</td><td>厨余垃圾</td><td>180°</td><td>3号桶</td></tr>
+        <tr><td>3</td><td>其他垃圾</td><td>270°</td><td>4号桶</td></tr>
+    </table>
+    <p>
+        
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">STM32主控接收分类结果驱动舵机</div>
+        <pre>// 串口接收中断回调
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart == &amp;huart1) {
+        uint8_t class_id = rx_buffer[0] - &#x27;0&#x27;; // ASCII转数字
+        if (class_id &lt;= 3) {
+            // 四种垃圾对应四种舵机角度
+            uint16_t angles[4] = {0, 90, 180, 270};
+            Servo_SetAngle(angles[class_id]);
+        }
+        // 重新开启接收
+        HAL_UART_Receive_IT(&amp;huart1, rx_buffer, 1);
+    }
+}
+
+// 舵机角度设置 (50Hz PWM, 0.5ms~2.5ms脉宽)
+void Servo_SetAngle(uint16_t angle) {
+    // 将0~270度映射到500~2500us脉宽
+    uint16_t pulse = 500 + (uint32_t)angle * 2000 / 270;
+    __HAL_TIM_SET_COMPARE(&amp;htim_servo, TIM_CHANNEL_1, pulse);
+    HAL_Delay(500); // 等待舵机到位
+}</pre>
+    </div>
+
+    <h3>2.5 &nbsp; Step 5: TF卡烧录独立运行</h3>
+    <p>
+        调试完成后将程序与模型烧录至TF卡，实现K210开机自启动独立运行，脱离PC调试环境。完整系统工作流程：K210视觉识别<em class="math">→</em>串口发送class\<sub>i</sub>d<em class="math">→</em>MCU接收<em class="math">→</em>舵机旋转到对应角度<em class="math">→</em>垃圾分类投放。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/tracking-car/Snipaste_2026-04-08_23-09-42.png" alt="K210垃圾分类识别系统运行效果" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; K210垃圾分类识别系统运行效果</div>
+    </div>
+
+    <h2>3 &nbsp; 迭代优化历程</h2>
+    <div class="info-box">
+        <div class="info-box-title">版本迭代</div>
+        <ol>
+            <li><strong>数据采集</strong>：多角度、多光照采集800+张四类垃圾样本</li>
+            <li><strong>模型训练</strong>：MaixHub云端训练，调整网络结构和超参数，准确率逐步提升</li>
+            <li><strong>本地部署</strong>：MaixPy IDE串口联调，优化推理速度和显示效果</li>
+            <li><strong>舵机联调</strong>：K210串口发送class\<sub>i</sub>d（0/1/2/3），MCU驱动舵机旋转至对应角度（0°/90°/180°/270°），实现四类垃圾自动分拣</li>
+            <li><strong>系统集成</strong>：TF卡烧录独立运行，K210识别+串口通信+舵机执行全链路闭环</li>
+        </ol>
+    </div>
 
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

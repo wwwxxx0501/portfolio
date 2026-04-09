@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>心电信号采集与处理系统</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,65 +21,281 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">心电信号采集与处理系统</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>心电信号采集与处理系统</li>
-                    <li>项目背景与需求</li>
-                    <li>硬件系统——ADS1292R SPI通信</li>
-                        <li>SPI通信协议</li>
-                        <li>ADS1292R硬件连接</li>
-                        <li>ADS1292R数据读取</li>
-                    <li>MATLAB算法验证</li>
-                        <li>原始信号与频谱分析</li>
-                        <li>直流陷波处理</li>
-                        <li>FIR低通滤波器设计</li>
-                    <li>STM32嵌入式实现</li>
-                        <li>CMSIS-DSP FFT频谱计算</li>
-                        <li>FIR滤波器嵌入式部署</li>
-                        <li>LCD实时心电波形绘制</li>
-                    <li>信号处理链</li>
-                    <li>Pan-Tompkins算法数学表达</li>
-                    <li>自适应阈值策略</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>信号与系统课程拓展项目</td></tr>
+        <tr><td><strong>技术栈</strong></td><td>STM32F4, ADS1292R, SPI通信, CMSIS-DSP, MATLAB</td></tr>
+        <tr><td><strong>核心技术</strong></td><td>ADS1292R芯片SPI采集、FIR/IIR数字滤波、FFT频谱分析、</td></tr>
+        <tr><td></td><td>Pan-Tompkins R波检测、LCD实时波形显示</td></tr>
+        <tr><td><strong>硬件平台</strong></td><td>STM32F407 + ADS1292R心电前端 + LCD显示屏</td></tr>
+        <tr><td><strong>输入</strong></td><td>ECG心电信号（采样率500Hz, 24bit ADC）</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/heart-rate/pages/page_054.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_055.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_056.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_057.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_058.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_059.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_060.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/heart-rate/pages/page_061.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目背景与需求</h2>
+    <p>
+        本项目设计并实现了一套<strong>完整的心电信号采集与处理系统</strong>，从硬件层的ADS1292R芯片SPI通信、到信号处理层的多级数字滤波、再到应用层的心率计算与LCD实时显示。项目要求：
+        </p>
+    <ol>
+        <li>ADS1292R芯片通过SPI读取心电信号，能调用内部测试信号验证通信正确性</li>
+        <li>数字滤波处理：通带截止频率40Hz（衰减3dB）、阻带截止频率50Hz（衰减<em class="math">≥</em>40dB）、采样频率500Hz</li>
+        <li>滤波后信号分析峰峰值、心率等特征</li>
+        <li>处理后的信号及心电特征实时显示在LCD屏幕上</li>
+        <li>能够采集人体真实ECG信号并显示</li>
+    </ol>
+
+    <h2>2 &nbsp; 硬件系统——ADS1292R SPI通信</h2>
+
+    <h3>2.1 &nbsp; SPI通信协议</h3>
+    <p>
+        ADS1292R采用<strong>SPI全双工通信</strong>，STM32作为主设备，ADS1292R作为从设备。SPI接口使用4根信号线：MOSI、MISO、SCLK、CS。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_0.png" alt="SPI通信时序——CPOL=1/CPHA=1模式" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; SPI通信时序——CPOL=1/CPHA=1模式</div>
+    </div>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_35.png" alt="SPI主从设备移位寄存器数据交换原理" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 2 &nbsp; SPI主从设备移位寄存器数据交换原理</div>
+    </div>
+
+    <h3>2.2 &nbsp; ADS1292R硬件连接</h3>
+    <p>
+        ADS1292R传感器模块共12个输出引脚，关键连接如下：
+        </p>
+    <table>
+        <tr><th><strong>引脚</strong></th><th><strong>功能</strong></th><th><strong>连接</strong></th></tr>
+        <tr><td>SPI\<sub>S</sub>CK</td><td>SPI时钟信号</td><td>STM32 SPI\<sub>C</sub>LK</td></tr>
+        <tr><td>SPI\<sub>M</sub>ISO</td><td>数据输出（从<em class="math">→</em>主）</td><td>STM32 SPI\<sub>M</sub>ISO</td></tr>
+        <tr><td>SPI\<sub>M</sub>OSI</td><td>数据输入（主<em class="math">→</em>从）</td><td>STM32 SPI\<sub>M</sub>OSI</td></tr>
+        <tr><td>SPI\<sub>C</sub>S0</td><td>片选信号</td><td>STM32 GPIO</td></tr>
+        <tr><td>ADS\<sub>D</sub>RDY</td><td>数据就绪中断</td><td>STM32 外部中断</td></tr>
+        <tr><td>ADS\<sub>S</sub>TART</td><td>开始采集</td><td>STM32 GPIO</td></tr>
+        <tr><td>ADS\<sub>P</sub>WDN</td><td>复位/掉电</td><td>STM32 GPIO</td></tr>
+        <tr><td>+5V</td><td>电源</td><td>STM32 5V输出</td></tr>
+    </table>
+    <p>
+        
+        </p>
+
+    <h3>2.3 &nbsp; ADS1292R数据读取</h3>
+    <p>
+        SPI读取ADS1292R的原始数据帧格式为：3字节状态 + 3字节通道1数据 + 3字节通道2数据，共9字节。24位有符号数需要扩展为32位：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">ADS1292R SPI数据读取与24位符号扩展</div>
+        <pre>// 发送读取数据命令
+void ADS1292_ReadData(int32_t *ch1_data) {
+    uint8_t buff[10];
+    // 发送 RDATA 命令 (0x12)
+    ADS1292_SendCommand(CMD_RDATA);
+
+    // 读取 9 字节: 3字节状态 + 3字节CH1 + 3字节CH2
+    HAL_SPI_Receive(&amp;hspi1, &amp;buff[1], 9, 100);
+
+    // 提取通道1的24位数据 (高字节在前)
+    int32_t raw = ((int32_t)buff[4] &lt;&lt; 16)
+               | ((int32_t)buff[5] &lt;&lt; 8)
+               | ((int32_t)buff[6]);
+
+    // 24位有符号数扩展为32位 (补码符号位扩展)
+    if (raw &amp; 0x800000) {      // bit23 = 1 表示负数
+        raw |= 0xFF000000;     // 高8位补1
+    }
+
+    *ch1_data = raw;
+}</pre>
+    </div>
+    <p>
+        
+        </p>
+
+    <h2>3 &nbsp; MATLAB算法验证</h2>
+    <p>
+        在部署到嵌入式平台之前，先在MATLAB环境中完成算法验证。
+        </p>
+
+    <h3>3.1 &nbsp; 原始信号与频谱分析</h3>
+    <p>
+        将ADS1292R采集的原始信号通过串口导出为CH1.txt文件，在MATLAB中进行FFT频谱分析：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_30.png" alt="原始ECG信号频谱图——可见0Hz直流分量、50Hz工频干扰及高频噪声" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 3 &nbsp; 原始ECG信号频谱图——可见0Hz直流分量、50Hz工频干扰及高频噪声</div>
+    </div>
+
+    <h3>3.2 &nbsp; 直流陷波处理</h3>
+    <p>
+        设计0Hz陷波器滤除直流分量：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_29.png" alt="直流陷波前后频谱对比——左：陷波后（红），右：原始频谱（蓝），0Hz处直流分量被有效滤除" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; 直流陷波前后频谱对比——左：陷波后（红），右：原始频谱（蓝），0Hz处直流分量被有效滤除</div>
+    </div>
+
+    <h3>3.3 &nbsp; FIR低通滤波器设计</h3>
+    <p>
+        根据设计指标（通带40Hz/3dB、阻带50Hz/40dB、采样500Hz），使用MATLAB <code>filterDesigner</code>工具设计FIR数字低通滤波器：
+        </p>
+    <ul>
+        <li><strong>窗函数</strong>：Chebyshev窗（在给定窗口长度下提供最小主瓣宽度）</li>
+        <li><strong>滤波器阶数</strong>：81阶（当前点及前80个点加权求和）</li>
+        <li><strong>主要优势</strong>：频域主瓣振幅波动最小化，过渡带陡峭</li>
+    </ul>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_26.png" alt="FIR低通滤波前后频谱对比——左：滤波前（红），右：FIR滤波后（蓝），50Hz以上全部有效抑制" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; FIR低通滤波前后频谱对比——左：滤波前（红），右：FIR滤波后（蓝），50Hz以上全部有效抑制</div>
+    </div>
+
+    <h2>4 &nbsp; STM32嵌入式实现</h2>
+
+    <h3>4.1 &nbsp; CMSIS-DSP FFT频谱计算</h3>
+    <p>
+        利用ARM CMSIS-DSP库实现1024点FFT频谱计算，在LCD上实时显示频谱：
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/heart-rate/heart_8.png" alt="FFT计算核心代码——CMSIS-DSP textttarm\<sub>c</sub>fft\<sub>f</sub>32" onclick="openLightbox(this)">
+            <div class="figure-caption">FFT计算核心代码——CMSIS-DSP textttarm\<sub>c</sub>fft\<sub>f</sub>32</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/heart-rate/heart_7.png" alt="LCD频谱绘制——textttDraw\<sub>S</sub>pectrum" onclick="openLightbox(this)">
+            <div class="figure-caption">LCD频谱绘制——textttDraw\<sub>S</sub>pectrum</div>
+        </div>
+    </div>
+
+    <h3>4.2 &nbsp; FIR滤波器嵌入式部署</h3>
+    <p>
+        将MATLAB设计的81阶FIR滤波器系数导出为C数组，部署到STM32：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_20.png" alt="FIR滤波器系数数组（81阶Chebyshev窗）与FFT实例定义" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 8 &nbsp; FIR滤波器系数数组（81阶Chebyshev窗）与FFT实例定义</div>
+    </div>
+
+    <h3>4.3 &nbsp; LCD实时心电波形绘制</h3>
+    <div class="figure">
+        <img src="../assets/images/heart-rate/heart_9.png" alt="LCD实时波形绘制函数——textttdrawCurve" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 9 &nbsp; LCD实时波形绘制函数——textttdrawCurve</div>
+    </div>
+
+    <h2>5 &nbsp; 信号处理链</h2>
+    <p>
+        ECG心电信号从原始采集到BPM输出的完整处理流程：
+        </p>
+    <ol>
+        <li><strong>信号采集</strong>：ADS1292R通过SPI读取24位原始ECG数据，采样率500Hz</li>
+        <li><strong>直流陷波</strong>：滤除0Hz直流分量（电极偏置电压）</li>
+        <li><strong>FIR低通滤波</strong>（0–40Hz）：81阶Chebyshev窗FIR，去除50Hz工频及高频噪声</li>
+        <li><strong>50Hz工频陷波</strong>：二阶IIR陷波器进一步消除电网工频干扰</li>
+        <li><strong>Pan-Tompkins R波检测算法</strong>： [label=(alph*)]</li>
+        <li><strong>五点差分</strong>：突出QRS波群的快速斜率变化</li>
+        <li><strong>平方运算</strong>：增强大斜率区域，抑制小信号</li>
+        <li><strong>滑动窗口积分</strong>：窗口宽度<em class="math">≈</em>150ms，平滑包络轮廓</li>
+        <li><strong>自适应双阈值检测</strong>：动态调整阈值，识别R波峰值位置</li>
+        <li><strong>BPM计算</strong>：统计相邻R波间隔计算实时心率</li>
+        <li><strong>LCD显示</strong>：实时绘制滤波后心电波形、频谱图、心率数值</li>
+    </ol>
+
+    <h2>6 &nbsp; Pan-Tompkins算法数学表达</h2>
+    <p>
+        <strong>五点差分</strong>（突出QRS斜率）：
+        </p>
+    <div class="formula">y[n] = (1)/(8)2x[n] + x[n-1] - x[n-3] - 2x[n-4]</div>
+    <p>
+        <strong>平方增强</strong>：
+        </p>
+    <div class="formula">z[n] = y[n]<sup>2</sup></div>
+    <p>
+        <strong>滑动窗口积分</strong>（<em class="math">N ≈ 0.15 × f<sub>s</sub></em>）：
+        </p>
+    <div class="formula">w[n] = (1)/(N)Σ<sub>k=0</sub><sup>N-1</sup> z[n-k]</div>
+    <p>
+        <strong>心率计算</strong>：
+        </p>
+    <div class="formula">BPM = (60 × f<sub>s</sub>)/(overlineRR)</div>
+    <p>
+        其中 <em class="math">overlineRR</em> 为平均R-R间期采样点数，<em class="math">f<sub>s</sub></em> 为采样频率。
+        </p>
+
+    <h2>7 &nbsp; 自适应阈值策略</h2>
+    <p>
+        Pan-Tompkins算法的关键在于<strong>自适应双阈值</strong>机制：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">Pan-Tompkins自适应阈值R波检测</div>
+        <pre>% 初始化阈值
+SPKI = max(signal(1:2*fs));   % 信号峰值初始估计
+NPKI = mean(signal(1:2*fs));  % 噪声峰值初始估计
+THR1 = NPKI + 0.25*(SPKI - NPKI); % 检测阈值
+THR2 = 0.5 * THR1;            % 回搜阈值
+
+R_peaks = [];
+for i = 2:length(signal)-1
+    if signal(i) &gt; signal(i-1) &amp;&amp; signal(i) &gt; signal(i+1)
+        if signal(i) &gt; THR1
+            % 检测到R波
+            R_peaks = [R_peaks, i];
+            % 更新信号峰值估计
+            SPKI = 0.125*signal(i) + 0.875*SPKI;
+        else
+            % 更新噪声峰值估计
+            NPKI = 0.125*signal(i) + 0.875*NPKI;
+        end
+        % 动态更新阈值
+        THR1 = NPKI + 0.25*(SPKI - NPKI);
+        THR2 = 0.5 * THR1;
+    end
+end
+
+% 计算心率
+RR_intervals = diff(R_peaks);
+BPM = 60 * fs / mean(RR_intervals);
+fprintf(&#x27;心率: %.1f BPM\n&#x27;, BPM);</pre>
+    </div>
 
 
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">心电信号采集演示 1</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/heart-rate-1.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 心电信号采集演示 1</div>
     </div>
-    <div class="video-container">
-        <p class="figure-caption">心电信号采集演示 2</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/heart-rate-2.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 心电信号采集演示 2</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

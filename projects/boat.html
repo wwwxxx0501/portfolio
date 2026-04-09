@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QEA电动船设计与稳性分析</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,47 +21,154 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">QEA电动船设计与稳性分析</h1>
+        <div class="article-meta">
+            <span>薛雅文等（5人团队）</span><span>2024</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
-        <ul>
-                <li>QEA电动船设计与稳性分析</li>
-                    <li>项目概述</li>
-                    <li>船体结构设计</li>
-                    <li>MATLAB稳性分析</li>
-                        <li>船体几何参数化</li>
-                        <li>吃水线迭代与浮心计算</li>
-                        <li>复原力臂与稳性曲线</li>
-                    <li>实船制造与下水测试</li>
-        </ul>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>项目类型</strong></td><td>QEA（Quantitative Engineering Analysis）课程项目</td></tr>
+        <tr><td><strong>项目角色</strong></td><td>结构设计与稳性计算</td></tr>
+        <tr><td><strong>核心工具</strong></td><td>SolidWorks / MATLAB / Altium Designer</td></tr>
+    </table>
     </div>
 
-    <img src="../assets/images/boat/pages/page_076.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/boat/pages/page_077.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/boat/pages/page_078.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/boat/pages/page_079.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/boat/pages/page_080.png" alt="PDF Page" class="pdf-page">
+    <h2>1 &nbsp; 项目概述</h2>
+    <p>
+        本项目为QEA课程综合设计，要求从零设计并制造一艘电动船，完成水面自主航行。项目涵盖船体结构设计（SolidWorks三维建模）、流体力学稳性分析（MATLAB数值计算）、供电与驱动系统设计、以及实船制造与下水测试。
+        </p>
+
+    <h2>2 &nbsp; 船体结构设计</h2>
+    <p>
+        采用SolidWorks进行船体三维建模，船体结构由以下零部件组成：
+        </p>
+    <ul>
+        <li><strong>船首/船尾挡板</strong>：流线型曲面设计，减小水阻</li>
+        <li><strong>龙骨框架</strong>："V"型截面肋骨+纵向龙骨杆，提供结构强度</li>
+        <li><strong>电机支架</strong>：带安装孔的L型支架，固定推进电机</li>
+        <li><strong>舵机支架</strong>：矩形框架结构，安装舵机与连杆</li>
+    </ul>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/boat/boat_10.png" alt="船体骨架三维装配模型" onclick="openLightbox(this)">
+            <div class="figure-caption">船体骨架三维装配模型</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/boat/boat_11.png" alt="船首曲面挡板零件" onclick="openLightbox(this)">
+            <div class="figure-caption">船首曲面挡板零件</div>
+        </div>
+    </div>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/boat/boat_8.png" alt="电机/舵机安装支架" onclick="openLightbox(this)">
+            <div class="figure-caption">电机/舵机安装支架</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/boat/boat_9.png" alt="舵臂连接件" onclick="openLightbox(this)">
+            <div class="figure-caption">舵臂连接件</div>
+        </div>
+    </div>
+
+    <h2>3 &nbsp; MATLAB稳性分析</h2>
+    <p>
+        船舶稳性是安全航行的核心指标。本项目采用MATLAB进行数值化稳性分析，核心思路为：通过离散化船体网格，在不同横倾角下迭代求解吃水线位置，进而计算浮心坐标与复原力臂（GZ值）。
+        </p>
+
+    <h3>3.1 &nbsp; 船体几何参数化</h3>
+    <p>
+        采用幂函数截面描述船体横截面形状，通过参数 <code>hull.width</code>、<code>hull.deep</code>、<code>hull.n</code> 控制切片宽度、深度与曲线形状：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_21.png" alt="MATLAB船体参数化定义" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 5 &nbsp; MATLAB船体参数化定义</div>
+    </div>
+    <p>
+        <code>getHull()</code> 函数将参数化截面映射到离散网格上，生成布尔矩阵标记船体内部区域：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_20.png" alt="getHull()函数——船体几何网格化" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 6 &nbsp; getHull()函数——船体几何网格化</div>
+    </div>
+
+    <h3>3.2 &nbsp; 吃水线迭代与浮心计算</h3>
+    <p>
+        对于给定横倾角，需找到满足重力=浮力的吃水线位置。<code>getwaterline2()</code> 函数通过 while 循环逐步抬升吃水线，直到浸没体积产生的浮力等于船重：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_19.png" alt="吃水线迭代求解函数" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 7 &nbsp; 吃水线迭代求解函数</div>
+    </div>
+    <p>
+        浮心坐标由 <code>bofy2()</code> 和 <code>bofz2()</code> 分别计算Y/Z方向的浮心偏移：
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/boat/boat_17.png" alt="浮心Y坐标计算" onclick="openLightbox(this)">
+            <div class="figure-caption">浮心Y坐标计算</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/boat/boat_18.png" alt="浮心Z坐标计算" onclick="openLightbox(this)">
+            <div class="figure-caption">浮心Z坐标计算</div>
+        </div>
+    </div>
+
+    <h3>3.3 &nbsp; 复原力臂与稳性曲线</h3>
+    <p>
+        复原力臂 <em class="math">GZ</em> 是衡量船舶稳性的关键指标，定义为浮心相对重心的横向力臂。对不同横倾角 <em class="math">θ ∈ [0°, 180°]</em> 扫描，计算各角度的 <em class="math">GZ</em> 值绘制稳性曲线。航向角修正通过以下公式实现：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_14.png" alt="角度修正与航向计算代码" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 10 &nbsp; 角度修正与航向计算代码</div>
+    </div>
+    <p>
+        稳性分析的关键结论：重心低→定倾高度（GM）大→复原力臂（GZ）大→稳度好；反之则稳度差。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_13.png" alt="GZ稳性曲线（不同重心高度对比）" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 11 &nbsp; GZ稳性曲线（不同重心高度对比）</div>
+    </div>
+
+    <h2>4 &nbsp; 实船制造与下水测试</h2>
+    <p>
+        根据SolidWorks三维模型，采用激光切割木板+蓝色防水胶带外蒙皮方案制造实船。实测结果验证了稳性分析的有效性。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/boat/boat_5.jpeg" alt="实船制造成品" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 12 &nbsp; 实船制造成品</div>
+    </div>
 
 
-    <h2>项目视频</h2>
-    <div class="video-container">
-        <p class="figure-caption">电动船航行演示</p>
-        <video controls preload="metadata" style="width:100%; max-width:800px;">
+    <h2>演示视频</h2>
+    <div class="figure">
+        <video controls style="width:100%; border-radius:4px;">
             <source src="../assets/videos/boat.mp4" type="video/mp4">
         </video>
+        <div class="figure-caption">Video &nbsp; 电动船航行演示</div>
     </div>
 
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

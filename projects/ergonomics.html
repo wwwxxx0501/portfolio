@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工效学课程项目——隧道洪涝救灾机器人人机交互界面设计</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,47 +21,169 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">工效学课程项目——隧道洪涝救灾机器人人机交互界面设计</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>课程</strong></td><td>工效学（人因工程）</td></tr>
+        <tr><td><strong>研究课题</strong></td><td>隧道洪涝救灾机器人界面复杂度与拟人化程度对救援效能的影响</td></tr>
+        <tr><td><strong>核心方法</strong></td><td>Unity场景构建 / 被试内实验设计 / NASA-TLX认知负荷量表</td></tr>
+        <tr><td><strong>辅助研究</strong></td><td>博物馆展签信息分层设计的人因分析</td></tr>
+    </table>
+    </div>
+    <p>
+        工效学课程项目围绕"人–机器人交互"展开系统研究，分为两个部分：(1) 主体项目——救灾机器人交互界面的实验研究；(2) 辅助案例——博物馆展签信息设计的人因分析。
+        </p>
+
+    <h2>1 &nbsp; 研究背景：隧道洪涝的极端救援需求</h2>
+    <p>
+        隧道洪灾（如郑州京广隧道2021、广州白云隧道2024）具有空间封闭、水位上涨迅速、能见度极低（0.3–1 m）等极端特征。远程操控救灾机器人是替代人类进入高危水域的关键手段，但操作者面临严峻的信息获取与认知负荷挑战：
+        </p>
+    <ul>
+        <li>水体混有泥沙油污，摄像头画面高度退化</li>
+        <li>单一视角深度线索不足，无法准确判断距离</li>
+        <li>多任务并行（导航+搜索+物资投放）导致认知过载</li>
+    </ul>
+
+    <h2>2 &nbsp; 研究设计：用户需求分析与实验框架</h2>
+
+    <h3>2.1 &nbsp; 双角色需求挖掘</h3>
+    <p>
+        通过访谈法与焦点小组法，系统梳理两类关键角色的需求：
+        </p>
+    <p>
+        <strong>操作者需求</strong>：(1) 环境感知——准确感知障碍物分布与水流状态；(2) 操控精度——在浑浊水体中精确控制运动路径；(3) 认知负荷管理——避免信息过载，关键信息突出显示；(4) 任务协作——与后方指挥中心高效沟通。
+        </p>
+    <p>
+        <strong>被困人员需求</strong>：(1) 心理安全——能识别接近物体为救援设备；(2) 物理安全——机器人不造成二次伤害；(3) 互动沟通——传达自身状况。
+        </p>
+
+    <h3>2.2 &nbsp; 界面复杂度渐进设计</h3>
+    <p>
+        基于需求分析，设计三级复杂度界面（非简单二元对立，而是逐步叠加信息要素）：
+        </p>
+    <ol>
+        <li><strong>基础模拟界面</strong>：单一主摄像头画面，暗光低可视度，无辅助信息——模拟最原始救援状态</li>
+        <li><strong>信息叠加界面</strong>（中等复杂度）：新增二维小地图、风险区域标注、AI语音提示、机器人姿态自稳定</li>
+        <li><strong>高信息密度界面</strong>（高复杂度）：第三人称视角(3PP)、声呐探测、多源信息融合、VR沉浸式操控</li>
+    </ol>
+
+    <h3>2.3 &nbsp; 拟人化程度设计</h3>
+    <ul>
+        <li><strong>功能导向型</strong>（低拟人化）：流线型机身，高对比度荧光配色，通过指示灯传递状态</li>
+        <li><strong>拟人化叠加型</strong>（高拟人化）：接入DeepSeek大模型语音反馈，姿态/动作表达意图，VR动作映射</li>
+    </ul>
+
+    <h2>3 &nbsp; Unity仿真实验</h2>
+
+    <h3>3.1 &nbsp; 实验设计</h3>
+    <p>
+        采用被试内实验设计（Within-subject Design），每名被试在不同条件组合下完成同一救援任务。设置8个二水平自变量：
+        </p>
+    <table>
+        <tr><th><strong>自变量</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>视野亮暗</td><td>暗光（真实洪涝条件） vs 明亮（界面增强）</td></tr>
+        <tr><td>机器人稳态</td><td>姿态不稳定（水流扰动） vs 姿态稳定</td></tr>
+        <tr><td>小地图</td><td>隐藏 vs 显示</td></tr>
+        <tr><td>水位信息</td><td>不显示 vs 显示</td></tr>
+        <tr><td>视角模式</td><td>第一人称(1PP) vs 第三人称(3PP)</td></tr>
+        <tr><td>投放次数</td><td>不限制 vs 限制</td></tr>
+        <tr><td>AI信息方式</td><td>语音提示 vs 语音+文字</td></tr>
+        <tr><td>操作方式</td><td>键鼠 / 手柄 / VR交互</td></tr>
+    </table>
+    <p>
+        任务场景：Unity构建200 m虚拟隧道，水下能见度0.5–2 m渐变，10+辆被淹没车辆随机分布，被试需完成导航<em class="math">→</em>搜索<em class="math">→</em>物资投放。
+        </p>
+
+    <h3>3.2 &nbsp; 因变量测量</h3>
+    <ul>
+        <li><strong>任务绩效</strong>：完成时间（系统自动记录）、投放错误次数</li>
+        <li><strong>认知负荷</strong>：参考NASA-TLX的0–10分主观评分（脑力负荷、努力程度、时间压力、头晕程度等）</li>
+        <li><strong>主观体验</strong>：SUS系统易用性量表、TAM技术接受模型、半结构化访谈</li>
+    </ul>
+
+    <h2>4 &nbsp; 核心实验发现</h2>
+
+    <h3>4.1 &nbsp; 发现1：机器人稳态是效率的"基座"</h3>
+    <p>
+        任务完成时间分布在34–110 s区间。<strong>机器人运动稳定性</strong>决定效率下限（平均缩短20–25 s），视觉质量+认知外化工具（小地图、AI提示）决定效率上限。当系统行为不可预测时，<strong>任何界面优化都会失效</strong>。
+        </p>
+
+    <h3>4.2 &nbsp; 发现2：AI辅助存在"情境适配区间"</h3>
+    <ul>
+        <li>轻度负荷场景：语音提示即可有效接收</li>
+        <li>中等负荷场景：语音+文字提示有效降低努力与时间压力评分（降1–2分）</li>
+        <li>极高负荷场景：纯文字信息处理困难，被试反映"来不及看"</li>
+    </ul>
+
+    <h3>4.3 &nbsp; 发现3：小地图作为"外部化认知支架"</h3>
+    <p>
+        引入小地图后NASA-TLX综合评分平均下降1–2分。机制：将"大脑内部的空间记忆与推理"转变为"外部视觉的直接检索"。但在任务简单+机器人稳态条件下，小地图的固定存在反而成为干扰。
+        </p>
+
+    <h3>4.4 &nbsp; 发现4：第三人称视角显著降低晕动症</h3>
+    <p>
+        引入3PP后平均头晕评分从7.3分降至3.6分（降低51%）。机制：将视觉输入识别为"他者运动"而非"自我运动"，避免与静止身体前庭信号的冲突。
+        </p>
+
+    <h3>4.5 &nbsp; 发现5：拟人化呈"倒U型"效应</h3>
+    <ul>
+        <li>低拟人化（键鼠）：逻辑清晰、错误率可控，但直觉性不足</li>
+        <li>中等拟人化（VR）：在直觉性、控制精度与生理舒适性间取得最佳平衡</li>
+        <li>高拟人化（1PP强沉浸）：增强沉浸感但引发视觉–前庭冲突，认知负荷上升</li>
+    </ul>
+
+    <h2>5 &nbsp; 辅助研究：博物馆展签信息分层的人因分析</h2>
+    <p>
+        除主体实验外，项目还对<strong>博物馆展签信息设计</strong>进行了人因分析，前往湖北省博物馆实地调研：
+        </p>
+    <ul>
+        <li>现场观察20位随机观众：信息过少/过多的展签停留<em class="math"><</em>10 s，信息适中展签停留<em class="math">></em>30 s</li>
+        <li>问卷调查28份：100%选择"展品名称"为首要关注，76%期望字数<em class="math"><</em>150字</li>
+        <li>最受欢迎展签类型（69.23%）：信息适中、结构清晰型（C类）</li>
+    </ul>
+    <p>
+        <strong>结论</strong>：有效展签需具备三个特点——具象清晰的描述、适中简洁的篇幅、便于扫读的结构。
+        </p>
+
+    <h2>6 &nbsp; 设计优化建议</h2>
+    <div class="info-box">
+        <div class="info-box-title">核心结论</div>
         <ul>
-                <li>工效学课程项目——隧道洪涝救灾机器人人机交互界面设计</li>
-                    <li>研究背景：隧道洪涝的极端救援需求</li>
-                    <li>研究设计：用户需求分析与实验框架</li>
-                        <li>双角色需求挖掘</li>
-                        <li>界面复杂度渐进设计</li>
-                        <li>拟人化程度设计</li>
-                    <li>Unity仿真实验</li>
-                        <li>实验设计</li>
-                        <li>因变量测量</li>
-                    <li>核心实验发现</li>
-                        <li>发现1：机器人稳态是效率的"基座"</li>
-                        <li>发现2：AI辅助存在"情境适配区间"</li>
-                        <li>发现3：小地图作为"外部化认知支架"</li>
-                        <li>发现4：第三人称视角显著降低晕动症</li>
-                        <li>发现5：拟人化呈"倒U型"效应</li>
-                    <li>辅助研究：博物馆展签信息分层的人因分析</li>
-                    <li>设计优化建议</li>
+            <li><strong>稳态优先</strong>：机器人运动稳定性是所有交互优化的"生效前提"</li>
+            <li><strong>分层自适应</strong>：视觉信息根据环境照度与任务类型动态切换视角策略</li>
+            <li><strong>界面复杂度存在最优区间</strong>：并非"越简单越好"，适中复杂度+清晰结构最优</li>
+            <li><strong>拟人化的核心是映射清晰度</strong>：映射的清晰度应优先于形态的拟真度</li>
+            <li><strong>AI作为"认知安全网"</strong>：在极端场景下提供预设方案甚至一键接管选项</li>
         </ul>
     </div>
 
-    <img src="../assets/images/ergonomics/pages/page_095.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/ergonomics/pages/page_096.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/ergonomics/pages/page_097.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/ergonomics/pages/page_098.png" alt="PDF Page" class="pdf-page">
 
-
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>

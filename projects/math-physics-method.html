@@ -5,35 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数学物理方法课程项目——圆形薄膜振动的理论分析与实验验证</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .pdf-page {
-            width: 100%;
-            max-width: 860px;
-            display: block;
-            margin: 0 auto;
-            border: 1px solid var(--border-light);
-        }
-        .toc-box {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 4px;
-        }
-        .toc-box h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        .toc-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc-box li {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
 
@@ -50,51 +21,267 @@
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">数学物理方法课程项目——圆形薄膜振动的理论分析与实验验证</h1>
+        <div class="article-meta">
+            <span>薛雅文</span><span>2025</span>
+        </div>
     </div>
 
-    <div class="toc-box">
-        <h3>目录</h3>
+    <div class="info-box">
+        <div class="info-box-title">项目概况</div>
+    <table>
+        <tr><td><strong>课程</strong></td><td>数学物理方法</td></tr>
+        <tr><td><strong>研究课题</strong></td><td>圆形张紧薄膜振动的Bessel模态理论分析与Chladni实验验证</td></tr>
+        <tr><td><strong>核心方法</strong></td><td>分离变量法 / Bessel函数 / COMSOL仿真 / MATLAB / 扫频盐粒法</td></tr>
+        <tr><td><strong>关键结论</strong></td><td>频率比定律验证误差<em class="math"><</em><em class="math">2%</em>，成功显影3组模态节线</td></tr>
+    </table>
+    </div>
+    <p>
+        本项目以羊皮鼓膜为研究对象，围绕"圆形张紧薄膜在不同激励条件下呈现何种振动模态"这一核心问题，经历了从时域瞬态分析到频域稳态分析的<strong>研究路线迭代</strong>，最终通过扫频+Chladni盐粒法成功验证了Bessel模态理论。
+        </p>
+
+    <h2>1 &nbsp; 问题引入：单次敲击的时域瞬态分析</h2>
+    <p>
+        研究最初的兴趣源于最直观的物理好奇：当一个圆形鼓膜受到一次短促敲击时，其膜面位移如何随时间演化？
+        </p>
+    <p>
+        将实际羊皮鼓抽象为理想二维圆形张紧薄膜，设膜面密度<em class="math">ρ<sub>s</sub></em>（kg/m<em class="math"><sup>2</sup></em>），张力<em class="math">T</em>（N/m），膜上横波传播速度<em class="math">c = √T/ρ<sub>s</sub></em>。膜面任意点<em class="math">(r,θ)</em>的位移<em class="math">u(r,θ,t)</em>满足二维波动方程：
+        </p>
+    <p>
+        \[
+        (∂<sup>2</sup> u)/(∂ t<sup>2</sup>) = c<sup>2</sup> ∇<sup>2</sup> u
+        \]
+        </p>
+    <p>
+        边界条件为固定边界（Dirichlet条件）：<em class="math">u(a, θ, t) = 0</em>。
+        </p>
+    <div class="figure">
+        <img src="../assets/images/math-physics-method/mathphys_001.png" alt="圆形薄膜COMSOL建模几何及坐标设定" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 1 &nbsp; 圆形薄膜COMSOL建模几何及坐标设定</div>
+    </div>
+
+    <h3>1.1 &nbsp; 分离变量法求解本征模态</h3>
+    <p>
+        采用分离变量法<em class="math">u = R(r)Theta(θ)T(t)</em>，径向部分满足<em class="math">m</em>阶Bessel方程，由于膜心<em class="math">r=0</em>处位移有限，舍弃第二类Bessel函数<em class="math">Y<sub>m</sub></em>，仅保留第一类Bessel函数<em class="math">J<sub>m</sub></em>：
+        </p>
+    <p>
+        \[
+        R<sub>mn</sub>(r) = J<sub>m</sub>(α<sub>mn</sub>)/(a) r
+        \]
+        </p>
+    <p>
+        其中<em class="math">α<sub>mn</sub></em>为<em class="math">J<sub>m</sub></em>的第<em class="math">n</em>个正零点。空间本征模态为：
+        </p>
+    <p>
+        \[
+        Phi<sub>mn</sub>(r,θ) = J<sub>m</sub>(α<sub>mn</sub>)/(a) r
+        cos(mθ) <br>
+        sin(mθ)
+        \]
+        </p>
+    <p>
+        对应本征频率为：
+        </p>
+    <p>
+        \[
+        f<sub>mn</sub> = (1)/(2π) √(T)/(ρ<sub>s</sub>) · (α<sub>mn</sub>)/(a)
+        \]
+        </p>
+
+    <h3>1.2 &nbsp; COMSOL仿真验证瞬态响应</h3>
+    <p>
+        通过COMSOL构建鼓膜有限元模型，模拟敲击极短时间的正半周期正弦激励，分析圆心位移随时间的变化：
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_003.png" alt="COMSOL仿真模型与激励设定" onclick="openLightbox(this)">
+            <div class="figure-caption">COMSOL仿真模型与激励设定</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_005.png" alt="圆心时域位移曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">圆心时域位移曲线</div>
+        </div>
+    </div>
+    <p>
+        仿真结果与MATLAB理论解高度重合，证明了理论分析的准确性。但同时揭示了时域观测的三大困难：
+        </p>
+    <ol>
+        <li><strong>多模态混叠</strong>：一次敲击同时激发大量模态，时域信号是多频叠加</li>
+        <li><strong>瞬态衰减快</strong>：高阶模态在极短时间窗口内衰减殆尽</li>
+        <li><strong>位移幅值小</strong>：毫米甚至亚毫米级位移，普通设备难以精确采集</li>
+    </ol>
+
+    <h2>2 &nbsp; 研究路线关键迭代：从时域到频域</h2>
+    <div class="info-box">
+        <div class="info-box-title">方法论迭代</div>
+        <p><strong>核心转折</strong>：上述三大困难表明——时域瞬态敲击几乎不可能"看清"单一模态。要验证Bessel模态形状，<strong>必须通过稳态共振把单一模态"筛选"出来</strong>，即从"时域瞬态"迭代为"频域稳态扫频响应"。这一转折是整个研究的方法论核心。</p>
+    </div>
+
+    <h3>2.1 &nbsp; 频域稳态理论：Helmholtz方程与共振筛选</h3>
+    <p>
+        取正弦稳态激励，波动方程转化为非齐次Helmholtz方程。利用本征函数展开，每阶模态的频率响应为：
+        </p>
+    <p>
+        \[
+        c<sub>mn</sub>(ω) = (F<sub>mn</sub>)/((ω<sub>mn</sub><sup>2</sup> - ω<sup>2</sup>) + 2jzeta<sub>mn</sub>ω<sub>mn</sub>ω)
+        \]
+        </p>
+    <p>
+        当驱动频率<em class="math">ω → ω<sub>mn</sub></em>时，分母趋近最小，该模态被显著放大，其他模态贡献弱——这就是<strong>共振筛选机理</strong>，也是Chladni盐粒法可行的根本物理原因。
+        </p>
+
+    <h2>3 &nbsp; 核心验证判据：频率比定律</h2>
+    <p>
+        对同一张鼓膜，材料参数<em class="math">T</em>、<em class="math">ρ<sub>s</sub></em>和半径<em class="math">a</em>均为常数。任意两模态频率之比仅由Bessel零点比决定：
+        </p>
+    <p>
+        \[
+        (f<sub>mn</sub>)/(f<sub>pq</sub>) = (α<sub>mn</sub>)/(α<sub>pq</sub>)
+        \]
+        </p>
+    <p>
+        这一定律的重要意义在于：<strong>无需精确测量难以获取的膜张力或面密度</strong>，只需测量两个共振频率即可与纯数学的Bessel零点比对照。
+        </p>
+    <p>
+        <strong>锚点预测法</strong>：选取<em class="math">(0,2)</em>模态作为锚点（实测<em class="math">f<sub>0,2</sub> = 525</em> Hz），利用频率比定律预测其他模态频率：
+        </p>
+    <table>
+        <tr><th><strong>模态<em class="math">(m,n)</em></strong></th><th><strong>Bessel零点<em class="math">α<sub>mn</strong></em></sub></th><th><strong>节线结构</strong></th><th><strong>预测频率(Hz)</strong></th></tr>
+        <tr><td><em class="math">(0,1)</em></td><td>2.4048</td><td>仅边界圆（基频）</td><td>228.7</td></tr>
+        <tr><td><em class="math">(1,1)</em></td><td>3.8317</td><td>1条直径</td><td>364.5</td></tr>
+        <tr><td><em class="math">(2,1)</em></td><td>5.1356</td><td>2条直径（四瓣）</td><td>488.5</td></tr>
+        <tr><td><em class="math">(0,2)</em></td><td>5.5201</td><td>1个内圈+边界圈</td><td>525（锚点）</td></tr>
+    </table>
+
+    <h2>4 &nbsp; MATLAB仿真：本征模态节线可视化</h2>
+    <p>
+        利用Bessel解析表达式，通过MATLAB生成各模态的理论节线图（Chladni标准答案）。节线由<em class="math">Phi<sub>mn</sub> = 0</em>确定，包括径向节线（<em class="math">m</em>条直径）和角向节线（<em class="math">n-1</em>个同心圆）：
+        </p>
+    <div class="figure">
+        <img src="../assets/images/math-physics-method/mathphys_007.png" alt="MATLAB绘制四组模态的理论节线图——<em class="math">(0,1)</em>全膜同相、<em class="math">(1,1)</em>两半反相、<em class="math">(2,1)</em>四瓣、<em class="math">(0,2)</em>同心双圈" onclick="openLightbox(this)">
+        <div class="figure-caption">Fig. 4 &nbsp; MATLAB绘制四组模态的理论节线图——<em class="math">(0,1)</em>全膜同相、<em class="math">(1,1)</em>两半反相、<em class="math">(2,1)</em>四瓣、<em class="math">(0,2)</em>同心双圈</div>
+    </div>
+
+    <h2>5 &nbsp; 实验设计：扫频+Chladni盐粒法</h2>
+
+    <h3>5.1 &nbsp; 实验装置</h3>
+    <table>
+        <tr><th><strong>组件</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>鼓膜</td><td>羊皮鼓，半径<em class="math">a ≈ 0.1</em> m，边缘固定于木框</td></tr>
+        <tr><td>激励源</td><td>手机/电脑音频软件生成单频正弦波，音箱播放</td></tr>
+        <tr><td>音箱</td><td>置于鼓膜正下方约5–10 cm，声压近似轴对称</td></tr>
+        <tr><td>显影介质</td><td>食盐颗粒，均匀薄撒</td></tr>
+        <tr><td>记录设备</td><td>手机相机俯拍</td></tr>
+    </table>
+
+    <h3>5.2 &nbsp; 盐粒显影机理</h3>
+    <p>
+        盐粒在振动膜面上的运动遵循：大振幅区域盐粒受周期性惯性力被"抖"离，而节线（<em class="math">Phi = 0</em>）附近振幅最小，盐粒稳定停留并累积。因此稳态后<strong>盐粒聚集位置<em class="math">≈</em>理论节线位置</strong>。
+        </p>
+
+    <h2>6 &nbsp; 实验结果与理论对照</h2>
+
+    <h3>6.1 &nbsp; 锚点模态<em class="math">(0,2)</em> @ 525 Hz——同心双圈</h3>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_012.jpg" alt="实验盐粒图样——同心双圈清晰可见" onclick="openLightbox(this)">
+            <div class="figure-caption">实验盐粒图样——同心双圈清晰可见</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_013.png" alt="理论模态节线对照" onclick="openLightbox(this)">
+            <div class="figure-caption">理论模态节线对照</div>
+        </div>
+    </div>
+
+    <h3>6.2 &nbsp; 模态<em class="math">(1,1)</em> @ 365–370 Hz——直径节线</h3>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_016.jpg" alt="实验盐粒图样——"两半区分界"清晰" onclick="openLightbox(this)">
+            <div class="figure-caption">实验盐粒图样——"两半区分界"清晰</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_017.png" alt="理论模态节线对照" onclick="openLightbox(this)">
+            <div class="figure-caption">理论模态节线对照</div>
+        </div>
+    </div>
+
+    <h3>6.3 &nbsp; 模态<em class="math">(0,1)</em>基频——空心圆环</h3>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_014.png" alt="实验盐粒图样" onclick="openLightbox(this)">
+            <div class="figure-caption">实验盐粒图样</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_015.png" alt="理论模态节线对照" onclick="openLightbox(this)">
+            <div class="figure-caption">理论模态节线对照</div>
+        </div>
+    </div>
+
+    <h3>6.4 &nbsp; 模态<em class="math">(2,1)</em>的观测困难与原因分析</h3>
+    <p>
+        <em class="math">(2,1)</em>模态（理论488 Hz）未能稳定显影，实验中445–495 Hz区间图样复杂且不稳定：
+        </p>
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_018.jpg" alt="实验图样——模态混合，未形成稳定四瓣" onclick="openLightbox(this)">
+            <div class="figure-caption">实验图样——模态混合，未形成稳定四瓣</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/math-physics-method/mathphys_019.png" alt="理论节线（2条正交直径）" onclick="openLightbox(this)">
+            <div class="figure-caption">理论节线（2条正交直径）</div>
+        </div>
+    </div>
+    <p>
+        未能显影的原因分析：(1) 488 Hz与525 Hz间隔仅7%，易产生模态竞争；(2) 轴对称声压激励对<em class="math">m=2</em>模态耦合效率低。
+        </p>
+
+    <h2>7 &nbsp; 定量验证汇总</h2>
+    <table>
+        <tr><th><strong>模态对</strong></th><th><strong>理论比值</strong></th><th><strong>实验比值</strong></th><th><strong>相对误差</strong></th><th><strong>吻合度</strong></th></tr>
+        <tr><td><em class="math">f<sub>0,1</sub>/f<sub>0,2</sub></em></td><td>0.436</td><td><em class="math">~</em>0.448</td><td>2.5%</td><td><em class="math">starstarstarstar</em></td></tr>
+        <tr><td><em class="math">f<sub>1,1</sub>/f<sub>0,2</sub></em></td><td>0.694</td><td><em class="math">~</em>0.705</td><td>1.6%</td><td><em class="math">starstarstarstar</em></td></tr>
+        <tr><td><em class="math">f<sub>0,2</sub>/f<sub>0,2</sub></em></td><td>1.000</td><td>1.000</td><td>0%（锚点）</td><td><em class="math">starstarstarstarstar</em></td></tr>
+        <tr><td><em class="math">f<sub>2,1</sub>/f<sub>0,2</sub></em></td><td>0.930</td><td>未稳定</td><td>—</td><td><em class="math">starstar</em></td></tr>
+    </table>
+
+    <h2>8 &nbsp; 实验不足与反思</h2>
+    <ol>
+        <li><strong>激励源频响受限</strong>：音箱在高频段声压输出下降，高阶模态激励能量不足</li>
+        <li><strong>真实阻尼</strong>：空气辐射、膜材料内阻尼、边界摩擦导致高阶模态共振峰被"压低"</li>
+        <li><strong>显影介质局限</strong>：盐粒粒径不均匀、摩擦力影响迁移效率</li>
+        <li><strong>环境扰动</strong>：温湿度变化导致膜张力漂移，影响实验重复性</li>
+    </ol>
+    <div class="info-box">
+        <div class="info-box-title">核心结论</div>
         <ul>
-                <li>数学物理方法课程项目——圆形薄膜振动的理论分析与实验验证</li>
-                    <li>问题引入：单次敲击的时域瞬态分析</li>
-                        <li>分离变量法求解本征模态</li>
-                        <li>COMSOL仿真验证瞬态响应</li>
-                    <li>研究路线关键迭代：从时域到频域</li>
-                        <li>频域稳态理论：Helmholtz方程与共振筛选</li>
-                    <li>核心验证判据：频率比定律</li>
-                    <li>MATLAB仿真：本征模态节线可视化</li>
-                    <li>实验设计：扫频+Chladni盐粒法</li>
-                        <li>实验装置</li>
-                        <li>盐粒显影机理</li>
-                    <li>实验结果与理论对照</li>
-                        <li>锚点模态(0,2) @ 525 Hz——同心双圈</li>
-                        <li>模态(1,1) @ 365–370 Hz——直径节线</li>
-                        <li>模态(0,1)基频——空心圆环</li>
-                        <li>模态(2,1)的观测困难与原因分析</li>
-                    <li>定量验证汇总</li>
-                    <li>实验不足与反思</li>
+            <li>模态形状由Bessel函数<em class="math">J<sub>m</sub></em>与三角函数乘积决定，<em class="math">m</em>为角向节线数，<em class="math">n</em>为径向节线数</li>
+            <li>频率比定律<em class="math">f<sub>mn</sub>/f<sub>pq</sub> = α<sub>mn</sub>/α<sub>pq</sub></em>成功验证，误差<em class="math"><</em><em class="math">2.5%</em></li>
+            <li>时域瞬态<em class="math">→</em>频域稳态的方法迭代，是过渡至可观测实验的关键转折</li>
+            <li>轴对称激励仅能有效耦合<em class="math">m=0</em>模态；非轴对称模态需改进激励方式</li>
         </ul>
     </div>
 
-    <img src="../assets/images/math-physics-method/pages/page_088.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_089.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_090.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_091.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_092.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_093.png" alt="PDF Page" class="pdf-page">
-    <img src="../assets/images/math-physics-method/pages/page_094.png" alt="PDF Page" class="pdf-page">
 
-
+    <p style="margin-top:2rem; text-align:center;">
+        <a href="../index.html">← 返回首页</a>
+    </p>
 </div>
 
-
 <footer class="footer">&copy; 2025&ndash;2026 薛雅文 &middot; 重庆大学国家卓越工程师学院</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="">
+</div>
 
 <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
 window.addEventListener('scroll', () => {
     document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
 });
+function openLightbox(el) {
+    document.getElementById('lightboxImg').src = el.src;
+    document.getElementById('lightbox').classList.add('active');
+}
 </script>
 </body>
 </html>
