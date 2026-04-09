@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工程设计课程项目——Gamma 型斯特林发动机联合仿真</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">工程设计课程项目——Gamma 型斯特林发动机 ADAMS-MATLAB 联合仿真</h1>
+        <div class="article-meta">
+            <span>课程：工程设计（热力学方向）</span>
+            <span>核心工具：SolidWorks / ADAMS / MATLAB Simulink</span>
+            <span>目标：输出功率 ≥ 0.5 W，额定转速 1500 r/min</span>
+        </div>
+        <p class="article-abstract">
+            本项目以 Gamma 型斯特林发动机为对象，完成了从热力学理论建模、结构参数设计、三维建模、多体动力学仿真
+            到 ADAMS-MATLAB 联合仿真的全流程闭环。项目最终通过参数敏感性优化达到 1500 r/min 设计转速目标。
+        </p>
+        <div class="article-keywords"><strong>关键词：</strong>斯特林循环, 史密特理论, 联合仿真, ADAMS, Simulink, 参数敏感性分析</div>
+    </div>
+
+    <h2>1 &nbsp; 热力学建模</h2>
+    <h3>1.1 &nbsp; 斯特林循环四过程</h3>
+    <p>
+        模型基于等温压缩、等容吸热、等温膨胀、等容放热四个基本过程建立，
+        并以史密特理论进行准稳态分析，假设理想气体、等温过程与正弦容积变化。
+        理论计算得到循环做功约 0.2880 J，在理想回热条件下热效率接近 40%。
+    </p>
+
+    <h3>1.2 &nbsp; 参数设计</h3>
+    <table>
+        <thead><tr><th>参数</th><th>数值</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td>活塞直径 DP</td><td>12 mm</td><td>影响受压面积与输出力</td></tr>
+            <tr><td>活塞行程 SP</td><td>11.8 mm</td><td>影响行程容积</td></tr>
+            <tr><td>相位角 α</td><td>90°</td><td>Gamma 型机构关键相位关系</td></tr>
+            <tr><td>温度比 τ=TC/TE</td><td>0.48</td><td>决定热压转换幅值</td></tr>
+        </tbody>
+    </table>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_03.png" alt="理论曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 1 &nbsp; 气压-曲柄角与 p-V 特性曲线</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_04.png" alt="三维模型" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 2 &nbsp; SolidWorks 三维模型与 ADAMS 模型</div>
+        </div>
+    </div>
+
+    <h2>2 &nbsp; 联合仿真平台</h2>
+    <p>
+        在 Simulink 中构建热力子模型，实时根据曲柄角计算瞬时气缸压力、活塞力与输出转矩；
+        ADAMS 负责机械系统多体动力学求解并回传转角、转速，实现双向耦合。
+    </p>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_06.png" alt="联合仿真框图" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 3 &nbsp; ADAMS-Simulink 联合仿真框图</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_07.png" alt="仿真输出曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 4 &nbsp; 转矩与转速仿真结果</div>
+        </div>
+    </div>
+
+    <h2>3 &nbsp; 参数敏感性分析与优化结果</h2>
+    <ul>
+        <li>增大活塞直径：提高有效受压面积与单循环输出功。</li>
+        <li>增大气缸长度：提升行程容积与循环功率。</li>
+        <li>优化飞轮转动惯量：提升速度稳定性并改善动态响应。</li>
+        <li>多轮参数迭代后，达到 1500 r/min 设计目标转速。</li>
+    </ul>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_18.png" alt="优化结果" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 5 &nbsp; 优化后转速提升效果</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/stirling/stirling_21.png" alt="项目总结" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 6 &nbsp; 项目关键结果汇总</div>
+        </div>
+    </div>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

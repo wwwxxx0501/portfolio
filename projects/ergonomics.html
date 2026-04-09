@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工效学课程项目——隧道洪涝救灾机器人人机交互界面设计</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">工效学课程项目——隧道洪涝救灾机器人人机交互界面设计</h1>
+        <div class="article-meta">
+            <span>课程：工效学（人因工程）</span>
+            <span>方法：Unity 场景构建 + 被试内实验 + NASA-TLX</span>
+            <span>主题：界面复杂度与拟人化程度对救援效能影响</span>
+        </div>
+        <p class="article-abstract">
+            项目面向隧道洪涝极端救援场景，研究远程操控机器人的界面设计与认知负荷问题。
+            通过多条件被试内实验分析稳态控制、小地图、视角模式、AI 提示与拟人化程度等变量对任务效率和主观体验的影响，
+            提炼出“稳态优先、分层自适应、适度复杂度、映射清晰优先”的界面设计原则。
+        </p>
+        <div class="article-keywords"><strong>关键词：</strong>人机交互, 工效学, NASA-TLX, Unity, 救援机器人, 认知负荷, 拟人化设计</div>
+    </div>
+
+    <h2>1 &nbsp; 研究背景与实验设计</h2>
+    <p>
+        隧道洪灾场景具有低能见度、高风险、任务并发度高等特征。操作者在“导航 + 搜索 + 投放”的复合任务中
+        面临显著信息处理压力。项目围绕操作者与被困人员双角色需求，构建三级复杂度界面和两档拟人化方案，
+        在 Unity 虚拟隧道中开展系统实验。
+    </p>
+
+    <table>
+        <thead><tr><th>变量维度</th><th>典型条件</th><th>目标</th></tr></thead>
+        <tbody>
+            <tr><td>界面复杂度</td><td>基础 / 信息叠加 / 高密度</td><td>评估信息量与任务表现平衡点</td></tr>
+            <tr><td>视角模式</td><td>1PP / 3PP</td><td>比较晕动症与空间感知</td></tr>
+            <tr><td>AI 信息方式</td><td>语音 / 语音+文字</td><td>观察不同认知负荷下的提示有效性</td></tr>
+            <tr><td>拟人化程度</td><td>功能导向 / 拟人叠加</td><td>分析直觉性与负荷变化</td></tr>
+        </tbody>
+    </table>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/ergonomics/page_095.png" alt="工效学项目页 95" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 1 &nbsp; 项目背景与研究框架</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/ergonomics/page_096.png" alt="工效学项目页 96" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 2 &nbsp; 实验变量与任务设置</div>
+        </div>
+    </div>
+
+    <h2>2 &nbsp; 核心实验发现</h2>
+    <ol>
+        <li><strong>稳态是效率基座</strong>：机器人姿态稳定可显著缩短完成时间，是所有界面优化生效前提。</li>
+        <li><strong>AI 辅助存在适配区间</strong>：中等负荷下“语音+文字”效果最佳，极高负荷下文字信息易过载。</li>
+        <li><strong>小地图是认知支架</strong>：可降低 NASA-TLX 评分，但在简单任务中可能形成额外干扰。</li>
+        <li><strong>3PP 显著减轻晕动症</strong>：平均头晕评分明显下降，改善可操作性。</li>
+        <li><strong>拟人化呈倒 U 型效应</strong>：中等拟人化可平衡沉浸与控制，高拟人化可能增加认知冲突。</li>
+    </ol>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/ergonomics/page_097.png" alt="工效学项目页 97" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 3 &nbsp; 实验发现与数据分析</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/ergonomics/page_098.png" alt="工效学项目页 98" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 4 &nbsp; 设计建议与结论</div>
+        </div>
+    </div>
+
+    <h2>3 &nbsp; 设计建议</h2>
+    <ul>
+        <li>稳态优先：优先提升机器人运动可预测性，再叠加界面增强。</li>
+        <li>分层自适应：根据信息密度与环境条件动态调整显示策略。</li>
+        <li>复杂度有最优区间：不是越简越好，而是“适度 + 结构清晰”。</li>
+        <li>拟人化关注映射清晰：优先动作-意图映射可理解性，而非外形拟真。</li>
+    </ul>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>

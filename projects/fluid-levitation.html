@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数理综合2——振荡容器中流体悬浮现象</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
+        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="article-header">
+        <h1 class="article-title">数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究</h1>
+        <div class="article-meta">
+            <span>课程：数学物理方法综合实践 2</span>
+            <span>方法：理论推导 + 硅油振荡实验 + COMSOL 多相流仿真</span>
+            <span>关键词：Rayleigh-Taylor / Kapitza / Bjerknes</span>
+        </div>
+        <p class="article-abstract">
+            项目研究垂直振荡容器中的反直觉流体悬浮现象，围绕“倒置构型如何稳定”展开理论与实验闭环。
+            从 Rayleigh-Taylor 不稳定性出发，通过 Kapitza 动态稳定化推导出临界激励速度条件，
+            并在频率、横截面积、注射深度三个维度完成实验验证与 COMSOL 对比分析。
+        </p>
+        <div class="article-keywords"><strong>关键词：</strong>流体悬浮, 动态稳定化, Kapitza 效应, 多相流, COMSOL, 法拉第不稳定性</div>
+    </div>
+
+    <h2>1 &nbsp; 理论框架</h2>
+    <h3>1.1 &nbsp; 静态不稳定与振动稳定化</h3>
+    <p>
+        液体位于气体上方时，界面满足 Rayleigh-Taylor 不稳定性，小波数扰动会随时间增长并导致坍塌。
+        引入高频垂直振荡后，系统产生时间平均意义下的稳定化项，形成与卡皮察倒立摆类似的动态稳定机制。
+    </p>
+
+    <blockquote>
+        项目核心推导条件：A<sub>1</sub>ω &gt; √(2gL/π)，即激励速度需超过由容器横向尺度 L 决定的阈值。
+    </blockquote>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_01_01.png" alt="理论背景" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 1 &nbsp; 振荡流体悬浮现象与问题定义</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_11_09.png" alt="理论推导" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 2 &nbsp; 动态稳定化理论推导</div>
+        </div>
+    </div>
+
+    <h2>2 &nbsp; 实验验证</h2>
+    <p>
+        实验装置由有机玻璃容器、振动台、波形发生器、功率放大器与硅油/甘油组成。
+        通过控制频率、振幅与注射深度，观察气液界面的稳定与坍塌边界。
+    </p>
+
+    <ul>
+        <li>频率影响：存在临界频率，低于阈值无法稳定悬浮。</li>
+        <li>横截面积影响：容器尺度越大，所需激励速度越高，与理论式一致。</li>
+        <li>注射深度影响：临界深度与振幅近似满足反比平方关系。</li>
+    </ul>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_27_68.png" alt="实验曲线" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 3 &nbsp; 横截面积与临界激发速度关系</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_29_76.png" alt="注射深度实验" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 4 &nbsp; 临界深度与振幅关系</div>
+        </div>
+    </div>
+
+    <h2>3 &nbsp; COMSOL 仿真对照</h2>
+    <p>
+        建立二维多相流模型，对 70 Hz 与 100 Hz 工况进行对比。结果显示低频时悬浮不稳定，高频时界面更平整，
+        同时在界面近壁面区域观察到显著速度极值，解释了实验中的界面浑浊与边缘剧烈变化。
+    </p>
+
+    <div class="figure-row">
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_45_110.png" alt="仿真结果" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 5 &nbsp; COMSOL 气液界面与速度场结果</div>
+        </div>
+        <div class="figure">
+            <img src="../assets/images/fluid-levitation/levitating_31_84.png" alt="实验对比" onclick="openLightbox(this)">
+            <div class="figure-caption">Fig. 6 &nbsp; 气泡行为与稳定/下沉对比</div>
+        </div>
+    </div>
+
+    <h2>4 &nbsp; 项目视频</h2>
+    <div class="video-container">
+        <video controls preload="metadata" style="max-width:100%">
+            <source src="../assets/videos/fluid-levitation/experiment-process.mp4" type="video/mp4">
+        </video>
+        <div class="video-caption">Video 1 &nbsp; 数理综合2实验流程</div>
+    </div>
+
+    <div class="video-container">
+        <video controls preload="metadata" style="max-width:100%">
+            <source src="../assets/videos/fluid-levitation/experiment-phenomenon.mp4" type="video/mp4">
+        </video>
+        <div class="video-caption">Video 2 &nbsp; 实验现象记录</div>
+    </div>
+
+    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
+</div>
+
+<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
+function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
+</script>
+</body>
+</html>
