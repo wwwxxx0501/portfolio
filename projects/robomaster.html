@@ -3,8 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoboMaster 机械臂视觉伺服系统</title>
+    <title>RoboMaster 视觉伺服引擎（rm-engine）</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pdf-page {
+            width: 100%;
+            max-width: 860px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--border-light);
+        }
+        .toc-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        .toc-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc-box li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
 
@@ -20,408 +49,58 @@
 
 <div class="container">
     <div class="article-header">
-        <h1 class="article-title">RoboMaster 机械臂视觉伺服系统</h1>
-        <div class="article-meta">
-            <span>薛雅文（第一负责人 / 视觉开发）</span>
-            <span>重庆大学 RoboMaster 战队</span>
-            <span>2024.09 – 2025.08</span>
-        </div>
-        <p class="article-abstract">
-            本项目为 RoboMaster 机甲大师超级对抗赛设计并实现了一套在边缘设备上运行的实时机械臂视觉伺服系统。
-            系统采用 eye-in-hand 构型，通过传统视觉流水线（无 GPU 推理）完成目标矿石的检测、定位与抓取。
-            整体流水线在 Intel NUC i5-1135G7 上实现 13.5 ms/帧（约 74 FPS）的处理速度。
-            赛事获省级二等奖（区域赛）与国家级三等奖（全国赛）。
-        </p>
-        <div class="article-keywords">
-            <strong>关键词：</strong>视觉伺服, eye-in-hand, OpenCV, 逆运动学, PnP 位姿估计, 边缘计算, 机械臂控制
-        </div>
+        <h1 class="article-title">RoboMaster 视觉伺服引擎（rm-engine）</h1>
     </div>
 
-    <!-- 1 系统概述 -->
-    <h2>1 &nbsp; 系统概述</h2>
-
-    <h3>1.1 &nbsp; 任务背景</h3>
-    <p>
-        RoboMaster 超级对抗赛中，工程机器人需从矿仓中取出金/银矿石并运送至兑换站。
-        矿石为纯色圆柱体（金色或银色），放置于不同高度的矿仓格位中。机械臂末端安装夹爪，
-        需在运动中完成视觉识别、逼近、对准与抓取。作为第一负责人，本人负责整套视觉系统的算法设计、
-        软件架构与联调部署。
-    </p>
-
-    <h3>1.2 &nbsp; 硬件平台</h3>
-    <table>
-        <thead><tr><th>组件</th><th>型号/规格</th><th>备注</th></tr></thead>
-        <tbody>
-            <tr><td>计算平台</td><td>Intel NUC i5-1135G7</td><td>仅 CPU，无独立 GPU</td></tr>
-            <tr><td>相机</td><td>鱼眼工业相机，3.37 mm F2.8</td><td>eye-in-hand，安装于末端连杆</td></tr>
-            <tr><td>机械臂</td><td>自研 6-DOF 串联臂</td><td>RoboMaster 标准电机</td></tr>
-            <tr><td>通信</td><td>CRC16 串口协议</td><td>NUC ↔ STM32 主控</td></tr>
-        </tbody>
-    </table>
-
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_robot.png" alt="机器人平台" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 1 &nbsp; 工程机器人整体平台</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_arm_target.png" alt="机械臂与目标" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 2 &nbsp; 机械臂末端与矿石目标</div>
-        </div>
-    </div>
-
-    <!-- 2 视觉流水线 -->
-    <h2>2 &nbsp; 视觉流水线</h2>
-    <p>
-        考虑到边缘设备的算力约束（无 GPU），本项目放弃了基于神经网络的检测方案，
-        转而设计了一套纯 OpenCV 的六阶段流水线。以下逐阶段说明其原理与实现。
-    </p>
-
-    <div class="figure">
-        <img src="../assets/images/robomaster/fig_pipeline.png" alt="视觉流水线" onclick="openLightbox(this)">
-        <div class="figure-caption">Fig. 3 &nbsp; 六阶段视觉处理流水线总览</div>
-    </div>
-
-    <h3>2.1 &nbsp; 阶段一：色彩空间变换</h3>
-    <p>
-        原始 BGR 图像同时转换为 HSV 与灰度两个通道。HSV 空间用于按色相（Hue）分割金/银矿石的颜色区域；
-        灰度通道保留亮度梯度信息，为后续边缘检测提供输入。双通道并行处理使得系统在不同光照条件下均具备鲁棒性。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">produce-picture-xyw.cpp — HSV 颜色检测 + 灰度筛选</div>
-        <pre>Mat ProducePictureXYW::color_detection(Mat&amp; img)
-{
-    Mat Mask, imgExtracted, imgHSV;
-    cvtColor(img, imgHSV, COLOR_BGR2HSV);
-    // 蓝色区域掩膜
-    Scalar lower_blue(38, 135, 100);
-    Scalar upper_blue(179, 255, 255);
-    inRange(imgHSV, lower_blue, upper_blue, Mask);
-    // 灰度通道二次筛选
-    Mat imgGray;
-    cvtColor(img, imgGray, COLOR_BGR2GRAY);
-    inRange(imgGray, Scalar(100), Scalar(200), Mask);
-
-    imgExtracted = Mat::zeros(img.size(), img.type());
-    img.copyTo(imgExtracted, Mask);
-    return imgExtracted;
-}</pre>
-    </div>
-
-    <h3>2.2 &nbsp; 阶段二：边缘检测与形态学处理</h3>
-    <p>
-        对灰度图施加 Canny 边缘检测（双阈值自适应），随后进行形态学闭运算（<code>morphologyEx CLOSE</code>）
-        填补边缘断裂。闭运算的结构元素为 5×5 矩形核，迭代 2 次。该步骤将离散边缘像素连接为完整轮廓，
-        为后续的轮廓筛选创造条件。
-    </p>
-
-    <h3>2.3 &nbsp; 阶段三：多准则轮廓筛选</h3>
-    <p>
-        对检测到的所有轮廓施加四项几何约束进行筛选：
-    </p>
-    <ol>
-        <li><strong>面积阈值</strong>：丢弃面积过小（噪声）或过大（背景）的轮廓；</li>
-        <li><strong>长宽比</strong>：矿石截面近圆，要求长宽比在 [0.6, 1.7] 范围内；</li>
-        <li><strong>圆度</strong>：计算 <code>4π·Area / Perimeter²</code>，阈值 > 0.5；</li>
-        <li><strong>凸度</strong>：轮廓面积与凸包面积之比，阈值 > 0.8。</li>
-    </ol>
-    <div class="code-block">
-        <div class="code-block-header">produce-picture-xyw.cpp — 轮廓检测 + 多准则筛选</div>
-        <pre>findContours(imgDil, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE);
-for (size_t i = 0; i &lt; contours.size(); i++)
-{
-    if (contourArea(contours[i]) &gt; 200)
-    {
-        RotatedRect minRect = minAreaRect(contours[i]);
-        float width  = minRect.size.width;
-        float height = minRect.size.height;
-        float aspectRatio = max(width, height) / min(width, height);
-
-        if (aspectRatio &gt; 0.4 &amp;&amp; aspectRatio &lt; 3.5)
-        {
-            peri = arcLength(contours[i], true);
-            approxPolyDP(contours[i], conPoly[i], 0.02 * peri, true);
-            int objCor = conPoly[i].size();
-
-            if (objCor &gt;= 4 &amp;&amp; objCor &lt;= 15)
-            {
-                double rect_area = width * height;
-                double extent = contourArea(contours[i]) / rect_area;
-                if (extent &gt;= 0.35 &amp;&amp; extent &lt;= 0.75)
-                {
-                    Point2f center;
-                    float radius;
-                    minEnclosingCircle(conPoly[i], center, radius);
-                    circleCenters.push_back(center);
-                }
-            }
-        }
-    }
-}</pre>
-    </div>
-    <p>
-        经过四级过滤后，误检轮廓被大幅剔除，仅保留真正的矿石候选。
-    </p>
-
-    <h3>2.4 &nbsp; 阶段四：最小外接圆拟合</h3>
-    <p>
-        对筛选后的轮廓调用 <code>cv::minEnclosingCircle</code>，得到矿石在图像平面上的圆心坐标 (u, v) 与半径 r。
-        圆心即为目标的 2D 像素位置，半径用于粗略估计目标距离（近大远小）。
-    </p>
-
-    <h3>2.5 &nbsp; 阶段五：PnP 6-DOF 位姿估计</h3>
-    <p>
-        已知矿石的物理直径（先验），结合相机内参矩阵与畸变系数（预标定），
-        构造 3D-2D 点对并调用 <code>cv::solvePnP</code>（ITERATIVE 方法），
-        解算目标相对于相机坐标系的 6-DOF 位姿（平移向量 t 与旋转向量 r）。
-        该位姿直接用于后续的末端轨迹规划。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">produce-picture-xyw.cpp — solvePnP 位姿估计</div>
-        <pre>vector&lt;Point3f&gt; objectPoints = {
-    {-w_length / 2, -h_length / 2, 0.0f},
-    { w_length / 2, -h_length / 2, 0.0f},
-    { w_length / 2,  h_length / 2, 0.0f},
-    {-w_length / 2,  h_length / 2, 0.0f}
-};
-
-Mat cameraMatrix = (Mat_&lt;double&gt;(3, 3) &lt;&lt;
-    501.356, 0, 635.693,
-    0, 501.264, 488.572,
-    0, 0, 1);
-Mat distCoeffs = (Mat_&lt;double&gt;(1, 5) &lt;&lt;
-    -0.3391, 0.1520, -1.144e-05, -3.299e-05, -0.03573);
-
-Mat rvec, tvec;
-solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec);
-
-m_SolvePNP_RT.push_back(tvec.at&lt;double&gt;(0, 0));  // x
-m_SolvePNP_RT.push_back(tvec.at&lt;double&gt;(1, 0));  // y
-m_SolvePNP_RT.push_back(tvec.at&lt;double&gt;(2, 0));  // z
-m_SolvePNP_RT.push_back(rvec.at&lt;double&gt;(0, 0));  // pitch
-m_SolvePNP_RT.push_back(-rvec.at&lt;double&gt;(1, 0)); // yaw
-m_SolvePNP_RT.push_back(rvec.at&lt;double&gt;(2, 0));  // roll</pre>
-    </div>
-
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_success.png" alt="检测成功" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 4 &nbsp; 视觉流水线成功检测结果</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_camera.png" alt="相机视角" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 5 &nbsp; 鱼眼相机实际视角</div>
-        </div>
-    </div>
-
-    <h3>2.6 &nbsp; YOLO 方案对比与弃用</h3>
-    <p>
-        开发初期曾测试 YOLOv5n / YOLOv8n 检测方案。在 NUC 上通过 OpenVINO 推理可达约 30 FPS，
-        但存在以下问题：(1) 对纯色目标鲁棒性不如传统视觉分割；(2) 模型需针对赛场光照重新训练，
-        泛化成本高；(3) 推理延迟约为传统方案的 2.5 倍。最终选择传统视觉方案。
-    </p>
-
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_yolo_fail.png" alt="YOLO失败" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 6 &nbsp; YOLO 在强光下检测失败</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/robomaster/fig_filter_fail.png" alt="滤波失败" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 7 &nbsp; 极端干扰下的滤波失败案例</div>
-        </div>
-    </div>
-
-    <!-- 3 逆运动学 -->
-    <h2>3 &nbsp; 逆运动学求解</h2>
-
-    <h3>3.1 &nbsp; 问题建模</h3>
-    <p>
-        机械臂为 6-DOF 串联结构。给定末端目标位姿 (x, y, z, roll, pitch, yaw)，需求解各关节角度。
-        对于前三个关节（决定末端位置），采用余弦定理构造解析解；后三个关节（决定姿态）由腕部解耦处理。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">DH-coord.cpp — 逆运动学解析求解（DH 参数法）</div>
-        <pre>ARM_BASE DHCoord::inverse_kinematics(double x, double y, double z,
-                                      double pitch, double yaw, double roll)
-{
-    ARM_BASE ArmStat;
-    if (sqrt(x * x + y * y) &gt; 80) {  // 超出工作空间
-        ArmStat.stat = 1;
-        return ArmStat;
-    }
-    ArmStat.z = z - ArmStat.arm4 * sin(pitch);
-    ArmStat.pitch = pitch;
-    ArmStat.roll = roll;
-
-    double arm_x = x - (ArmStat.arm3 + ArmStat.arm4 * cos(-pitch)) * cos(yaw);
-    double arm_y = y - (ArmStat.arm3 + ArmStat.arm4 * cos(-pitch)) * sin(yaw);
-    double r = sqrt(arm_x * arm_x + arm_y * arm_y);
-    double psi1 = atan2(arm_y, arm_x);
-
-    // 余弦定理求肘关节角
-    double cos_b = (-r*r + ArmStat.arm1*ArmStat.arm1
-                    + ArmStat.arm2*ArmStat.arm2) / (2 * ArmStat.arm1 * ArmStat.arm2);
-    cos_b = std::clamp(cos_b, -1.0, 1.0);
-    ArmStat.angle2 = acos(cos_b);
-
-    double cos_psi2 = (ArmStat.arm1*ArmStat.arm1 + r*r
-                       - ArmStat.arm2*ArmStat.arm2) / (2 * ArmStat.arm1 * r);
-    cos_psi2 = std::clamp(cos_psi2, -1.0, 1.0);
-    ArmStat.angle1 = psi1 + acos(cos_psi2);
-
-    ArmStat.yaw = yaw - ArmStat.angle1 - ArmStat.angle2;
-    // 正运动学验证...
-}</pre>
-    </div>
-    <div class="formula">
-        cos θ₂ = (x² + y² − l₁² − l₂²) / (2 l₁ l₂)
-    </div>
-    <p>
-        余弦定理可能产生双解（肘上/肘下），通过正运动学验证选取可行解。
-    </p>
-
-    <h3>3.2 &nbsp; 双路径实现</h3>
-    <p>
-        项目中实现了两套独立的 IK 求解器，用于交叉验证与鲁棒性保障：
-    </p>
-    <ol>
-        <li><strong>Ceres Solver 方案</strong>：利用 Google Ceres 的 AutoDiff 自动微分功能，
-            将 IK 建模为非线性最小二乘问题，由 Levenberg-Marquardt 算法迭代求解。
-            优势在于易于扩展至更复杂的臂型。</li>
-        <li><strong>纯 Eigen 手写方案</strong>：手动推导 Jacobian 矩阵，
-            用 Eigen 库实现 Levenberg-Marquardt 迭代。计算效率更高（约 0.3 ms/次），
-            适用于实时控制。</li>
-    </ol>
-
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/robomaster/sandbox_arm-solve_assets_img_output.png" alt="IK输出1" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 8 &nbsp; IK 求解可视化输出（方案一）</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/robomaster/sandbox_arm-solve_assets_img_output (1).png" alt="IK输出2" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 9 &nbsp; IK 求解可视化输出（方案二）</div>
-        </div>
-    </div>
-
-    <!-- 4 轨迹规划与通信 -->
-    <h2>4 &nbsp; 轨迹规划与下位机通信</h2>
-
-    <h3>4.1 &nbsp; 笛卡尔空间轨迹插值</h3>
-    <p>
-        为避免关节空间插值导致的末端路径不可预测，采用笛卡尔空间等间距插值。
-        将起始位姿到目标位姿在 xyz 三轴上均匀分为 10 步，逐步发送至下位机执行。
-        每步时间间隔根据通信帧率与机械响应动态调整，确保运动平滑无抖动。
-    </p>
-
-    <h3>4.2 &nbsp; CRC16 串口通信协议</h3>
-    <p>
-        上位机（NUC）与下位机（STM32）之间采用自定义帧协议通信：
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">commute.h — 紧凑帧结构 + CRC16 校验</div>
-        <pre>#pragma pack(push, 1)
-struct PacketSend {
-    uint8_t  head;                  // 0xA5 包头
-    float    armAngle1, armAngle2;  // 机械臂关节角
-    float    handAngle2, handAngle1;// 末端姿态
-    uint8_t  roll_mode;
-    float    handAngle3;
-    uint8_t  z_mode;
-    float    armZ;                  // Z 轴升降
-    float    car_dx, car_dy;        // 底盘平移
-    uint16_t checksum;              // CRC16 校验
-
-    PacketSend(/* ... */) {
-        if (cs == 0)
-            checksum = calculateCRC16(
-                reinterpret_cast&lt;const uint8_t*&gt;(&amp;temp), sizeof(temp));
-    }
-};
-#pragma pack(pop)
-
-// 接收端 CRC 验证
-void Commute::receive(std::vector&lt;uint8_t&gt;&amp; receive_data) {
-    uint16_t calc = PacketReceive::calculateCRC16(
-        receive_data.data(), receiveDataSize - 2);
-    uint16_t recv = receive_data[receiveDataSize - 2]
-                  | (receive_data[receiveDataSize - 1] &lt;&lt; 8);
-    pd_crc_error = (calc != recv);
-}</pre>
-    </div>
-    <p>
-        每帧携带 6 个关节目标角度（float 编码）与控制标志位。
-        CRC16 校验确保通信可靠性，帧率约 100 Hz。
-    </p>
-
-    <!-- 5 软件架构 -->
-    <h2>5 &nbsp; 软件架构：rm-engine 框架</h2>
-    <p>
-        为适应 RoboMaster 赛季迭代需求，将视觉系统封装为模块化的 <code>rm-engine</code> 框架，
-        支持 Windows 与 Linux 双平台编译（Premake5 构建系统）。主要模块包括：
-    </p>
-    <table>
-        <thead><tr><th>模块</th><th>职责</th><th>关键依赖</th></tr></thead>
-        <tbody>
-            <tr><td>robomaster-engine (Core)</td><td>窗口管理、渲染循环、事件分发</td><td>GLFW, ImGui</td></tr>
-            <tr><td>Vision Pipeline</td><td>相机驱动、图像处理、目标检测</td><td>OpenCV, MindVision SDK</td></tr>
-            <tr><td>Arm Solver</td><td>正/逆运动学、轨迹规划</td><td>Eigen, Ceres</td></tr>
-            <tr><td>Serial Comm</td><td>串口通信、CRC 校验、帧解析</td><td>Boost.Asio</td></tr>
-            <tr><td>Sandbox / Example</td><td>调试可视化、参数调试 GUI</td><td>ImGui</td></tr>
-        </tbody>
-    </table>
-
-    <!-- 6 性能与结果 -->
-    <h2>6 &nbsp; 性能指标与竞赛结果</h2>
-    <table>
-        <thead><tr><th>指标</th><th>数值</th></tr></thead>
-        <tbody>
-            <tr><td>视觉流水线延迟</td><td>13.5 ms/帧（~74 FPS）</td></tr>
-            <tr><td>IK 求解时间</td><td>~0.3 ms/次（Eigen 方案）</td></tr>
-            <tr><td>通信帧率</td><td>~100 Hz</td></tr>
-            <tr><td>计算平台</td><td>Intel NUC i5-1135G7，无 GPU</td></tr>
-        </tbody>
-    </table>
-
-    <div class="info-box" style="margin-top:1.5rem;">
-        <div class="info-box-title">竞赛成绩</div>
+    <div class="toc-box">
+        <h3>目录</h3>
         <ul>
-            <li>RoboMaster 2025 超级对抗赛 · 区域赛 — <strong>省级二等奖</strong>（2025.06）</li>
-            <li>RoboMaster 2025 超级对抗赛 · 全国赛 — <strong>国家级三等奖</strong>（2025.08）</li>
+                <li>RoboMaster 视觉伺服引擎（rm-engine）</li>
+                    <li>项目背景与目标</li>
+                    <li>硬件平台配置</li>
+                    <li>rm-engine 跨平台引擎框架</li>
+                        <li>引擎架构分层</li>
+                        <li>Premake5 跨平台构建系统</li>
+                        <li>多线程模块化运行</li>
+                    <li>完整视觉伺服流水线</li>
+                        <li>Stage 1–2：鱼眼采集与双色彩空间分割</li>
+                        <li>Stage 3–4：边缘增强与多准则轮廓过滤</li>
+                        <li>Stage 5：最小包围圆(MEC)关键点提取</li>
+                        <li>Stage 6：PnP位姿估计与手眼坐标变换</li>
+                    <li>解析逆运动学求解器</li>
+                        <li>求解算法</li>
+                    <li>轨迹插值与串口闭环控制</li>
+                    <li>深度学习方案对比分析：为什么回退到传统视觉</li>
+                    <li>迭代优化历程</li>
+                    <li>端到端性能指标</li>
         </ul>
     </div>
 
-    <!-- 7 演示视频 -->
-    <h2>7 &nbsp; 演示视频</h2>
-    <div class="figure">
-        <video controls style="width:100%; border-radius:4px;">
+    <img src="../assets/images/robomaster/pages/page_008.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_009.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_010.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_011.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_012.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_013.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_014.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_015.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_016.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_017.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_018.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_019.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_020.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/robomaster/pages/page_021.png" alt="PDF Page" class="pdf-page">
+
+
+    <h2>项目视频</h2>
+    <div class="video-container">
+        <p class="figure-caption">RoboMaster 视觉伺服演示</p>
+        <video controls preload="metadata" style="width:100%; max-width:800px;">
             <source src="../assets/videos/robomaster.mp4" type="video/mp4">
         </video>
-        <div class="figure-caption">Video 1 &nbsp; 机械臂视觉伺服系统实际运行演示</div>
     </div>
 
-    <p style="margin-top:2rem; text-align:center;">
-        <a href="../index.html">← 返回首页</a>
-    </p>
 </div>
 
-<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
-
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
-    <img id="lightboxImg" src="" alt="">
-</div>
-
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script>
-window.addEventListener('scroll', () => {
-    document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300);
-});
-function openLightbox(el) {
-    document.getElementById('lightboxImg').src = el.src;
-    document.getElementById('lightbox').classList.add('active');
-}
-</script>
 </body>
 </html>

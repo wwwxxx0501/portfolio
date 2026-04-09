@@ -3,149 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VHDL 数字逻辑设计</title>
+    <title>VHDL数字逻辑电路设计</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pdf-page {
+            width: 100%;
+            max-width: 860px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--border-light);
+        }
+        .toc-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        .toc-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc-box li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="nav-inner">
         <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
-        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+        <div class="nav-links">
+            <a href="../index.html">首页</a>
+            <a href="#" class="active">项目</a>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <div class="article-header">
-        <h1 class="article-title">VHDL 数字逻辑设计与仿真</h1>
-        <div class="article-meta">
-            <span>薛雅文</span>
-            <span>2024</span>
-        </div>
-        <p class="article-abstract">
-            本系列实验使用 VHDL 硬件描述语言实现了数字电路中的基本时序逻辑单元：
-            五种触发器（D 边沿触发、D 电平触发、JK、SR、T）、四位双向移位寄存器
-            以及同步可逆计数器（四位二进制与八进制），并在 ModelSim 中完成功能仿真与时序验证。
-        </p>
-        <div class="article-keywords">
-            <strong>关键词：</strong>VHDL, 触发器, 移位寄存器, 同步计数器, ModelSim
-        </div>
+        <h1 class="article-title">VHDL数字逻辑电路设计</h1>
     </div>
 
-    <!-- 1 触发器 -->
-    <h2>1 &nbsp; 五种触发器的 VHDL 实现</h2>
-
-    <h3>1.1 &nbsp; 边沿触发 D 触发器</h3>
-    <p>
-        在时钟上升沿采样输入 D 并锁存至输出 Q。使用 <code>rising_edge(clk)</code>
-        或 <code>clk'event and clk='1'</code> 检测上升沿。
-        异步复位端 <code>rst</code> 在低电平时强制 Q = '0'。
-    </p>
-
-    <h3>1.2 &nbsp; 电平触发 D 触发器</h3>
-    <p>
-        当 <code>clk = '1'</code> 时，输出 Q 实时跟随输入 D（透明锁存器）；
-        当 <code>clk = '0'</code> 时，Q 保持不变。本质为电平敏感的锁存器，
-        时序分析中需注意竞争冒险。
-    </p>
-
-    <h3>1.3 &nbsp; JK 触发器</h3>
-    <p>
-        JK 触发器的状态转移：J=K=0 保持，J=1/K=0 置位，J=0/K=1 复位，J=K=1 翻转。
-        VHDL 中用 <code>CASE</code> 语句在上升沿对 J&K 的组合值分支判断。
-    </p>
-
-    <h3>1.4 &nbsp; SR 触发器</h3>
-    <p>
-        SR 触发器中 S=R=1 为禁止态（输出不确定）。本实现中将该状态定义为保持上一状态，
-        避免仿真时产生不确定值。
-    </p>
-
-    <h3>1.5 &nbsp; T 触发器</h3>
-    <p>
-        T=1 时每个时钟沿翻转一次，T=0 时保持。T 触发器可由 JK 触发器令 J=K=T 得到，
-        但本实现直接描述翻转逻辑。
-    </p>
-
-    <!-- 2 移位寄存器 -->
-    <h2>2 &nbsp; 四位双向移位寄存器</h2>
-    <p>
-        支持左移、右移与并行加载三种模式，由模式选择信号 <code>mode(1:0)</code> 控制：
-    </p>
-    <table>
-        <thead><tr><th>mode</th><th>功能</th><th>操作</th></tr></thead>
-        <tbody>
-            <tr><td>00</td><td>保持</td><td>Q 不变</td></tr>
-            <tr><td>01</td><td>右移</td><td>Q(3)←SI, Q(2)←Q(3), Q(1)←Q(2), Q(0)←Q(1)</td></tr>
-            <tr><td>10</td><td>左移</td><td>Q(0)←SI, Q(1)←Q(0), Q(2)←Q(1), Q(3)←Q(2)</td></tr>
-            <tr><td>11</td><td>并行加载</td><td>Q←D（4-bit 并入）</td></tr>
-        </tbody>
-    </table>
-    <p>
-        VHDL 中使用 <code>CASE mode IS ... END CASE;</code> 选择操作，
-        移位通过信号拼接（<code>&amp;</code> 运算符）实现。
-    </p>
-
-    <!-- 3 计数器 -->
-    <h2>3 &nbsp; 同步可逆计数器</h2>
-
-    <h3>3.1 &nbsp; 四位同步二进制可逆计数器</h3>
-    <p>
-        通过 <code>up_down</code> 信号选择加计数或减计数。内部使用 4-bit
-        <code>unsigned</code> 信号，在时钟上升沿加 1 或减 1，自然溢出实现循环（0–15）。
-        设有同步使能端 <code>en</code> 与异步复位端 <code>rst</code>。
-    </p>
-
-    <h3>3.2 &nbsp; 同步八进制可逆计数器</h3>
-    <p>
-        计数范围 0–7（3-bit）。与四位计数器结构类似，但加计数到 7 后归零，
-        减计数到 0 后跳至 7。仿真波形中可清晰观察到八进制循环特征。
-    </p>
-
-    <!-- 4 仿真 -->
-    <h2>4 &nbsp; ModelSim 仿真验证</h2>
-    <p>
-        所有 VHDL 设计均在 ModelSim 中编写 Testbench 并运行功能仿真。
-        Testbench 以 <code>process</code> 语句生成时钟与输入激励，
-        通过 <code>assert</code> 语句自动检查输出是否符合预期。
-    </p>
-
-    <div class="figure">
-        <div class="figure-grid-3">
-            <img src="../assets/images/vhdl/不同功能触发器的VHDL实现_边沿触发的D触发器_simulation.png" alt="D触发器仿真" onclick="openLightbox(this)">
-            <img src="../assets/images/vhdl/不同功能触发器的VHDL实现_JK触发器_SIMULATION.png" alt="JK触发器仿真" onclick="openLightbox(this)">
-            <img src="../assets/images/vhdl/不同功能触发器的VHDL实现_T触发器_simulation.png" alt="T触发器仿真" onclick="openLightbox(this)">
-        </div>
-        <div class="figure-caption">Fig. 1 &nbsp; 触发器 ModelSim 仿真波形（D 边沿触发、JK、T）</div>
+    <div class="toc-box">
+        <h3>目录</h3>
+        <ul>
+                <li>VHDL数字逻辑电路设计</li>
+                    <li>核心VHDL模块实现</li>
+                        <li>四位同步二进制可逆计数器</li>
+                        <li>四位双向移位寄存器</li>
+                        <li>同步八进制可逆计数器</li>
+                    <li>五种触发器实现</li>
+                    <li>延伸项目：FPGA自动循迹小车</li>
+                        <li>系统架构与供电设计</li>
+                        <li>自研8路红外传感器模块</li>
+                        <li>循迹算法与丢线恢复策略</li>
+                        <li>电机驱动模块</li>
+                    <li>配套设计</li>
+        </ul>
     </div>
 
-    <div class="figure">
-        <div class="figure-grid-3">
-            <img src="../assets/images/vhdl/四位双向移位寄存器的VHDL实现_simulation.png" alt="移位寄存器仿真" onclick="openLightbox(this)">
-            <img src="../assets/images/vhdl/四位同步二进制可逆计数器的VHDL实现_simulation.png" alt="四位计数器仿真" onclick="openLightbox(this)">
-            <img src="../assets/images/vhdl/同步八进制可逆计数器的VHDL实现_simulation.png" alt="八进制计数器仿真" onclick="openLightbox(this)">
-        </div>
-        <div class="figure-caption">Fig. 2 &nbsp; 移位寄存器与计数器仿真波形</div>
-    </div>
+    <img src="../assets/images/digital-logic/pages/page_047.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_048.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_049.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_050.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_051.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_052.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/digital-logic/pages/page_053.png" alt="PDF Page" class="pdf-page">
 
-    <!-- 5 成果 -->
-    <h2>5 &nbsp; 项目成果</h2>
-    <ul>
-        <li>使用 VHDL 实现五种基本触发器（D 边沿/电平、JK、SR、T），掌握时序逻辑建模方法</li>
-        <li>实现四位双向移位寄存器（左移/右移/并行加载/保持四种模式）</li>
-        <li>实现四位二进制与八进制同步可逆计数器</li>
-        <li>所有设计通过 ModelSim 功能仿真验证，波形与理论状态转移表一致</li>
-    </ul>
 
-    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
 </div>
 
-<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script>
-window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
-function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
-</script>
 </body>
 </html>

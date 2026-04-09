@@ -3,302 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电机驱动系统设计</title>
+    <title>电机驱动综合系统</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pdf-page {
+            width: 100%;
+            max-width: 860px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--border-light);
+        }
+        .toc-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        .toc-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc-box li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="nav-inner">
         <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
-        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+        <div class="nav-links">
+            <a href="../index.html">首页</a>
+            <a href="#" class="active">项目</a>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <div class="article-header">
-        <h1 class="article-title">电机驱动系统设计——从有刷到无刷</h1>
-        <div class="article-meta">
-            <span>薛雅文</span>
-            <span>2024–2025</span>
-        </div>
-        <p class="article-abstract">
-            本项目围绕电机驱动系统展开，涵盖有刷直流电机开环驱动、无刷直流电机（BLDC）六步换相驱动
-            以及 PI 闭环控制器的设计与实现。硬件端基于 STM32F103C8T6 进行固件开发，
-            配套设计了两版 Altium Designer PCB 并制板焊接。
-            项目完整覆盖了电机驱动从原理推导、固件编写到 PCB 制作的全流程。
-        </p>
-        <div class="article-keywords">
-            <strong>关键词：</strong>STM32, 有刷电机, BLDC, 六步换相, H 桥, PI 控制, PCB 设计
-        </div>
+        <h1 class="article-title">电机驱动综合系统</h1>
     </div>
 
-    <!-- 1 有刷电机 -->
-    <h2>1 &nbsp; 有刷直流电机驱动</h2>
-
-    <h3>1.1 &nbsp; 硬件设计</h3>
-    <p>
-        采用分立 MOSFET 搭建 H 桥：上桥臂（Q1, Q2）由 TIM2/TIM3 的 PWM 输出驱动，
-        下桥臂（Q3, Q4）由 GPIO 开关控制。对角导通实现正反转。
-    </p>
-    <table>
-        <thead><tr><th>参数</th><th>配置</th></tr></thead>
-        <tbody>
-            <tr><td>MCU</td><td>STM32F103C8T6（72 MHz，HSE 8 MHz × PLL ×9）</td></tr>
-            <tr><td>PWM 频率</td><td>30 kHz（Timer Period = 2399, Prescaler = 0）</td></tr>
-            <tr><td>PWM 通道</td><td>TIM2_CH4 (PB11), TIM3_CH4 (PB1)</td></tr>
-            <tr><td>占空比范围</td><td>100–2300（步进 239，对应 ~4%–96%）</td></tr>
-        </tbody>
-    </table>
-    <div class="code-block">
-        <div class="code-block-header">main.c — H 桥电机正反转控制</div>
-        <pre>void Motor_Stop(void) {
-    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-    HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-}
-
-void Motor_UpdateOutput(void) {
-    if (Motor_Dir == 1) {   // 正转：Q2(TIM2_CH4) PWM, Q3(PB0) LOW
-        HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, Motor_Speed);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-        HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-    } else {                // 反转：Q1(TIM3_CH4) PWM, Q4(PB10) LOW
-        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, Motor_Speed);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-    }
-}</pre>
+    <div class="toc-box">
+        <h3>目录</h3>
+        <ul>
+                <li>电机驱动综合系统</li>
+                    <li>项目背景</li>
+                    <li>系统功能总览</li>
+                    <li>有刷电机综合PCB——硬件方案</li>
+                    <li>ADC双通道电压电流检测</li>
+                    <li>H桥交叉控制正反转</li>
+                    <li>按键扫描与交互控制</li>
+                    <li>OLED软件I2C显示</li>
+                    <li>PI闭环控制器</li>
+                    <li>无刷电机综合PCB——FOC矢量控制</li>
+                    <li>PCB设计迭代</li>
+                    <li>主循环控制逻辑</li>
+        </ul>
     </div>
 
-    <h3>1.2 &nbsp; 电流与电压检测</h3>
-    <p>
-        电流检测采用低端检流电阻 R<sub>shunt</sub> = 0.01 Ω，经 20 倍运放放大后送入 ADC1_CH5。
-        ADC 参考电压 1.2 V，电流计算公式：
-    </p>
-    <div class="formula">
-        I = (V<sub>adc</sub> − 1.2) × 5 &nbsp;&nbsp; [A]
-    </div>
-    <p>
-        母线电压通过 33 kΩ / 10 kΩ 分压后接入 ADC1_CH6，比例系数 ×4.3。
-        电流与电压实时显示在 SSD1306 OLED（128×64，软件模拟 I²C）上。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">main.c — ADC 电压/电流采集（16 次均值滤波）</div>
-        <pre>#define VOL_RATIO   4.3f     // R16=33k, R22=10k → Vin = Vadc×4.3
-#define CUR_VREF    1.2f     // 电流检测参考电压
-#define CUR_GAIN    5.0f     // I = (Vout - Vref) / 0.2
-#define ADC_AVG_N   16
+    <img src="../assets/images/motor-driver/pages/page_033.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_034.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_035.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_036.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_037.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_038.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_039.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/motor-driver/pages/page_040.png" alt="PDF Page" class="pdf-page">
 
-static void ADC_Read_CurVol_Avg(uint16_t *raw_cur, uint16_t *raw_vol) {
-    uint32_t sum_cur = 0, sum_vol = 0;
-    for (int n = 0; n < ADC_AVG_N; n++) {
-        HAL_ADC_Start(&hadc1);
-        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
-            sum_cur += HAL_ADC_GetValue(&hadc1);     // CH5 = 电流
-        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
-            sum_vol += HAL_ADC_GetValue(&hadc1);     // CH6 = 电压
-        HAL_ADC_Stop(&hadc1);
-    }
-    *raw_cur = (uint16_t)(sum_cur / ADC_AVG_N);
-    *raw_vol = (uint16_t)(sum_vol / ADC_AVG_N);
-}
 
-static void Measure_Update(void) {
-    ADC_Read_CurVol_Avg(&adc_raw_cur, &adc_raw_vol);
-    float v_cur = (adc_raw_cur * 3.3f) / 4095.0f;
-    float v_vol = (adc_raw_vol * 3.3f) / 4095.0f;
-    meas_voltage_V = v_vol * VOL_RATIO;
-    meas_current_A = (v_cur - CUR_VREF) * CUR_GAIN;
-    if (meas_current_A < 0.0f) meas_current_A = 0.0f;
-}</pre>
-    </div>
-    <div class="code-block">
-        <div class="code-block-header">main.c — OLED 实时显示电压/电流/PWM</div>
-        <pre>static void OLED_ShowMeas(uint16_t speed, uint8_t dir,
-                          float vin, float ia) {
-    char line[24];
-    OLED_Fill(0);
-    snprintf(line, 24, "PWM:%4d", speed);          OLED_Puts(0,7, line);
-    snprintf(line, 24, "DIR:%1d",  dir?1:0);       OLED_Puts(0,5, line);
-    snprintf(line, 24, "V:%5d", (int)(vin*1000));  OLED_Puts(0,3, line);
-    snprintf(line, 24, "I:%5d", (int)(ia*1000));   OLED_Puts(0,1, line);
-    OLED_Update();
-}</pre>
-    </div>
-
-    <h3>1.3 &nbsp; 用户交互</h3>
-    <p>
-        4 个按键（PB4–PB7）分别控制：停止、正反转切换、加速、减速。
-        开环控制模式下，按键直接修改 PWM 占空比。
-    </p>
-
-    <!-- 2 BLDC -->
-    <h2>2 &nbsp; 无刷直流电机（BLDC）驱动</h2>
-
-    <h3>2.1 &nbsp; 六步换相原理</h3>
-    <p>
-        三相 BLDC 通过 Hall 传感器确定转子位置。3 个 Hall 信号（PA8–PA10）编码为 3-bit 状态（1–6），
-        对应六步换相表中的一个状态。每个状态导通两相（一相高侧 PWM + 一相低侧 GPIO），
-        第三相悬空。
-    </p>
-    <table>
-        <thead><tr><th>Hall 状态</th><th>导通相</th><th>高侧 PWM</th><th>低侧 GPIO</th></tr></thead>
-        <tbody>
-            <tr><td>1 (001)</td><td>U→V</td><td>HI_U (TIM3_CH4)</td><td>LO_V (PA6)</td></tr>
-            <tr><td>2 (010)</td><td>W→V</td><td>HI_W (TIM2_CH4)</td><td>LO_V (PA6)</td></tr>
-            <tr><td>3 (011)</td><td>W→U</td><td>HI_W (TIM2_CH4)</td><td>LO_U (PB0)</td></tr>
-            <tr><td>4 (100)</td><td>V→U</td><td>HI_V (TIM3_CH2)</td><td>LO_U (PB0)</td></tr>
-            <tr><td>5 (101)</td><td>V→W</td><td>HI_V (TIM3_CH2)</td><td>LO_W (PA2)</td></tr>
-            <tr><td>6 (110)</td><td>U→W</td><td>HI_U (TIM3_CH4)</td><td>LO_W (PA2)</td></tr>
-        </tbody>
-    </table>
-    <p>
-        PWM 频率同为 30 kHz，固定占空比约 83%（CCR = 2000 / ARR = 2399）。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">main.c — BLDC 六步换相（Hall → switch-case）</div>
-        <pre>BLDC_STATE = 0;
-if (HAL_GPIO_ReadPin(GPIOA, HALL_U_Pin)==GPIO_PIN_SET) BLDC_STATE |= 0x01;
-if (HAL_GPIO_ReadPin(GPIOA, HALL_V_Pin)==GPIO_PIN_SET) BLDC_STATE |= 0x02;
-if (HAL_GPIO_ReadPin(GPIOA, HALL_W_Pin)==GPIO_PIN_SET) BLDC_STATE |= 0x04;
-
-switch (BLDC_STATE) {
-    case 1:  // U 上桥 PWM, W 下桥导通
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, SET_PWM);
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 0);
-        __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_4, 0);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);    // U- 关
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6,  GPIO_PIN_SET);    // V- 关
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2,  GPIO_PIN_RESET);  // W- 开
-        break;
-    case 2:  // W 上桥 PWM, V 下桥导通
-        __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_4, SET_PWM);
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 0);
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 0);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0,  GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6,  GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2,  GPIO_PIN_SET);
-        break;
-    /* case 3–6: 类似模式, 依次导通 W→U, V→U, V→W, U→W */
-    default: // 全关保护
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 0);
-        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 0);
-        __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_4, 0);
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
-        break;
-}</pre>
-    </div>
-
-    <h3>2.2 &nbsp; 电流检测与滤波</h3>
-    <p>
-        母线电流经 ADC1_CH5 采集，采用 16 次均值滤波降低噪声。
-        由于运放输出存在零点偏移（实测 1.14 V），需在软件中减去偏移量后换算为实际电流值。
-        电压检测通过 100 kΩ / 10 kΩ 分压（比例 ×11），经 ADC1_CH4 读取。
-        采样周期 20 ms。
-    </p>
-
-    <!-- 3 PI 控制 -->
-    <h2>3 &nbsp; PI 速度闭环控制</h2>
-
-    <h3>3.1 &nbsp; 控制器设计</h3>
-    <p>
-        增量式 PI 控制器参数：K<sub>p</sub> = 0.8，采样周期 T = 2 ms，K<sub>i</sub> = K<sub>p</sub> / T = 400。
-        控制律为：
-    </p>
-    <div class="formula">
-        V<sub>PI</sub> = K<sub>p</sub> · e[k] + V<sub>I</sub>  <br>
-        V<sub>I</sub> = V<sub>I</sub> + K<sub>i</sub> · T<sub>n</sub> · e[k]
-    </div>
-    <p>
-        其中 e[k] 为目标转速与实际转速的偏差，T<sub>n</sub> 为实际积分时间步长。
-        积分项具有累积效果，可消除稳态误差。
-    </p>
-    <div class="code-block">
-        <div class="code-block-header">main.c — PI 速度闭环控制器</div>
-        <pre>float Kp = 0.8f;
-float T  = 0.002f;              // 采样周期 2ms
-float Ki = Kp / T;              // Ki = 400
-float VI = 0.0f;                // 积分累积项
-
-void PI_Control(float Vref, float Vin, float dt) {
-    float Ve  = Vin - Vref;     // 误差 = 实测 - 目标
-    VI += Ki * dt * Ve;         // 积分项累加
-    float Vpi = Kp * Ve + VI;   // PI 输出
-    // 限幅后写入 PWM
-    if (Vpi > 2399) Vpi = 2399;
-    if (Vpi < 0)    Vpi = 0;
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, (uint16_t)Vpi);
-}</pre>
-    </div>
-
-    <!-- 4 PCB 迭代 -->
-    <h2>4 &nbsp; PCB 设计与迭代</h2>
-
-    <h3>4.1 &nbsp; 第一版（MOTOR_1023）</h3>
-    <p>
-        初版 PCB 在 Altium Designer 中完成原理图与布局。
-        该版本实现基本 H 桥驱动功能，包含 MOSFET 功率级、栅极驱动与电源输入接口。
-    </p>
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/motor/pcb_v1_sch.png" alt="第一版原理图" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 1 &nbsp; 第一版原理图</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/motor/pcb_v1_layout.png" alt="第一版PCB布局" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 2 &nbsp; 第一版 PCB 布局</div>
-        </div>
-    </div>
-
-    <h3>4.2 &nbsp; 第二版（MOTOR_260305）</h3>
-    <p>
-        修订版在初版基础上大幅扩展电路规模：新增 4 个 IC（电流检测运放与栅极驱动）、
-        23 个电阻、7 个电容与 1 个保护二极管。PCB 从头重新布局，
-        走线密度显著增加。新增元件主要用于：
-    </p>
-    <ul>
-        <li>电流检测放大电路（低侧 shunt + 差分运放）</li>
-        <li>额外的稳压/去耦电容</li>
-        <li>栅极驱动电路（MOSFET 栅极电荷快充/泄放）</li>
-        <li>ESD/TVS 保护</li>
-    </ul>
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/motor/pcb_v2_sch.png" alt="第二版原理图" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 3 &nbsp; 第二版原理图</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/motor/pcb_v2_layout.png" alt="第二版PCB布局" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 4 &nbsp; 第二版 PCB 布局</div>
-        </div>
-    </div>
-
-    <!-- 5 成果 -->
-    <h2>5 &nbsp; 项目成果</h2>
-    <ul>
-        <li>设计并实现有刷直流电机 H 桥驱动（30 kHz PWM，电流/电压 ADC 采集，OLED 显示）</li>
-        <li>设计并实现三相 BLDC 六步换相驱动（Hall 传感器定位，三路 PWM + 三路低侧 GPIO）</li>
-        <li>完成增量式 PI 速度闭环控制器的理论推导与代码实现</li>
-        <li>在 Altium Designer 中完成两版 PCB 设计与制板，第二版新增 35+ 元件</li>
-    </ul>
-
-    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
 </div>
 
-<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script>
-window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
-function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
-</script>
 </body>
 </html>

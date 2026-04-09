@@ -3,160 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QEA 电动船设计</title>
+    <title>QEA电动船设计与稳性分析</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pdf-page {
+            width: 100%;
+            max-width: 860px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--border-light);
+        }
+        .toc-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        .toc-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc-box li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="nav-inner">
         <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
-        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+        <div class="nav-links">
+            <a href="../index.html">首页</a>
+            <a href="#" class="active">项目</a>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <div class="article-header">
-        <h1 class="article-title">QEA 电动船——设计、仿真与制造</h1>
-        <div class="article-meta">
-            <span>薛雅文等（5 人团队）</span>
-            <span>2024</span>
-        </div>
-        <p class="article-abstract">
-            本项目要求团队设计并制造一艘电动货船，在满足承载能力的前提下
-            实现最大装载质量。项目综合运用 MATLAB 进行浮力/稳性分析，SolidWorks 进行三维建模，
-            经历三轮迭代原型制造，最终船体采用 3D 打印船首/船尾 + 轻木条船身的混合工艺，
-            775 有刷电机驱动，ExpressLRS 遥控链路。
-        </p>
-        <div class="article-keywords">
-            <strong>关键词：</strong>船舶设计, 浮力分析, 稳性计算, SolidWorks, MATLAB, 3D 打印, ExpressLRS
-        </div>
+        <h1 class="article-title">QEA电动船设计与稳性分析</h1>
     </div>
 
-    <!-- 1 设计需求 -->
-    <h2>1 &nbsp; 设计需求与约束</h2>
-    <ul>
-        <li>船体总长度不超过 600 mm</li>
-        <li>须能承载尽可能多的载荷（评分标准：最大装载质量 / 自重比）</li>
-        <li>船体须能自主行驶（非拖曳），动力不限</li>
-        <li>须通过倾覆角测试（倾覆角 &gt; 90° 视为优秀）</li>
-    </ul>
-
-    <!-- 2 理论分析 -->
-    <h2>2 &nbsp; 理论分析（MATLAB）</h2>
-
-    <h3>2.1 &nbsp; 浮力与浮心</h3>
-    <p>
-        根据阿基米德原理，船体所受浮力等于其排开水的重力。在 MATLAB 中对船体截面进行
-        数值积分（梯形法则），计算不同吃水深度下的排水体积与浮力。
-        浮心（Center of Buoyancy, COB）为排水体积的体积质心。
-    </p>
-
-    <h3>2.2 &nbsp; 重心与稳性</h3>
-    <p>
-        重心（Center of Mass, COM）由船体各部件（船壳、电机、电池、载荷）的质量与位置
-        加权平均计算。稳性分析的核心是复原力矩：当船体倾斜角 φ 时，
-        浮心位置随水线面变化而偏移，与重力构成复原力矩对。
-    </p>
-    <div class="formula">
-        M<sub>righting</sub>(φ) = Δ · GZ(φ)
-    </div>
-    <p>
-        其中 Δ 为排水量，GZ 为复原力臂。当 GZ 由正变负时的角度即为倾覆角。
-    </p>
-
-    <h3>2.3 &nbsp; 倾覆角计算</h3>
-    <p>
-        MATLAB 仿真逐度（0°–180°）计算 GZ 曲线。最终设计的倾覆角为 <strong>125.1°</strong>，
-        远超 90° 阈值，表明船体具有良好的横向稳性。
-        关键设计策略：船底尽可能宽且平（增大水线面惯性矩），重心尽可能低（加压载物于底部）。
-    </p>
-
-    <div class="figure-row">
-        <div class="figure">
-            <img src="../assets/images/boat/boat_11.png" alt="SolidWorks 模型" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 1 &nbsp; SolidWorks 船首三维模型</div>
-        </div>
-        <div class="figure">
-            <img src="../assets/images/boat/boat_2.jpeg" alt="实物" onclick="openLightbox(this)">
-            <div class="figure-caption">Fig. 2 &nbsp; 最终船体实物俯视图</div>
-        </div>
+    <div class="toc-box">
+        <h3>目录</h3>
+        <ul>
+                <li>QEA电动船设计与稳性分析</li>
+                    <li>项目概述</li>
+                    <li>船体结构设计</li>
+                    <li>MATLAB稳性分析</li>
+                        <li>船体几何参数化</li>
+                        <li>吃水线迭代与浮心计算</li>
+                        <li>复原力臂与稳性曲线</li>
+                    <li>实船制造与下水测试</li>
+        </ul>
     </div>
 
-    <!-- 3 结构设计 -->
-    <h2>3 &nbsp; 结构设计与制造</h2>
+    <img src="../assets/images/boat/pages/page_076.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/boat/pages/page_077.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/boat/pages/page_078.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/boat/pages/page_079.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/boat/pages/page_080.png" alt="PDF Page" class="pdf-page">
 
-    <h3>3.1 &nbsp; 船型选择</h3>
-    <p>
-        在快艇型（低阻力、小排水量）与货船型（大排水量、高稳性）之间权衡，
-        最终选择宽体平底货船型，以最大化装载能力。
-        船长 550 mm，最大宽度 200 mm，船深 80 mm。
-    </p>
 
-    <h3>3.2 &nbsp; 制造工艺</h3>
-    <table>
-        <thead><tr><th>部件</th><th>工艺</th><th>材料</th></tr></thead>
-        <tbody>
-            <tr><td>船首 / 船尾</td><td>FDM 3D 打印</td><td>PLA</td></tr>
-            <tr><td>船身侧板</td><td>手工拼合</td><td>轻木条（Balsa）</td></tr>
-            <tr><td>船底</td><td>平板裁切</td><td>轻木板 + 环氧树脂涂层</td></tr>
-            <tr><td>防水处理</td><td>4 层防水漆喷涂</td><td>聚氨酯防水漆</td></tr>
-        </tbody>
-    </table>
-
-    <h3>3.3 &nbsp; 三轮迭代</h3>
-    <ol>
-        <li><strong>第一版原型</strong>：船身曲率过大，3D 打印段与轻木段拼接困难，气密性不足。
-            →教训：简化曲面，增大平直段比例。</li>
-        <li><strong>第二版原型</strong>：船首/船尾与轻木条船身的尺寸配合出现偏差（打印收缩率未补偿），
-            需打磨才能嵌合。→教训：在 SolidWorks 中预留 0.3 mm 公差。</li>
-        <li><strong>第三版（最终）</strong>：修正公差，4 层防水漆处理后密封性良好，
-            水测试无明显渗漏。承载测试满载 2.5 kg，倾覆角 125.1°。</li>
-    </ol>
-
-    <!-- 4 动力与遥控 -->
-    <h2>4 &nbsp; 动力与遥控系统</h2>
-
-    <h3>4.1 &nbsp; 电机与螺旋桨</h3>
-    <p>
-        采用 775 有刷直流电机（12 V, ~18000 rpm 空载），经联轴器连接三叶螺旋桨。
-        电调（ESC）接受 PWM 信号控制转速。单电机后置推进，舵面转向。
-    </p>
-
-    <h3>4.2 &nbsp; ExpressLRS 遥控链路</h3>
-    <p>
-        遥控采用开源 ExpressLRS 协议（900 MHz 频段），延迟极低（&lt; 5 ms），
-        传输距离远超测试水池尺度需求。接收机输出 CRSF 协议信号至电调与舵机。
-    </p>
-
-    <!-- 5 演示视频 -->
-    <h2>5 &nbsp; 演示视频</h2>
+    <h2>项目视频</h2>
     <div class="video-container">
-        <video controls preload="metadata" style="max-width:100%">
+        <p class="figure-caption">电动船航行演示</p>
+        <video controls preload="metadata" style="width:100%; max-width:800px;">
             <source src="../assets/videos/boat.mp4" type="video/mp4">
         </video>
-        <div class="video-caption">Video 1 &nbsp; 电动船航行演示</div>
     </div>
 
-    <!-- 6 成果 -->
-    <h2>6 &nbsp; 项目成果</h2>
-    <ul>
-        <li>MATLAB 完成浮力、浮心、重心、GZ 曲线与倾覆角（125.1°）的完整稳性计算</li>
-        <li>SolidWorks 三维建模并导出 3D 打印船首/船尾</li>
-        <li>经三轮迭代完成混合工艺（3D 打印 + 轻木条 + 4 层防水漆）船体制造</li>
-        <li>775 电机 + ExpressLRS 遥控实现自主航行</li>
-        <li>最终装载质量 2.5 kg，倾覆角 125.1°</li>
-    </ul>
-
-    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
 </div>
 
-<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script>
-window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
-function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
-</script>
 </body>
 </html>

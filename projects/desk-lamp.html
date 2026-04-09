@@ -5,167 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>仿生多模态智能台灯</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pdf-page {
+            width: 100%;
+            max-width: 860px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--border-light);
+        }
+        .toc-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        .toc-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc-box li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="nav-inner">
         <a class="nav-brand" href="../index.html">薛雅文 · Portfolio</a>
-        <div class="nav-links"><a href="../index.html">首页</a><a href="#" class="active">项目</a></div>
+        <div class="nav-links">
+            <a href="../index.html">首页</a>
+            <a href="#" class="active">项目</a>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <div class="article-header">
         <h1 class="article-title">仿生多模态智能台灯</h1>
-        <div class="article-meta">
-            <span>薛雅文、郑皓文、严海轩、令狐子安</span>
-            <span>2025</span>
-        </div>
-        <p class="article-abstract">
-            本项目包含两个子课题。子课题一从控制理论出发，对 Buck 变换器在 PI 控制下的稳定性进行完整分析，
-            综合运用 Routh 判据、根轨迹法、Nyquist 稳定判据与 Bode 图四种方法，并在 PSIM 仿真与 STM32 数字控制中验证。
-            子课题二设计并实现一款仿生多模态智能台灯——以 Apple Elegant 为概念灵感，
-            搭载 Raspberry Pi CM5 计算模块与三自由度机械臂，融合计算机视觉（MediaPipe 手部追踪）、
-            语音识别与手势识别三种交互模式，实现手部跟随照明、桌面宠物与亮度调节等功能。
-        </p>
-        <div class="article-keywords">
-            <strong>关键词：</strong>Buck 变换器, PI 控制, 稳定性分析, Raspberry Pi CM5, MediaPipe, 三自由度机械臂, 有限状态机
-        </div>
     </div>
 
-    <!-- Part I -->
-    <h2>1 &nbsp; 子课题一：Buck 变换器 PI 控制与稳定性分析</h2>
+    <div class="toc-box">
+        <h3>目录</h3>
+        <ul>
+                <li>仿生多模态智能台灯</li>
+                    <li>设计灵感与外观造型</li>
+                    <li>系统总体架构</li>
+                    <li>机械结构设计与迭代</li>
+                    <li>3-DOF逆运动学解算</li>
+                    <li>有限状态机与多模态交互</li>
+                    <li>语音识别与亮度控制通信</li>
+        </ul>
+    </div>
 
-    <h3>1.1 &nbsp; Buck 电路建模</h3>
-    <p>
-        Buck 变换器的小信号传递函数为二阶系统，以占空比 <em>d̂</em> 为输入、输出电压 <em>v̂<sub>o</sub></em> 为输出。
-        闭环 PI 控制器传递函数为 <code>G_c(s) = K_p + K_i/s</code>，与电力级传递函数级联后构成闭环。
-    </p>
+    <img src="../assets/images/desk-lamp/pages/page_062.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/desk-lamp/pages/page_063.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/desk-lamp/pages/page_064.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/desk-lamp/pages/page_065.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/desk-lamp/pages/page_066.png" alt="PDF Page" class="pdf-page">
+    <img src="../assets/images/desk-lamp/pages/page_067.png" alt="PDF Page" class="pdf-page">
 
-    <h3>1.2 &nbsp; 四种稳定性分析方法</h3>
-    <table>
-        <thead><tr><th>方法</th><th>核心思路</th><th>结论</th></tr></thead>
-        <tbody>
-            <tr>
-                <td>Routh 判据</td>
-                <td>闭环特征方程系数列表，判断第一列符号变号次数</td>
-                <td>给出 K<sub>p</sub>, K<sub>i</sub> 的稳定域边界</td>
-            </tr>
-            <tr>
-                <td>根轨迹法</td>
-                <td>变化 K<sub>p</sub> 时闭环极点在 s 平面的轨迹</td>
-                <td>极点穿越虚轴时的临界增益</td>
-            </tr>
-            <tr>
-                <td>Nyquist 判据</td>
-                <td>开环频率响应曲线对 (−1, j0) 的包围数</td>
-                <td>系统增益裕度与相位裕度</td>
-            </tr>
-            <tr>
-                <td>Bode 图</td>
-                <td>开环幅频与相频特性</td>
-                <td>穿越频率处增益裕度 ≥ 6 dB，相位裕度 ≥ 45°</td>
-            </tr>
-        </tbody>
-    </table>
-    <p>
-        四种方法一致给出稳定边界条件：负载电阻 <em>R</em> &lt; 1.25 Ω 时闭环不稳定。
-    </p>
 
-    <h3>1.3 &nbsp; PSIM 仿真与 Python 验证</h3>
-    <p>
-        在 PSIM 中搭建 Buck 电路闭环模型，分别施加阶跃与斜坡负载扰动，验证 PI 控制的动态响应。
-        同时使用 Python（<code>scipy.signal</code>）绘制根轨迹、Bode 图与 Nyquist 图，
-        与理论推导结果完全吻合。
-    </p>
-
-    <h3>1.4 &nbsp; STM32 数字 PI 实现</h3>
-    <p>
-        在 STM32 上以数字 PI 控制器驱动 Buck 变换器。ADC 采样输出电压，
-        经差分方程 <code>u[k] = u[k-1] + K_p(e[k]−e[k-1]) + K_i·e[k]</code> 计算占空比，
-        通过 PWM 输出至 MOSFET 驱动。采样频率与 PWM 频率均为 100 kHz。
-    </p>
-
-    <!-- Part II -->
-    <h2>2 &nbsp; 子课题二：仿生多模态智能台灯</h2>
-
-    <h3>2.1 &nbsp; 整体方案</h3>
-    <p>
-        以 "Apple Elegant" 极简工业设计风格为灵感，台灯主体为三自由度串联机械臂
-        （底座旋转 + 大臂俯仰 + 灯头俯仰），末端集成 LED 照明模组与摄像头。
-        系统核心为 Raspberry Pi CM5（4-core Cortex-A76, 8 GB RAM），
-        运行 Linux 操作系统，承担视觉推理、语音识别与状态机调度等计算密集任务。
-    </p>
-
-    <h3>2.2 &nbsp; 系统架构</h3>
-    <table>
-        <thead><tr><th>模块</th><th>实现</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr><td>计算核心</td><td>RPi CM5 + IO Board</td><td>运行 Python 主程序与 MediaPipe</td></tr>
-            <tr><td>舵机驱动</td><td>PCA9685 (I²C)</td><td>16 通道 PWM，驱动 3 个 SG90 舵机</td></tr>
-            <tr><td>视觉输入</td><td>USB Camera</td><td>30 fps，用于手部追踪与手势识别</td></tr>
-            <tr><td>语音输入</td><td>USB 麦克风</td><td>支持离线唤醒词与语音命令</td></tr>
-            <tr><td>照明</td><td>高亮 LED 模组</td><td>PWM 调光，舵机控制照射方向</td></tr>
-        </tbody>
-    </table>
-
-    <h3>2.3 &nbsp; 有限状态机</h3>
-    <p>
-        软件采用有限状态机（FSM）架构管理三种模式间的切换，避免模式冲突：
-    </p>
-    <ul>
-        <li><strong>手部跟随模式</strong>：MediaPipe 实时检测手部关键点（21 landmarks），
-            计算手掌中心在图像中的坐标，经反向运动学映射为三轴舵机角度，
-            灯头实时追踪手部移动。</li>
-        <li><strong>桌面宠物模式</strong>：语音指令驱动预设动作序列（点头、摇头、呼吸灯效等），
-            赋予台灯拟人化交互体验。</li>
-        <li><strong>亮度调节模式</strong>：通过手势（张开/握拳/旋转）控制 LED 亮度等级，
-            手势特征由 MediaPipe 手部关键点的几何关系提取。</li>
-    </ul>
-
-    <h3>2.4 &nbsp; MediaPipe 手部追踪</h3>
-    <p>
-        Google MediaPipe Hands 模块输出 21 个手部关键点的三维坐标（归一化到 [0,1]）。
-        取手掌中心（landmark 0, 9 的中点）作为目标位置，经 PID 平滑后映射到舵机角度空间。
-        实测在 RPi CM5 上帧率约 25 fps，延迟 &lt; 80 ms，满足实时跟随需求。
-    </p>
-
-    <h3>2.5 &nbsp; 逆运动学</h3>
-    <p>
-        三自由度串联臂的逆运动学可解析求解。给定目标点 (x, y, z)——由相机坐标系经标定矩阵
-        映射至臂基座坐标系——依次计算底座旋转角 θ<sub>1</sub> = atan2(y, x)，
-        大臂俯仰角 θ<sub>2</sub> 与灯头俯仰角 θ<sub>3</sub> 由余弦定理联立求解。
-    </p>
-
-    <!-- 3 演示视频 -->
-    <h2>3 &nbsp; 演示视频</h2>
+    <h2>项目视频</h2>
     <div class="video-container">
-        <video controls preload="metadata" style="max-width:100%">
+        <p class="figure-caption">智能台灯功能演示</p>
+        <video controls preload="metadata" style="width:100%; max-width:800px;">
             <source src="../assets/videos/desk-lamp.mp4" type="video/mp4">
         </video>
-        <div class="video-caption">Video 1 &nbsp; 智能台灯功能演示</div>
     </div>
 
-    <!-- 4 成果 -->
-    <h2>4 &nbsp; 项目成果</h2>
-    <ul>
-        <li>完成 Buck 变换器在 PI 控制下的四种稳定性分析方法推导与验证</li>
-        <li>PSIM 仿真与 STM32 数字控制均验证了理论预测的稳定边界（R &lt; 1.25 Ω 不稳定）</li>
-        <li>搭建基于 RPi CM5 的三自由度智能台灯原型</li>
-        <li>实现 MediaPipe 手部追踪实时跟随照明（25 fps, &lt;80 ms 延迟）</li>
-        <li>有限状态机管理手部跟随、桌面宠物、亮度调节三种交互模式</li>
-    </ul>
-
-    <p style="margin-top:2rem; text-align:center;"><a href="../index.html">← 返回首页</a></p>
 </div>
 
-<footer class="footer">© 2025–2026 薛雅文 · 重庆大学国家卓越工程师学院</footer>
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightboxImg" src="" alt=""></div>
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script>
-window.addEventListener('scroll', () => { document.getElementById('backTop').classList.toggle('visible', window.scrollY > 300); });
-function openLightbox(el) { document.getElementById('lightboxImg').src = el.src; document.getElementById('lightbox').classList.add('active'); }
-</script>
 </body>
 </html>
