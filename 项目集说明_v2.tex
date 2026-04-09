@@ -17,7 +17,89 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tcolorbox}
+\usepackage{xstring}
 \tcbuselibrary{listings,skins,breakable}
+
+% ===================== 历史图片路径兼容 =====================
+\makeatletter
+\newcommand{\xywResolvedGraphicPath}{}
+\newcommand{\xywGraphicInput}{}
+\newcommand{\xywGraphicFile}{}
+
+\newcommand{\xywSetGraphicCandidate}[1]{%
+    \IfFileExists{#1}{\edef\xywResolvedGraphicPath{#1}}{}%
+}
+
+\newcommand{\xywResolveGraphicPath}[1]{%
+    \StrSubstitute{#1}{"}{}[\xywGraphicInput]%
+    \edef\xywResolvedGraphicPath{\xywGraphicInput}%
+    \filename@parse{\xywGraphicInput}%
+    \ifx\filename@ext\relax
+        \edef\xywGraphicFile{\filename@base}%
+    \else
+        \edef\xywGraphicFile{\filename@base.\filename@ext}%
+    \fi
+    \IfFileExists{\xywResolvedGraphicPath}{}{%
+        \IfBeginWith{\xywGraphicInput}{robomaster/rm-engine-armsolve-xyw/paper/}{%
+            \xywSetGraphicCandidate{assets/images/robomaster/\xywGraphicFile}%
+        }{}%
+        \IfBeginWith{\xywGraphicInput}{robomaster/}{%
+            \xywSetGraphicCandidate{assets/images/robomaster/\xywGraphicFile}%
+        }{}%
+        \IfBeginWith{\xywGraphicInput}{工创赛/}{%
+            \xywSetGraphicCandidate{assets/images/tracking-car/\xywGraphicFile}%
+        }{}%
+        \IfBeginWith{\xywGraphicInput}{电机驱动/}{%
+            \xywSetGraphicCandidate{assets/images/motor-driver/\xywGraphicFile}%
+        }{}%
+        \IfBeginWith{\xywGraphicInput}{国自然项目&挑战杯/材料/}{%
+            \xywSetGraphicCandidate{assets/images/challenge-cup/\xywGraphicFile}%
+        }{}%
+        \IfStrEq{\xywGraphicInput}{工程原理 (1)/四位同步二进制可逆计数器的VHDL实现/simulation.png}{%
+            \xywSetGraphicCandidate{assets/images/vhdl/四位同步二进制可逆计数器的VHDL实现_simulation.png}%
+        }{}%
+        \IfStrEq{\xywGraphicInput}{工程原理 (1)/同步八进制可逆计数器的VHDL实现/simulation.png}{%
+            \xywSetGraphicCandidate{assets/images/vhdl/同步八进制可逆计数器的VHDL实现_simulation.png}%
+        }{}%
+        \IfStrEq{\xywGraphicInput}{工程原理 (1)/四位双向移位寄存器的VHDL实现/simulation.png}{%
+            \xywSetGraphicCandidate{assets/images/vhdl/四位双向移位寄存器的VHDL实现_simulation.png}%
+        }{}%
+        \IfStrEq{\xywGraphicInput}{工程原理 (1)/不同功能触发器的VHDL实现/边沿触发的D触发器/simulation.png}{%
+            \xywSetGraphicCandidate{assets/images/vhdl/不同功能触发器的VHDL实现_边沿触发的D触发器_simulation.png}%
+        }{}%
+        \IfBeginWith{\xywGraphicInput}{extracted_images/}{%
+            \IfBeginWith{\xywGraphicFile}{boat_}{\xywSetGraphicCandidate{assets/images/boat/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{fsbb_}{\xywSetGraphicCandidate{assets/images/fsbb/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{heart_}{\xywSetGraphicCandidate{assets/images/heart-rate/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{lamp_}{\xywSetGraphicCandidate{assets/images/desk-lamp/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{levitating_}{\xywSetGraphicCandidate{assets/images/fluid-levitation/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{mathphys_}{\xywSetGraphicCandidate{assets/images/math-physics-method/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{pathplan_}{\xywSetGraphicCandidate{assets/images/pathplan/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{srtp_}{\xywSetGraphicCandidate{assets/images/srtp/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{srtp_doc_}{\xywSetGraphicCandidate{assets/images/srtp/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{stirling_}{\xywSetGraphicCandidate{assets/images/stirling/\xywGraphicFile}}{}%
+            \IfBeginWith{\xywGraphicFile}{tracking_}{\xywSetGraphicCandidate{assets/images/digital-logic/\xywGraphicFile}}{}%
+        }{}%
+    }%
+}
+
+\newcommand{\xywMissingGraphic}[1]{%
+    \begingroup
+    \setlength{\fboxsep}{6pt}%
+    \fbox{\parbox[c][4cm][c]{0.85\linewidth}{\centering\small Missing image\\[0.3em]\ttfamily\detokenize{#1}}}%
+    \endgroup
+}
+
+\let\xywOriginalIncludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+    \xywResolveGraphicPath{#2}%
+    \IfFileExists{\xywResolvedGraphicPath}{%
+        \xywOriginalIncludegraphics[#1]{\xywResolvedGraphicPath}%
+    }{%
+        \xywMissingGraphic{#2}%
+    }%
+}
+\makeatother
 
 % ===================== 修正 headheight 警告 =====================
 \setlength{\headheight}{14pt}
