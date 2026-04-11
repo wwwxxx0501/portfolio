@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.1.8)  11 APR 2026 10:06
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.1.8)  11 APR 2026 10:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -928,8 +928,7 @@ Package pdfcol Info: pdfTeX's color stacks are not available.
 \tcb@testbox=\box91
 \tcb@totalupperbox=\box92
 \tcb@totallowerbox=\box93
-)
-No file 项目集说明_v2.aux.
+) (./项目集说明_v2.aux)
 \openout1 = `项目集说明_v2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 212.
@@ -1009,6 +1008,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
 (Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 212.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 212.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
 *geometry* verbose mode - [ preamble ] result:
@@ -1022,4 +1022,531 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
 * \textwidth=455.24411pt
-* \
+* \textheight=702.78308pt
+* \oddsidemargin=-1.1381pt
+* \evensidemargin=-1.1381pt
+* \topmargin=-40.1381pt
+* \headheight=14.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package hyperref Info: Link coloring OFF on input line 212.
+(./项目集说明_v2.out) (./项目集说明_v2.out)
+\@outlinefile=\write4
+\openout4 = `项目集说明_v2.out'.
+
+\c@lstlisting=\count393
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 215.
+ (c:/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 215.
+ (c:/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (./项目集说明_v2.toc [1
+
+] [2] [3] [4] [5] [6])
+\tf@toc=\write5
+\openout5 = `项目集说明_v2.toc'.
+
+ [7]
+File: assets/images/robomaster/fig_robot.png Graphic file (type bmp)
+<assets/images/robomaster/fig_robot.png>
+
+Overfull \hbox (20.99998pt too wide) in paragraph at lines 258--270
+ [][] 
+ []
+
+[8]
+File: assets/images/robomaster/fig_camera.png Graphic file (type bmp)
+<assets/images/robomaster/fig_camera.png>
+ (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
+)
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 282.
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "FangSong/BI" (it probably
+(fontspec)             doesn't exist).
+
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "FangSong/B" (it probably
+(fontspec)             doesn't exist).
+
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "FangSong/I" (it probably
+(fontspec)             doesn't exist).
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FangSong(0)' created for font 'FangSong'
+(fontspec)             with options [Script={CJK}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FangSong/OT:script=hani;language=dflt;"
+
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 283.
+
+
+LaTeX Font Warning: Font shape `TU/FangSong(0)/m/it' undefined
+(Font)              using `TU/FangSong(0)/m/n' instead on input line 286.
+
+[9]
+Underfull \hbox (badness 2302) in paragraph at lines 323--324
+[]\TU/lmr/m/n/12 Application \TU/SimSun(0)/m/n/12 生 命 周 期、| \TU/lmr/m/n/12 Layer \TU/SimSun(0)/m/n/12 图
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 323--324
+\TU/SimSun(0)/m/n/12 层 栈、|  多 线 程 管 理、| \TU/lmr/m/n/12 Timer \TU/SimSun(0)/m/n/12 性
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 323--324
+\TU/SimSun(0)/m/n/12 能 分 析、| \TU/lmr/m/n/12 spdlog \TU/SimSun(0)/m/n/12 日 志  |（\TU/lmr/m/n/12 5 \TU/SimSun(0)/m/n/12 级：|
+ []
+
+
+Overfull \hbox (38.51622pt too wide) in paragraph at lines 323--324
+\TU/lmr/m/n/12 TRACE/DEBUG/INFO/WARN/ERROR\TU/SimSun(0)/m/n/12 ）|| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 325--326
+[]\TU/lmr/m/n/12 OpenGL \TU/SimSun(0)/m/n/12 渲 染 管 线：|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 325--326
+\TU/lmr/m/n/12 Shader/Buffer/Texture/VAO/FBO\TU/SimSun(0)/m/n/12 ，|
+ []
+
+
+Underfull \hbox (badness 3039) in paragraph at lines 326--327
+[]\TU/SimSun(0)/m/n/12 相 机 采 集  |（\TU/lmr/m/n/12 MindVision/Intel Re-
+ []
+
+[10] (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2025/11/14 1.11b listings language file
+) [11] (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) [12]
+Overfull \hbox (122.82785pt too wide) in paragraph at lines 397--398
+[]\TU/SimSun(0)/m/n/12 性 能 分 析 采 用 \TU/lmr/m/n/12 Chrome Tracing \TU/SimSun(0)/m/n/12 格 式，|  通 过 \TU/lmtt/m/n/12 ROBOT_PROFILE_FUNCTION() \TU/SimSun(0)/m/n/12 和 \TU/lmtt/m/n/12 ROBOT_PROFILE_SCOPE("name")
+ []
+
+File: assets/images/robomaster/fig_pipeline.png Graphic file (type bmp)
+<assets/images/robomaster/fig_pipeline.png>
+[13]
+Overfull \hbox (2.82095pt too wide) detected at line 423
+[][][][] \OT1/cmr/m/n/12 = [] \OML/cmm/m/it/12 ;  [] \OT1/cmr/m/n/12 = [\OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 339\OML/cmm/m/it/12 ;  \OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 152\OML/cmm/m/it/12 ;  \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 1\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 14  \OMS/cmsy/m/n/12 ^^B  \OT1/cmr/m/n/12 10[]\OML/cmm/m/it/12 ;  \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 3\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 30  \OMS/cmsy/m/n/12 ^^B  \OT1/cmr/m/n/12 10[]\OML/cmm/m/it/12 ;  \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 036]
+ []
+
+[14]
+File: assets/images/robomaster/fig_success.png Graphic file (type bmp)
+<assets/images/robomaster/fig_success.png>
+ [15]
+File: assets/images/robomaster/fig_arm_target.png Graphic file (type bmp)
+<assets/images/robomaster/fig_arm_target.png>
+ [16]
+File: assets/images/robomaster/fig_yolo_fail.png Graphic file (type bmp)
+<assets/images/robomaster/fig_yolo_fail.png>
+ [17]
+Underfull \hbox (badness 10000) in paragraph at lines 601--602
+[]\TU/lmr/bx/n/12 C++17 \TU/SimSun(0)/b/n/12 引 擎 重 构\TU/SimSun(0)/m/n/12 ：|  设 计 \TU/lmr/m/n/12 rm-engine \TU/SimSun(0)/m/n/12 分 层 模 块 化 架 构
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 605--606
+[]\TU/SimSun(0)/b/n/12 跨 平 台 构 建 系 统\TU/SimSun(0)/m/n/12 ：| \TU/lmr/m/n/12 Premake5 Lua \TU/SimSun(0)/m/n/12 脚 本 体 系，|  自 动 检 测
+ []
+
+
+Underfull \hbox (badness 5832) in paragraph at lines 605--606
+\TU/lmr/m/n/12 Python/OpenCV/OpenVINO \TU/SimSun(0)/m/n/12 环 境，|  一 键 生 成 \TU/lmr/m/n/12 VS2022 |\TU/SimSun(0)/m/n/12 （\TU/lmr/m/n/12 Windows\TU/SimSun(0)/m/n/12 ）| \TU/lmr/m/n/12 /
+ []
+
+[18] [19]
+
+Package tcolorbox Warning: Using nobreak failed. Try to enlarge `lines before break' or set page breaks manually on input line 635.
+
+File: assets/images/robomaster/MVIMG_20250428_151002.jpg Graphic file (type bmp)
+<assets/images/robomaster/MVIMG_20250428_151002.jpg>
+[20] [21]
+Overfull \hbox (131.2459pt too wide) in paragraph at lines 667--674
+[][] 
+ []
+
+
+Overfull \hbox (61.96799pt too wide) in paragraph at lines 685--700
+ [] 
+ []
+
+[22] [23] [24] [25]
+Overfull \hbox (24.5351pt too wide) in paragraph at lines 859--871
+ [] 
+ []
+
+[26] [27] [28] [29]
+File: assets/images/tracking-car/数据集.png Graphic file (type bmp)
+<assets/images/tracking-car/数据集.png>
+ [30]
+File: assets/images/tracking-car/训练集准确率.png Graphic file (type bmp)
+<assets/images/tracking-car/训练集准确率.png>
+ (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) [31] [32]
+File: assets/images/tracking-car/Snipaste_2026-04-08_23-09-42.png Graphic file (type bmp)
+<assets/images/tracking-car/Snipaste_2026-04-08_23-09-42.png>
+ [33] [34]
+Overfull \hbox (6.26588pt too wide) in paragraph at lines 1143--1149
+[][] 
+ []
+
+[35] [36] [37] [38] [39] [40]
+File: assets/images/motor-driver/有刷电机.png Graphic file (type bmp)
+<assets/images/motor-driver/有刷电机.png>
+File: assets/images/motor-driver/无刷电机.png Graphic file (type bmp)
+<assets/images/motor-driver/无刷电机.png>
+ [41] [42] (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) [43] [44] [45] [46] [47] [48] (c:/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+) [49] [50] [51]
+File: assets/images/vhdl/四位同步二进制可逆计数器的VHDL实现_simulation.png Graphic file (type bmp)
+<assets/images/vhdl/四位同步二进制可逆计数器的VHDL实现_simulation.png>
+File: assets/images/vhdl/同步八进制可逆计数器的VHDL实现_simulation.png Graphic file (type bmp)
+<assets/images/vhdl/同步八进制可逆计数器的VHDL实现_simulation.png>
+File: assets/images/vhdl/四位双向移位寄存器的VHDL实现_simulation.png Graphic file (type bmp)
+<assets/images/vhdl/四位双向移位寄存器的VHDL实现_simulation.png>
+File: assets/images/vhdl/不同功能触发器的VHDL实现_边沿触发的D触发器_simulation.png Graphic file (type bmp)
+<assets/images/vhdl/不同功能触发器的VHDL实现_边沿触发的D触发器_simulation.png>
+ [52]
+File: assets/images/digital-logic/tracking_1.png Graphic file (type bmp)
+<assets/images/digital-logic/tracking_1.png>
+
+Overfull \hbox (39.65997pt too wide) in paragraph at lines 1872--1881
+ [] 
+ []
+
+[53]
+File: assets/images/digital-logic/tracking_7.png Graphic file (type bmp)
+<assets/images/digital-logic/tracking_7.png>
+File: assets/images/digital-logic/tracking_5.png Graphic file (type bmp)
+<assets/images/digital-logic/tracking_5.png>
+File: assets/images/digital-logic/tracking_8.png Graphic file (type bmp)
+<assets/images/digital-logic/tracking_8.png>
+File: assets/images/digital-logic/tracking_3.png Graphic file (type bmp)
+<assets/images/digital-logic/tracking_3.png>
+ [54] [55]
+File: assets/images/heart-rate/heart_0.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_0.png>
+ [56]
+File: assets/images/heart-rate/heart_35.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_35.png>
+ [57]
+File: assets/images/heart-rate/heart_30.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_30.png>
+ [58]
+File: assets/images/heart-rate/heart_29.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_29.png>
+File: assets/images/heart-rate/heart_26.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_26.png>
+ [59]
+File: assets/images/heart-rate/heart_8.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_8.png>
+
+Underfull \hbox (badness 1629) in paragraph at lines 2081--2081
+[]\TU/lmr/m/n/10.95 (a) |FFT \TU/SimSun(0)/m/n/10.95 计 算 核 心 代 码  |— —| \TU/lmr/m/n/10.95 CMSIS-DSP
+ []
+
+File: assets/images/heart-rate/heart_7.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_7.png>
+File: assets/images/heart-rate/heart_20.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_20.png>
+[60]
+File: assets/images/heart-rate/heart_9.png Graphic file (type bmp)
+<assets/images/heart-rate/heart_9.png>
+ [61] [62] [63]
+File: assets/images/desk-lamp/lamp_0.png Graphic file (type bmp)
+<assets/images/desk-lamp/lamp_0.png>
+File: assets/images/desk-lamp/lamp_1.png Graphic file (type bmp)
+<assets/images/desk-lamp/lamp_1.png>
+ [64]
+File: assets/images/desk-lamp/lamp_2.png Graphic file (type bmp)
+<assets/images/desk-lamp/lamp_2.png>
+ [65]
+File: assets/images/desk-lamp/lamp_3.png Graphic file (type bmp)
+<assets/images/desk-lamp/lamp_3.png>
+File: assets/images/desk-lamp/lamp_4.png Graphic file (type bmp)
+<assets/images/desk-lamp/lamp_4.png>
+ [66] [67]
+Overfull \hbox (29.34785pt too wide) in paragraph at lines 2336--2337
+[]\TU/SimSun(0)/m/n/12 语 音 系 统 采 用 讯 飞 实 时 语 音 转 写 \TU/lmr/m/n/12 API\TU/SimSun(0)/m/n/12 ，| \TU/lmr/m/n/12 USB \TU/SimSun(0)/m/n/12 麦 克 风 原 生 \TU/lmr/m/n/12 48kHz \TU/SimSun(0)/m/n/12 采 样 率 经 \TU/lmtt/m/n/12 audioop.ratecv
+ []
+
+
+Overfull \hbox (4.29306pt too wide) in paragraph at lines 2336--2337
+\TU/SimSun(0)/m/n/12 实 时 重 采 样 至 \TU/lmr/m/n/12 16kHz \TU/SimSun(0)/m/n/12 后 送 入 \TU/lmr/m/n/12 API \TU/SimSun(0)/m/n/12 识 别。|  语 音 合 成 采 用 \TU/lmr/m/n/12 Edge-TTS |\TU/SimSun(0)/m/n/12 （\TU/lmtt/m/n/12 zh-CN-XiaoxiaoNeural
+ []
+
+[68] [69] [70] [71] [72]
+File: assets/images/fsbb/fsbb_2.png Graphic file (type bmp)
+<assets/images/fsbb/fsbb_2.png>
+ [73]
+File: assets/images/fsbb/fsbb_0.png Graphic file (type bmp)
+<assets/images/fsbb/fsbb_0.png>
+File: assets/images/fsbb/fsbb_1.png Graphic file (type bmp)
+<assets/images/fsbb/fsbb_1.png>
+File: assets/images/fsbb/fsbb_4.png Graphic file (type bmp)
+<assets/images/fsbb/fsbb_4.png>
+ [74]
+File: assets/images/fsbb/fsbb_5.png Graphic file (type bmp)
+<assets/images/fsbb/fsbb_5.png>
+ [75]
+File: assets/images/challenge-cup/重庆文明网报道.png Graphic file (type bmp)
+<assets/images/challenge-cup/重庆文明网报道.png>
+File: assets/images/challenge-cup/网易新闻报道.png Graphic file (type bmp)
+<assets/images/challenge-cup/网易新闻报道.png>
+ [76]
+File: assets/images/challenge-cup/重大新闻报道.png Graphic file (type bmp)
+<assets/images/challenge-cup/重大新闻报道.png>
+File: assets/images/challenge-cup/花园烧烤.png Graphic file (type bmp)
+<assets/images/challenge-cup/花园烧烤.png>
+ [77]
+File: assets/images/boat/boat_10.png Graphic file (type bmp)
+<assets/images/boat/boat_10.png>
+File: assets/images/boat/boat_11.png Graphic file (type bmp)
+<assets/images/boat/boat_11.png>
+File: assets/images/boat/boat_8.png Graphic file (type bmp)
+<assets/images/boat/boat_8.png>
+File: assets/images/boat/boat_9.png Graphic file (type bmp)
+<assets/images/boat/boat_9.png>
+ [78]
+File: assets/images/boat/boat_21.png Graphic file (type bmp)
+<assets/images/boat/boat_21.png>
+File: assets/images/boat/boat_20.png Graphic file (type bmp)
+<assets/images/boat/boat_20.png>
+File: assets/images/boat/boat_19.png Graphic file (type bmp)
+<assets/images/boat/boat_19.png>
+ [79]
+File: assets/images/boat/boat_17.png Graphic file (type bmp)
+<assets/images/boat/boat_17.png>
+File: assets/images/boat/boat_18.png Graphic file (type bmp)
+<assets/images/boat/boat_18.png>
+File: assets/images/boat/boat_14.png Graphic file (type bmp)
+<assets/images/boat/boat_14.png>
+ [80]
+File: assets/images/boat/boat_13.png Graphic file (type bmp)
+<assets/images/boat/boat_13.png>
+File: assets/images/boat/boat_5.jpeg Graphic file (type bmp)
+<assets/images/boat/boat_5.jpeg>
+ [81] [82]
+File: assets/images/pathplan/pathplan_4.png Graphic file (type bmp)
+<assets/images/pathplan/pathplan_4.png>
+File: assets/images/pathplan/pathplan_8.png Graphic file (type bmp)
+<assets/images/pathplan/pathplan_8.png>
+ [83]
+File: assets/images/pathplan/pathplan_1.png Graphic file (type bmp)
+<assets/images/pathplan/pathplan_1.png>
+File: assets/images/pathplan/pathplan_5.png Graphic file (type bmp)
+<assets/images/pathplan/pathplan_5.png>
+File: assets/images/pathplan/pathplan_3.png Graphic file (type bmp)
+<assets/images/pathplan/pathplan_3.png>
+ [84] [85] [86]
+File: assets/images/srtp/srtp_doc_4.jpeg Graphic file (type bmp)
+<assets/images/srtp/srtp_doc_4.jpeg>
+File: assets/images/srtp/srtp_doc_0.jpeg Graphic file (type bmp)
+<assets/images/srtp/srtp_doc_0.jpeg>
+File: assets/images/srtp/srtp_0.jpeg Graphic file (type bmp)
+<assets/images/srtp/srtp_0.jpeg>
+ [87]
+File: assets/images/srtp/srtp_1.jpeg Graphic file (type bmp)
+<assets/images/srtp/srtp_1.jpeg>
+File: assets/images/srtp/srtp_doc_3.jpeg Graphic file (type bmp)
+<assets/images/srtp/srtp_doc_3.jpeg>
+ [88] [89]
+Overfull \hbox (12.92592pt too wide) in paragraph at lines 3001--3007
+[][] 
+ []
+
+File: assets/images/math-physics-method/mathphys_001.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_001.png>
+[90]
+File: assets/images/math-physics-method/mathphys_003.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_003.png>
+File: assets/images/math-physics-method/mathphys_005.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_005.png>
+ [91]
+File: assets/images/math-physics-method/mathphys_007.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_007.png>
+ [92]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3156.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3156.
+
+File: assets/images/math-physics-method/mathphys_012.jpg Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_012.jpg>
+File: assets/images/math-physics-method/mathphys_013.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_013.png>
+[93]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3174.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3174.
+
+File: assets/images/math-physics-method/mathphys_016.jpg Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_016.jpg>
+File: assets/images/math-physics-method/mathphys_017.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_017.png>
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3192.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3192.
+
+File: assets/images/math-physics-method/mathphys_014.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_014.png>
+File: assets/images/math-physics-method/mathphys_015.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_015.png>
+[94]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3210.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3210.
+
+File: assets/images/math-physics-method/mathphys_018.jpg Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_018.jpg>
+File: assets/images/math-physics-method/mathphys_019.png Graphic file (type bmp)
+<assets/images/math-physics-method/mathphys_019.png>
+[95] [96] [97] [98] [99] [100] [101]
+File: assets/images/stirling/stirling_03.png Graphic file (type bmp)
+<assets/images/stirling/stirling_03.png>
+File: assets/images/stirling/stirling_04.png Graphic file (type bmp)
+<assets/images/stirling/stirling_04.png>
+ [102]
+File: assets/images/stirling/stirling_06.png Graphic file (type bmp)
+<assets/images/stirling/stirling_06.png>
+File: assets/images/stirling/stirling_07.png Graphic file (type bmp)
+<assets/images/stirling/stirling_07.png>
+ [103]
+File: assets/images/stirling/stirling_19.png Graphic file (type bmp)
+<assets/images/stirling/stirling_19.png>
+File: assets/images/stirling/stirling_20.png Graphic file (type bmp)
+<assets/images/stirling/stirling_20.png>
+File: assets/images/stirling/stirling_21.png Graphic file (type bmp)
+<assets/images/stirling/stirling_21.png>
+ [104] [105] [106]
+Overfull \hbox (37.08191pt too wide) in paragraph at lines 3617--3623
+[][] 
+ []
+
+[107] [108] [109]
+File: assets/images/fluid-levitation/levitating_20_51.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_20_51.png>
+File: assets/images/fluid-levitation/levitating_28_74.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_28_74.png>
+File: assets/images/fluid-levitation/levitating_27_70.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_27_70.png>
+ [110] [111]
+File: assets/images/fluid-levitation/levitating_33_92.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_33_92.png>
+File: assets/images/fluid-levitation/levitating_34_94.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_34_94.png>
+File: assets/images/fluid-levitation/levitating_34_95.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_34_95.png>
+File: assets/images/fluid-levitation/levitating_35_97.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_35_97.png>
+ [112]
+File: assets/images/fluid-levitation/levitating_27_69.png Graphic file (type bmp)
+<assets/images/fluid-levitation/levitating_27_69.png>
+ [113] [114]
+Underfull \hbox (badness 2165) in paragraph at lines 3904--3905
+[]|\TU/lmr/m/n/12 STM32F103/F407, ESP32, K210, STM32CubeMX,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3907--3907
+[]|\TU/lmr/m/n/12 FPGA/\TU/SimSun(0)/m/n/12 数 字 电
+ []
+
+
+Underfull \hbox (badness 2635) in paragraph at lines 3917--3918
+[]|\TU/SimSun(0)/m/n/12 斯 特 林 循 环\TU/lmr/m/n/12 , \TU/SimSun(0)/m/n/12 史 密 特 理 论\TU/lmr/m/n/12 , SolidWorks, ADAMS-
+ []
+
+[115] [116] (./项目集说明_v2.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2022/08/05>
+ ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package rerunfilecheck Info: File `项目集说明_v2.out' has not changed.
+(rerunfilecheck)             Checksum: 6888BF573A5DBDC30E3486F04C82E510;30175.
+ ) 
+Here is how much of TeX's memory you used:
+ 38210 strings out of 468179
+ 853759 string characters out of 5436885
+ 1498964 words of memory out of 5000000
+ 66224 multiletter control sequences out of 15000+600000
+ 638923 words of font info for 129 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 102i,13n,111p,1202b,2424s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on 项目集说明_v2.pdf (116 pages).

@@ -1,0 +1,329 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\@writefile{toc}{\contentsline {section}{\numberline {1}RoboMaster 视觉伺服引擎（rm-engine）}{8}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}项目背景与目标}{8}{subsection.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 工程机器人全貌——标注鱼眼相机（Eye-in-hand构型）与4连杆机械臂}}{8}{figure.caption.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}硬件平台配置}{9}{subsection.1.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces 系统硬件规格}}{9}{table.caption.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 迈德威视工业相机——3.37mm F2.8鱼眼镜头}}{9}{figure.caption.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}rm-engine 跨平台引擎框架}{9}{subsection.1.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces rm-engine 引擎门面头文件（rmengine.h）}}{9}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.1}引擎架构分层}{10}{subsubsection.1.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces rm-engine 分层架构}}{11}{table.caption.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.2}Premake5 跨平台构建系统}{11}{subsubsection.1.3.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces premake5.lua 核心构建配置}}{11}{lstlisting.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces 跨平台构建命令}}{12}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.3}多线程模块化运行}{12}{subsubsection.1.3.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces 多线程模块注册与启动}}{12}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}完整视觉伺服流水线}{13}{subsection.1.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces 视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取}}{13}{figure.caption.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.1}Stage 1--2：鱼眼采集与双色彩空间分割}{13}{subsubsection.1.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.2}Stage 3--4：边缘增强与多准则轮廓过滤}{14}{subsubsection.1.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces HSV分割+Canny边缘+多准则轮廓过滤}}{14}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.3}Stage 5：最小包围圆(MEC)关键点提取}{15}{subsubsection.1.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces MEC关键点提取成功——极角排序标注A/B/C/D，Extent值与包围圆可视化}}{15}{figure.caption.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.4}Stage 6：PnP位姿估计与手眼坐标变换}{15}{subsubsection.1.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}解析逆运动学求解器}{16}{subsection.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}求解算法}{16}{subsubsection.1.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces 解析IK求解器性能（不同距离）}}{16}{table.caption.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}轨迹插值与串口闭环控制}{16}{subsection.1.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 机械臂对准兑换站目标——L形蓝色LED标记与串口闭环反馈}}{17}{figure.caption.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}深度学习方案对比分析：为什么回退到传统视觉}{17}{subsection.1.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces YOLOv11-Pose检测失败案例——近距离L形标记面积过大导致误检}}{18}{figure.caption.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces 传统视觉 vs YOLOv11-Pose 工程对比}}{18}{table.caption.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.8}迭代优化历程}{18}{subsection.1.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.9}端到端性能指标}{19}{subsection.1.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 操控成功率与失败原因分析}}{20}{table.caption.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces RoboMaster测试现场}}{21}{figure.caption.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}SpeedyBot 智能扫地机器人}{22}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}项目背景}{22}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}硬件设计——自研PCB}{22}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}下位机固件——FreeRTOS多任务架构}{22}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}PID闭环速度控制}{23}{subsection.2.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces 增量式PID速度控制器（50Hz采样周期）}}{23}{lstlisting.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}IIR低通滤波器——编码器速度平滑}{24}{subsection.2.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces IIR低通滤波器实现（截止频率15Hz）}}{24}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}电机安全监控}{24}{subsection.2.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces 电机安全检测参数}}{24}{lstlisting.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}WiFi UDP通信协议}{24}{subsection.2.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.8}ROS2上位机架构}{25}{subsection.2.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.1}UDP桥接节点——里程计发布}{26}{subsubsection.2.8.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces ROS2 UDP桥接节点里程计发布（C++）}}{26}{lstlisting.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.2}TF坐标系}{26}{subsubsection.2.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.3}Web控制界面REST API}{27}{subsubsection.2.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9}差速运动学与里程计}{27}{subsection.2.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.10}ESP32 GPIO引脚分配}{28}{subsection.2.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.11}测试结果}{28}{subsection.2.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}工创赛——K210智能垃圾分类识别系统}{30}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}项目背景}{30}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}技术方案与实现步骤}{30}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Step 1: 数据集采集与标注}{30}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces 垃圾分类数据集样本示例}}{31}{figure.caption.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Step 2: MaixHub云端模型训练}{31}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces MaixHub模型训练准确率曲线}}{31}{figure.caption.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}Step 3: MaixPy IDE串口调试与测试}{31}{subsubsection.3.2.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces MaixPy K210目标检测推理代码}}{32}{lstlisting.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.4}Step 4: 串口通信与舵机执行机构}{33}{subsubsection.3.2.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces STM32主控接收分类结果驱动舵机}}{33}{lstlisting.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.5}Step 5: TF卡烧录独立运行}{33}{subsubsection.3.2.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces K210垃圾分类识别系统运行效果}}{34}{figure.caption.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}迭代优化历程}{34}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}电机驱动综合系统}{35}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}项目背景}{35}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}系统功能总览}{35}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}有刷电机综合PCB——硬件方案}{36}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}ADC双通道电压电流检测}{36}{subsection.4.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}{\ignorespaces ADC双通道序列采集 + 16次滑动平均滤波}}{36}{lstlisting.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}H桥交叉控制正反转}{37}{subsection.4.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}{\ignorespaces H桥交叉控制——正反转+速度调节}}{37}{lstlisting.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}按键扫描与交互控制}{38}{subsection.4.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}{\ignorespaces 4键扫描——消抖+等待释放}}{38}{lstlisting.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}OLED软件I2C显示}{39}{subsection.4.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}{\ignorespaces SSD1306 OLED实时数据显示}}{39}{lstlisting.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}PI闭环控制器}{40}{subsection.4.8}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}{\ignorespaces PI控制器离散实现（500Hz采样频率）}}{40}{lstlisting.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}无刷电机综合PCB——FOC矢量控制}{40}{subsection.4.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.10}PCB设计迭代}{41}{subsection.4.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces 自研电机综合PCB设计（Altium Designer，嘉立创打样）}}{41}{figure.caption.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.11}主循环控制逻辑}{41}{subsection.4.11}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}{\ignorespaces 主循环：按键响应 + 100ms周期测量刷新}}{41}{lstlisting.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}PCA + SVM 人脸识别系统}{43}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}项目背景}{43}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}算法流程}{43}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}核心代码实现}{43}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}数据读取与预处理}{43}{subsubsection.5.3.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}{\ignorespaces ReadFace.m -- 批量读取人脸样本并展平}}{43}{lstlisting.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}PCA主成分分析}{44}{subsubsection.5.3.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}{\ignorespaces PCA.m -- 协方差矩阵特征分解降维}}{44}{lstlisting.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.3}Min-Max特征归一化}{45}{subsubsection.5.3.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}{\ignorespaces scaling.m -- Min-Max归一化至[-1,1}}{45}{lstlisting.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.4}One-vs-All多分类SVM训练}{45}{subsubsection.5.3.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}{\ignorespaces multiSVMtrain.m -- 27个二分类SVM训练}}{45}{lstlisting.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.5}Bagging概率投票预测}{46}{subsubsection.5.3.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}{\ignorespaces multiSVM.m -- Bagging后验概率投票}}{46}{lstlisting.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.6}单图预测接口}{46}{subsubsection.5.3.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}{\ignorespaces PredictImg.m -- 新图像预测}}{47}{lstlisting.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}MATLAB App界面}{47}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}迭代优化历程}{47}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}VHDL数字逻辑电路设计}{49}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}核心VHDL模块实现}{49}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}四位同步二进制可逆计数器}{49}{subsubsection.6.1.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}{\ignorespaces 四位同步可逆计数器完整实现（test31.vhd）}}{49}{lstlisting.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}四位双向移位寄存器}{50}{subsubsection.6.1.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}{\ignorespaces 四位双向移位寄存器（shift\_4.vhd）}}{50}{lstlisting.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.3}同步八进制可逆计数器}{51}{subsubsection.6.1.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}{\ignorespaces 同步八进制可逆计数器（counter.vhd）}}{51}{lstlisting.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}五种触发器实现}{52}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces ModelSim仿真波形验证}}{52}{figure.caption.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces 更多ModelSim仿真结果}}{53}{figure.caption.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}延伸项目：FPGA自动循迹小车}{53}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}系统架构与供电设计}{53}{subsubsection.6.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces 循迹小车系统供电与信号流框图}}{53}{figure.caption.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}自研8路红外传感器模块}{54}{subsubsection.6.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces 自研8路红外传感器模块设计}}{54}{figure.caption.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}循迹算法与丢线恢复策略}{54}{subsubsection.6.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces 循迹算法流程图（含丢线恢复策略）}}{54}{figure.caption.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.4}电机驱动模块}{55}{subsubsection.6.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces L298N电机驱动真值表}}{55}{figure.caption.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}配套设计}{55}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}2020电赛C题——ADS1292R心电图检测仪}{56}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}项目背景与需求}{56}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}硬件系统——ADS1292R SPI通信}{56}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}SPI通信协议}{56}{subsubsection.7.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces SPI通信时序——CPOL=1/CPHA=1模式}}{57}{figure.caption.23}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces SPI主从设备移位寄存器数据交换原理}}{57}{figure.caption.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}ADS1292R硬件连接}{57}{subsubsection.7.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3}ADS1292R数据读取}{57}{subsubsection.7.2.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}{\ignorespaces ADS1292R SPI数据读取与24位符号扩展}}{57}{lstlisting.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}MATLAB算法验证}{58}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}原始信号与频谱分析}{58}{subsubsection.7.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces 原始ECG信号频谱图——可见0Hz直流分量、50Hz工频干扰及高频噪声}}{59}{figure.caption.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.2}直流陷波处理}{59}{subsubsection.7.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces 直流陷波前后频谱对比——左：陷波后（红），右：原始频谱（蓝），0Hz处直流分量被有效滤除}}{59}{figure.caption.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.3}FIR低通滤波器设计}{59}{subsubsection.7.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces FIR低通滤波前后频谱对比——左：滤波前（红），右：FIR滤波后（蓝），50Hz以上全部有效抑制}}{60}{figure.caption.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}STM32嵌入式实现}{60}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.1}CMSIS-DSP FFT频谱计算}{60}{subsubsection.7.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces 嵌入式端FFT频谱分析实现}}{60}{figure.caption.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.2}FIR滤波器嵌入式部署}{60}{subsubsection.7.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces FIR滤波器系数数组（81阶Chebyshev窗）与FFT实例定义}}{61}{figure.caption.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.3}LCD实时心电波形绘制}{61}{subsubsection.7.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces LCD实时波形绘制函数——\texttt  {drawCurve}，支持坐标反转与自动清屏}}{61}{figure.caption.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}信号处理链}{61}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Pan-Tompkins算法数学表达}{62}{subsection.7.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}自适应阈值策略}{62}{subsection.7.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}{\ignorespaces Pan-Tompkins自适应阈值R波检测}}{63}{lstlisting.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}仿生多模态智能台灯}{64}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}设计灵感与外观造型}{64}{subsection.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Apple Elegant情感交互台灯概念参考}}{64}{figure.caption.31}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces 《死亡搁浅》奥德拉德克外观灵感来源}}{65}{figure.caption.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}系统总体架构}{65}{subsection.8.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces 系统硬件清单}}{65}{table.caption.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}机械结构设计与迭代}{65}{subsection.8.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {28}{\ignorespaces 底座3D模型——收纳电子元器件与摄像头}}{66}{figure.caption.34}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces 第一版机械臂——原理验证样机}}{66}{figure.caption.35}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces 第二版机械臂——融入奥德拉德克设计语言}}{67}{figure.caption.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}3-DOF逆运动学解算}{67}{subsection.8.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces 舵机参数配置}}{67}{table.caption.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}有限状态机与多模态交互}{68}{subsection.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}语音识别与亮度控制通信}{68}{subsection.8.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {29}{\ignorespaces 手部跟随模式核心逻辑}}{68}{lstlisting.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}机器人色块识别与抓取}{70}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}视觉系统——多色HSV识别}{70}{subsection.9.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {30}{\ignorespaces OpenCV多色HSV空间色块检测}}{70}{lstlisting.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}视觉伺服闭环控制}{71}{subsection.9.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {31}{\ignorespaces 视觉伺服PID闭环底盘控制}}{71}{lstlisting.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}六步抓取流程}{72}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}FSBB尖峰补能系统}{73}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}项目背景}{73}{subsection.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}FSBB拓扑结构}{73}{subsection.10.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces FSBB逻辑控制框图}}{73}{figure.caption.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.3}系统架构与模块化设计}{74}{subsection.10.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces FSBB尖峰补能系统硬件设计}}{74}{figure.caption.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.4}``三环并联''增量式PID协同控制}{74}{subsection.10.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {33}{\ignorespaces 尖峰补能装置三环并联控制框图}}{75}{figure.caption.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.5}毫秒级高速供电切换模块}{75}{subsection.10.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {34}{\ignorespaces 防倒灌模块原理图与PCB设计}}{75}{figure.caption.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.6}趋势感知动态限幅滤波}{75}{subsection.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}挑战杯·青年养老赋能计划}{76}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.1}项目背景}{76}{subsection.11.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.2}核心创新——突破四重壁垒}{76}{subsection.11.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.3}实践成果}{76}{subsection.11.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {35}{\ignorespaces 主流媒体报道}}{77}{figure.caption.42}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {36}{\ignorespaces 项目实践现场}}{77}{figure.caption.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}QEA电动船设计与稳性分析}{78}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}项目概述}{78}{subsection.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}船体结构设计}{78}{subsection.12.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {37}{\ignorespaces SolidWorks船体结构设计}}{78}{figure.caption.44}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {38}{\ignorespaces 关键零部件设计}}{79}{figure.caption.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}MATLAB稳性分析}{79}{subsection.12.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.1}船体几何参数化}{79}{subsubsection.12.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {39}{\ignorespaces MATLAB船体参数化定义}}{79}{figure.caption.46}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {40}{\ignorespaces getHull()函数——船体几何网格化}}{79}{figure.caption.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.2}吃水线迭代与浮心计算}{80}{subsubsection.12.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {41}{\ignorespaces 吃水线迭代求解函数}}{80}{figure.caption.48}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {42}{\ignorespaces 浮心坐标计算函数}}{80}{figure.caption.49}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.3}复原力臂与稳性曲线}{80}{subsubsection.12.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {43}{\ignorespaces 角度修正与航向计算代码}}{81}{figure.caption.50}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {44}{\ignorespaces GZ稳性曲线（不同重心高度对比）}}{81}{figure.caption.51}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.4}实船制造与下水测试}{81}{subsection.12.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {45}{\ignorespaces 实船制造成品}}{82}{figure.caption.52}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}工程原理——激光雷达路径规划系统}{83}{section.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1}项目概述}{83}{subsection.13.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {46}{\ignorespaces 路径规划系统功能框图}}{83}{figure.caption.53}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2}激光雷达数据采集与解析}{83}{subsection.13.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {47}{\ignorespaces 激光雷达数据帧格式}}{84}{figure.caption.54}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3}圆柱障碍物检测——类RANSAC算法}{84}{subsection.13.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {48}{\ignorespaces 类RANSAC圆柱检测算法流程}}{84}{figure.caption.55}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4}电机驱动与舵机控制}{85}{subsection.13.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {49}{\ignorespaces 驱动与控制系统设计}}{85}{figure.caption.56}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.5}MATLAB上位机与路径可视化}{85}{subsection.13.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14}SRTP 学生科研训练项目——电磁炮}{86}{section.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.1}研究背景与目标}{86}{subsection.14.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2}系统总体设计——模块化架构}{86}{subsection.14.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.3}自研触发模块PCB设计}{87}{subsection.14.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {50}{\ignorespaces 自研触发模块PCB实物（板号：6857775A\_Y3\_240227）}}{87}{figure.caption.57}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.4}IGBT关断特性实验分析}{87}{subsection.14.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {51}{\ignorespaces IGBT关断特性实测（SIGLENT SDS1102X-C示波器）。黄色：电压通道；粉色：电流通道}}{88}{figure.caption.58}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5}多时基放电波形对比实验}{88}{subsection.14.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {52}{\ignorespaces 不同时间尺度下的放电波形对比}}{88}{figure.caption.59}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.6}RLC放电理论模型与实验验证}{89}{subsection.14.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.7}项目收获与科研素养}{89}{subsection.14.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {15}圆形薄膜振动的理论分析与实验验证}{90}{section.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.1}问题引入：单次敲击的时域瞬态分析}{90}{subsection.15.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {53}{\ignorespaces 圆形薄膜COMSOL建模几何及坐标设定}}{90}{figure.caption.60}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.1.1}分离变量法求解本征模态}{90}{subsubsection.15.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.1.2}COMSOL仿真验证瞬态响应}{91}{subsubsection.15.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {54}{\ignorespaces COMSOL瞬态响应仿真}}{91}{figure.caption.61}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.2}研究路线关键迭代：从时域到频域}{92}{subsection.15.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.2.1}频域稳态理论：Helmholtz方程与共振筛选}{92}{subsubsection.15.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.3}核心验证判据：频率比定律}{92}{subsection.15.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.4}MATLAB仿真：本征模态节线可视化}{92}{subsection.15.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {55}{\ignorespaces MATLAB绘制四组模态的理论节线图——$(0,1)$全膜同相、$(1,1)$两半反相、$(2,1)$四瓣、$(0,2)$同心双圈}}{93}{figure.caption.62}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.5}实验设计：扫频+Chladni盐粒法}{93}{subsection.15.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.5.1}实验装置}{93}{subsubsection.15.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.5.2}盐粒显影机理}{93}{subsubsection.15.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.6}实验结果与理论对照}{94}{subsection.15.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.6.1}锚点模态$(0,2)$ @ 525 Hz——同心双圈}{94}{subsubsection.15.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {56}{\ignorespaces $(0,2)$模态验证——内圈半径实测约4--5 cm，理论值$a \cdot \alpha _{01}/\alpha _{02} \approx 4.4$ cm，吻合度$\bigstar \bigstar \bigstar \bigstar \bigstar $}}{94}{figure.caption.63}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.6.2}模态$(1,1)$ @ 365--370 Hz——直径节线}{94}{subsubsection.15.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {57}{\ignorespaces $(1,1)$模态验证——理论预测364 Hz，实测365--370 Hz，相对误差$<$$2\%$}}{94}{figure.caption.64}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.6.3}模态$(0,1)$基频——空心圆环}{95}{subsubsection.15.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {58}{\ignorespaces $(0,1)$基频模态验证——实测约235 Hz，理论228.7 Hz，误差约2.5\%}}{95}{figure.caption.65}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {15.6.4}模态$(2,1)$的观测困难与原因分析}{95}{subsubsection.15.6.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {59}{\ignorespaces $(2,1)$模态观测困难——频率与$(0,2)$仅差7\%，产生模态竞争}}{95}{figure.caption.66}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.7}定量验证汇总}{96}{subsection.15.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.8}实验不足与反思}{96}{subsection.15.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {16}救灾机器人人因分析}{97}{section.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.1}研究背景：隧道洪涝的极端救援需求}{97}{subsection.16.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.2}研究设计：用户需求分析与实验框架}{97}{subsection.16.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.2.1}双角色需求挖掘}{97}{subsubsection.16.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.2.2}界面复杂度渐进设计}{97}{subsubsection.16.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.2.3}拟人化程度设计}{98}{subsubsection.16.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.3}Unity仿真实验}{98}{subsection.16.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.3.1}实验设计}{98}{subsubsection.16.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.3.2}因变量测量}{98}{subsubsection.16.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.4}核心实验发现}{99}{subsection.16.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.4.1}发现1：机器人稳态是效率的"基座"}{99}{subsubsection.16.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.4.2}发现2：AI辅助存在"情境适配区间"}{99}{subsubsection.16.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.4.3}发现3：小地图作为"外部化认知支架"}{99}{subsubsection.16.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.4.4}发现4：第三人称视角显著降低晕动症}{99}{subsubsection.16.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {16.4.5}发现5：拟人化呈"倒U型"效应}{99}{subsubsection.16.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.5}辅助研究：博物馆展签信息分层的人因分析}{99}{subsection.16.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6}设计优化建议}{100}{subsection.16.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {17}工程设计课程项目——Gamma型斯特林发动机联合仿真}{101}{section.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.1}斯特林循环热力学基础}{101}{subsection.17.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.2}史密特理论建模}{102}{subsection.17.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.2.1}容积与压力的解析表达}{102}{subsubsection.17.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.3}结构参数设计}{102}{subsection.17.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.4}MATLAB曲线计算}{102}{subsection.17.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {60}{\ignorespaces MATLAB计算的斯特林循环特性曲线}}{103}{figure.caption.67}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.5}SolidWorks三维建模与ADAMS仿真}{103}{subsection.17.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.5.1}三维结构模型}{103}{subsubsection.17.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {61}{\ignorespaces 发动机多体动力学模型}}{103}{figure.caption.68}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.5.2}ADAMS运动副与约束设置}{103}{subsubsection.17.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.6}ADAMS-MATLAB联合仿真}{104}{subsection.17.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.6.1}Simulink热力模型}{104}{subsubsection.17.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {62}{\ignorespaces Simulink联合仿真模型：\texttt  {plant}模块输出转矩$\to $\texttt  {adams\_sub}接收并驱动$\to $输出转角/转速}}{104}{figure.caption.69}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.6.2}仿真结果与分析}{105}{subsubsection.17.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {63}{\ignorespaces 联合仿真结果}}{105}{figure.caption.70}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {17.6.3}参数敏感性分析与优化}{105}{subsubsection.17.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18}2025 CUPT/IYPT/CYPT 8.悬浮液体}{107}{section.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.1}研究背景与课题分析}{107}{subsection.18.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.2}理论分析}{107}{subsection.18.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.2.1}Rayleigh--Taylor不稳定性与静态分析}{107}{subsubsection.18.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.2.2}Kapitza效应与动态稳定化}{108}{subsubsection.18.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.2.3}气泡临界下沉深度}{109}{subsubsection.18.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.2.4}负重力效应与倒置浮力}{109}{subsubsection.18.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.3}预实验}{109}{subsection.18.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {64}{\ignorespaces 实验装置：注射器安装在克拉尼图形演示仪振动台上}}{110}{figure.caption.71}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.4}实验验证}{110}{subsection.18.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.4.1}实验器材与方法}{110}{subsubsection.18.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.4.2}频率影响实验}{110}{subsubsection.18.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.4.3}横截面积影响实验}{110}{subsubsection.18.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {65}{\ignorespaces 容器横截面长度$L$与临界激发速度$A_1\omega $的关系：实验数据（蓝点）与理论模型（红色虚线）对比}}{111}{figure.caption.72}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.4.4}注射深度与临界深度}{111}{subsubsection.18.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {66}{\ignorespaces 临界深度$d^*_{\mathrm  {th}}$与振荡幅度$A$的关系：实验值（蓝线）与理论曲线（红线）}}{111}{figure.caption.73}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.5}COMSOL多相流仿真}{111}{subsection.18.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.5.1}仿真建模}{111}{subsubsection.18.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.5.2}频率对比验证}{112}{subsubsection.18.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.5.3}横截面积对比验证}{112}{subsubsection.18.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.5.4}注射深度对比验证}{112}{subsubsection.18.5.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {67}{\ignorespaces COMSOL仿真：空气体积分数分布（$t=1$\,s），清晰显示气--液界面位置}}{112}{figure.caption.74}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {68}{\ignorespaces COMSOL仿真：速度场分布（$t=1$\,s），气--液界面处速度梯度显著}}{112}{figure.caption.74}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {18.5.5}界面特征深入分析}{112}{subsubsection.18.5.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {69}{\ignorespaces 速度等值线分布：壁面处速度极值清晰可见，最大值0.034\,m/s}}{113}{figure.caption.75}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {70}{\ignorespaces 界面不同截线上的速度大小分布：边缘速度显著高于中心}}{113}{figure.caption.75}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.6}气泡行为观察}{113}{subsection.18.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {71}{\ignorespaces 气泡在不同注射深度下的行为：$d<d^*$时稳定悬浮（上）；$d>d^*$时逐渐下沉（下）}}{113}{figure.caption.76}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.7}误差分析与不足}{113}{subsection.18.7}\protected@file@percent }
+\gdef \LT@i {\LT@entry 
+    {1}{97.35826pt}\LT@entry 
+    {1}{296.52756pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {19}总结与技术栈全景}{115}{section.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {19.1}技术栈总览}{115}{subsection.19.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {19.2}能力成长路径}{115}{subsection.19.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {19.3}核心荣誉}{116}{subsection.19.3}\protected@file@percent }
+\gdef \@abspage@last{116}

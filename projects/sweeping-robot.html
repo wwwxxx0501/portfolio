@@ -33,10 +33,16 @@
         <li><a href="#sec-2">2 &nbsp; 硬件设计——自研PCB</a></li>
         <li><a href="#sec-3">3 &nbsp; 下位机固件——FreeRTOS多任务架构</a></li>
         <li><a href="#sec-4">4 &nbsp; PID闭环速度控制</a></li>
-        <li><a href="#sec-5">5 &nbsp; WiFi UDP通信协议</a></li>
-        <li><a href="#sec-6">6 &nbsp; ROS2上位机架构</a></li>
-        <li><a href="#sec-7">7 &nbsp; 差速运动学与里程计</a></li>
-        <li><a href="#sec-8">8 &nbsp; 测试结果</a></li>
+        <li><a href="#sec-5">5 &nbsp; IIR低通滤波器——编码器速度平滑</a></li>
+        <li><a href="#sec-6">6 &nbsp; 电机安全监控</a></li>
+        <li><a href="#sec-7">7 &nbsp; WiFi UDP通信协议</a></li>
+        <li><a href="#sec-8">8 &nbsp; ROS2上位机架构</a></li>
+            <li class="toc-sub"><a href="#sec-8-1">8.1 &nbsp; UDP桥接节点——里程计发布</a></li>
+            <li class="toc-sub"><a href="#sec-8-2">8.2 &nbsp; TF坐标系</a></li>
+            <li class="toc-sub"><a href="#sec-8-3">8.3 &nbsp; Web控制界面REST API</a></li>
+        <li><a href="#sec-9">9 &nbsp; 差速运动学与里程计</a></li>
+        <li><a href="#sec-10">10 &nbsp; ESP32 GPIO引脚分配</a></li>
+        <li><a href="#sec-11">11 &nbsp; 测试结果</a></li>
         </ul>
     </nav>
 
@@ -117,7 +123,38 @@ float PID_Incremental(PID_TypeDef *pid, float target, float actual) {
 }</pre>
     </div>
 
-    <h2 id="sec-5">5 &nbsp; WiFi UDP通信协议</h2>
+    <h2 id="sec-5">5 &nbsp; IIR低通滤波器——编码器速度平滑</h2>
+    <p>
+        编码器原始速度信号含有高频噪声，采用一阶IIR低通滤波器（截止频率15Hz）进行平滑处理后再送入PID控制器：
+        </p>
+    <div class="formula">H(z) = (a)/(1-(1-a)z<sup>-1</sup>),    a = (Δ t)/((1)/(2π f<sub>c</sub>) + Δ t)</div>
+    <div class="code-block">
+        <div class="code-block-header">IIR低通滤波器实现（截止频率15Hz）</div>
+        <pre>void IIR_LPF_Init(IIR_LPF* lpf, float cutoff_hz, float dt_s) {
+    float RC = 1.0f / (2.0f * M_PI * cutoff_hz);
+    lpf-&gt;a = dt_s / (RC + dt_s);
+    lpf-&gt;y = 0.0f;
+}
+
+float IIR_LPF_Update(IIR_LPF* lpf, float x) {
+    lpf-&gt;y += lpf-&gt;a * (x - lpf-&gt;y);
+    return lpf-&gt;y;
+}</pre>
+    </div>
+
+    <h2 id="sec-6">6 &nbsp; 电机安全监控</h2>
+    <p>
+        下位机通过ADC实时监测外部电压信号，实现电机堵转和过流保护。检测逻辑采用连续计数消抖机制：每50ms采样一次ADC，若电压连续5次超过2.3V阈值则禁用电机并将速度归零；连续5次低于阈值则恢复正常控制。
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">电机安全检测参数</div>
+        <pre>#define SAFETY_ADC_PIN      5     // GPIO5 ADC输入
+#define VOLTAGE_THRESHOLD   2.3f  // 电压阈值(V)
+#define CONSECUTIVE_COUNT   5     // 连续检测次数阈值
+#define CHECK_PERIOD_MS     50    // 检测周期(ms)</pre>
+    </div>
+
+    <h2 id="sec-7">7 &nbsp; WiFi UDP通信协议</h2>
     <p>
         采用自定义轻量级UDP协议替代micro-ROS，定义5种帧类型：
         </p>
@@ -130,24 +167,96 @@ float PID_Incremental(PID_TypeDef *pid, float target, float actual) {
         <tr><td>下行（PC<em class="math">→</em>ESP32）</td><td>0xEA 0xAE</td><td>清扫电机控制指令</td><td>按需</td><td>XOR</td></tr>
     </table>
     <p>
-        <strong>NTP风格时间同步</strong>：设计时间同步请求帧（0xFC 0xCF）和应答帧，借鉴NTP协议实现ESP32与PC间毫秒级时钟同步，解决分布式系统中激光雷达数据（10Hz）与电机里程计数据（50Hz）的时间戳对齐问题。
+        <strong>NTP风格时间同步</strong>：设计时间同步请求帧（0xFC 0xCF，10字节）和应答帧（27字节，含<em class="math">T<sub>1</sub></em>/<em class="math">T<sub>2</sub></em>/<em class="math">T<sub>3</sub></em>三个时间戳），借鉴NTP协议实现ESP32与PC间毫秒级时钟同步。时间偏移计算公式：
+        </p>
+    <div class="formula">offset = ((T<sub>1</sub> - T<sub>2</sub>) + (T<sub>4</sub> - T<sub>3</sub>))/(2)</div>
+    <p>
+        
         </p>
 
-    <h2 id="sec-6">6 &nbsp; ROS2上位机架构</h2>
+    <h2 id="sec-8">8 &nbsp; ROS2上位机架构</h2>
     <p>
-        上位机基于ROS2 Jazzy/Humble构建完整导航栈，功能包括：
+        上位机基于ROS2 Jazzy/Humble构建完整导航栈，包含9个自研功能包：
         </p>
     <ul>
-        <li><strong>UDP桥接节点</strong>：接收ESP32上行数据，转换为ROS2标准话题（/odom, /scan），发布里程计与激光雷达数据</li>
+        <li><strong>UDP桥接节点（speedy\<sub>u</sub>dp\<sub>b</sub>ridge）</strong>：接收ESP32上行数据，转换为ROS2标准话题（/odom, /scan），发布里程计与激光雷达数据</li>
         <li><strong>Cartographer SLAM建图</strong>：融合激光雷达扫描数据与轮式里程计，实时构建2D栅格地图</li>
-        <li><strong>AMCL粒子滤波定位</strong>：在已知地图中实现机器人精确定位（<em class="math"><</em>5cm精度）</li>
-        <li><strong>Nav2导航栈</strong>：全局规划（NavFn）+ 局部规划（MPPI控制器），实现自主路径规划与避障</li>
+        <li><strong>AMCL粒子滤波定位</strong>：在已知地图中实现机器人精确定位（<em class="math"><</em>5cm精度），粒子数500<em class="math">~</em>3000自适应</li>
+        <li><strong>Nav2导航栈</strong>：全局规划（NavFn）+ 局部规划（MPPI控制器，20Hz控制频率），实现自主路径规划与避障</li>
         <li><strong>Frontier-Based自主探索</strong>：自动检测地图边界未探索区域，驱动机器人完成全屋建图</li>
         <li><strong>Boustrophedon覆盖路径规划</strong>：Zig-Zag弓字形全覆盖清扫，上位机统计覆盖率</li>
-        <li><strong>Web控制界面</strong>：FastAPI + Vue.js，提供远程遥控、建图模式切换、状态监控，无需安装客户端</li>
+        <li><strong>Web控制界面</strong>：FastAPI + Vue.js + WebSocket实时通信，提供远程遥控、建图模式切换、状态监控，无需安装客户端</li>
     </ul>
 
-    <h2 id="sec-7">7 &nbsp; 差速运动学与里程计</h2>
+    <h3 id="sec-8-1">8.1 &nbsp; UDP桥接节点——里程计发布</h3>
+    <p>
+        UDP桥接节点接收ESP32上行电机速度帧后，进行差速运动学逆解与位姿积分，发布标准ROS2 Odometry消息：
+        </p>
+    <div class="code-block">
+        <div class="code-block-header">ROS2 UDP桥接节点里程计发布（C++）</div>
+        <pre>void update_odometry(int64_t time, float left_speed,
+                     float right_speed) {
+    // 时间同步补偿
+    int64_t current_time = time * 1000
+                         + PacketProcessorBase::time_offset_ns;
+    double dt = (current_time - last_time_) / 1e9;
+    last_time_ = current_time;
+
+    // 差速运动学逆解
+    double linear_vel  = (left_speed + right_speed) / 2.0;
+    double angular_vel = (right_speed - left_speed) / wheel_base_;
+
+    // 位姿积分
+    theta_ += angular_vel * dt * theta_tuning_;
+    x_ += linear_vel * dt * cos(theta_);
+    y_ += linear_vel * dt * sin(theta_);
+
+    // 发布ROS2 Odometry消息
+    nav_msgs::msg::Odometry odom;
+    odom.header.stamp = rclcpp::Time(current_time);
+    odom.header.frame_id = &quot;odom&quot;;
+    odom.child_frame_id = &quot;base_footprint&quot;;
+    odom.pose.pose.position.x = x_;
+    odom.pose.pose.position.y = y_;
+    odom.pose.pose.orientation = quaternion_from_yaw(theta_);
+    pub_-&gt;publish(odom);
+}</pre>
+    </div>
+    <p>
+        其中 <code>wheel\<sub>b</sub>ase\_</code> = 0.18m（轮距），<code>theta\<sub>t</sub>uning\_</code> = 0.97515528（航向角校准系数，通过实际标定获得）。
+        </p>
+
+    <h3 id="sec-8-2">8.2 &nbsp; TF坐标系</h3>
+    <p>
+        系统维护完整的TF坐标系树，各帧关系如下：
+        </p>
+    <table>
+        <tr><th><strong>坐标系</strong></th><th><strong>父帧</strong></th><th><strong>发布者</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>map</td><td>–</td><td>AMCL / Cartographer</td><td>全局固定坐标系</td></tr>
+        <tr><td>odom</td><td>map</td><td>AMCL</td><td>里程计坐标系（连续但会漂移）</td></tr>
+        <tr><td>base\<sub>f</sub>ootprint</td><td>odom</td><td>odom2tf</td><td>底盘投影到地面</td></tr>
+        <tr><td>base\<sub>l</sub>ink</td><td>base\<sub>f</sub>ootprint</td><td>static\<sub>t</sub>f</td><td>底盘中心</td></tr>
+        <tr><td>laser\<sub>f</sub>rame</td><td>base\<sub>l</sub>ink</td><td>static\<sub>t</sub>f</td><td>激光雷达坐标系</td></tr>
+        <tr><td>imu\<sub>l</sub>ink</td><td>base\<sub>l</sub>ink</td><td>static\<sub>t</sub>f</td><td>IMU传感器坐标系</td></tr>
+    </table>
+
+    <h3 id="sec-8-3">8.3 &nbsp; Web控制界面REST API</h3>
+    <p>
+        Web UI基于FastAPI后端 + Vue.js前端 + WebSocket实时通信，提供以下REST API端点：
+        </p>
+    <table>
+        <tr><th><strong>端点</strong></th><th><strong>方法</strong></th><th><strong>功能</strong></th></tr>
+        <tr><td>/api/status</td><td>GET</td><td>获取机器人状态</td></tr>
+        <tr><td>/api/start\<sub>b</sub>ringup</td><td>POST</td><td>启动基础系统</td></tr>
+        <tr><td>/api/start\<sub>e</sub>xploration</td><td>POST</td><td>启动探索模式</td></tr>
+        <tr><td>/api/start\<sub>c</sub>leaning</td><td>POST</td><td>启动清扫模式</td></tr>
+        <tr><td>/api/stop\<sub>a</sub>ll</td><td>POST</td><td>停止所有进程</td></tr>
+        <tr><td>/api/maps</td><td>GET</td><td>获取地图列表</td></tr>
+        <tr><td>/api/save\<sub>m</sub>ap</td><td>POST</td><td>保存当前地图</td></tr>
+        <tr><td>/api/cmd\<sub>v</sub>el</td><td>POST</td><td>发送速度命令</td></tr>
+    </table>
+
+    <h2 id="sec-9">9 &nbsp; 差速运动学与里程计</h2>
     <p>
         采用差速驱动运动学模型，PCNT硬件编码器采集轮速后进行里程计积分：
         </p>
@@ -159,7 +268,23 @@ y<sub>k+1</sub> = y<sub>k</sub> + Δ s · sinθ<sub>k</sub> + (Δθ)/(2)</div>
         其中 <em class="math">D</em> 为两轮轴距，<em class="math">Δ s<sub>L</sub></em>、<em class="math">Δ s<sub>R</sub></em> 分别为左右轮弧长增量。里程计数据通过UDP桥接节点发布为ROS2标准Odometry消息，供Cartographer和AMCL融合使用。
         </p>
 
-    <h2 id="sec-8">8 &nbsp; 测试结果</h2>
+    <h2 id="sec-10">10 &nbsp; ESP32 GPIO引脚分配</h2>
+    <table>
+        <tr><th><strong>功能</strong></th><th><strong>GPIO</strong></th><th><strong>方向</strong></th><th><strong>说明</strong></th></tr>
+        <tr><td>左电机PWM</td><td>GPIO1</td><td>输出</td><td>LEDC Channel 0</td></tr>
+        <tr><td>左电机方向</td><td>GPIO2</td><td>输出</td><td>HIGH=前进</td></tr>
+        <tr><td>右电机PWM</td><td>GPIO42</td><td>输出</td><td>LEDC Channel 1</td></tr>
+        <tr><td>右电机方向</td><td>GPIO41</td><td>输出</td><td>HIGH=前进</td></tr>
+        <tr><td>左编码器A/B</td><td>GPIO5/6</td><td>输入</td><td>PCNT Unit 0</td></tr>
+        <tr><td>右编码器A/B</td><td>GPIO16/15</td><td>输入</td><td>PCNT Unit 1</td></tr>
+        <tr><td>雷达UART TX/RX</td><td>GPIO17/18</td><td>双向</td><td>UART1, 230400bps</td></tr>
+        <tr><td>IMU I2C SDA/SCL</td><td>GPIO38/39</td><td>双向</td><td>I2C0, 400kHz</td></tr>
+        <tr><td>清扫电机PWM</td><td>GPIO8</td><td>输出</td><td>LEDC Channel 2</td></tr>
+        <tr><td>吸尘电机PWM</td><td>GPIO48</td><td>输出</td><td>LEDC Channel 3</td></tr>
+        <tr><td>电池电压ADC</td><td>GPIO7</td><td>输入</td><td>ADC1 CH6, 分压比1:2</td></tr>
+    </table>
+
+    <h2 id="sec-11">11 &nbsp; 测试结果</h2>
     <div class="info-box">
         <div class="info-box-title">性能指标</div>
     <table>

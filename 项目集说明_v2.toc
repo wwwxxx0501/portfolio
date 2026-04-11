@@ -1,0 +1,212 @@
+\contentsline {section}{\numberline {1}RoboMaster 视觉伺服引擎（rm-engine）}{8}{section.1}%
+\contentsline {subsection}{\numberline {1.1}项目背景与目标}{8}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}硬件平台配置}{9}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}rm-engine 跨平台引擎框架}{9}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}引擎架构分层}{10}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}Premake5 跨平台构建系统}{11}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}多线程模块化运行}{12}{subsubsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.4}完整视觉伺服流水线}{13}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}Stage 1--2：鱼眼采集与双色彩空间分割}{13}{subsubsection.1.4.1}%
+\contentsline {subsubsection}{\numberline {1.4.2}Stage 3--4：边缘增强与多准则轮廓过滤}{14}{subsubsection.1.4.2}%
+\contentsline {subsubsection}{\numberline {1.4.3}Stage 5：最小包围圆(MEC)关键点提取}{15}{subsubsection.1.4.3}%
+\contentsline {subsubsection}{\numberline {1.4.4}Stage 6：PnP位姿估计与手眼坐标变换}{15}{subsubsection.1.4.4}%
+\contentsline {subsection}{\numberline {1.5}解析逆运动学求解器}{16}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}求解算法}{16}{subsubsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.6}轨迹插值与串口闭环控制}{16}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}深度学习方案对比分析：为什么回退到传统视觉}{17}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}迭代优化历程}{18}{subsection.1.8}%
+\contentsline {subsection}{\numberline {1.9}端到端性能指标}{19}{subsection.1.9}%
+\contentsline {section}{\numberline {2}SpeedyBot 智能扫地机器人}{22}{section.2}%
+\contentsline {subsection}{\numberline {2.1}项目背景}{22}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}硬件设计——自研PCB}{22}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}下位机固件——FreeRTOS多任务架构}{22}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}PID闭环速度控制}{23}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}IIR低通滤波器——编码器速度平滑}{24}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}电机安全监控}{24}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}WiFi UDP通信协议}{24}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}ROS2上位机架构}{25}{subsection.2.8}%
+\contentsline {subsubsection}{\numberline {2.8.1}UDP桥接节点——里程计发布}{26}{subsubsection.2.8.1}%
+\contentsline {subsubsection}{\numberline {2.8.2}TF坐标系}{26}{subsubsection.2.8.2}%
+\contentsline {subsubsection}{\numberline {2.8.3}Web控制界面REST API}{27}{subsubsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.9}差速运动学与里程计}{27}{subsection.2.9}%
+\contentsline {subsection}{\numberline {2.10}ESP32 GPIO引脚分配}{28}{subsection.2.10}%
+\contentsline {subsection}{\numberline {2.11}测试结果}{28}{subsection.2.11}%
+\contentsline {section}{\numberline {3}工创赛——K210智能垃圾分类识别系统}{30}{section.3}%
+\contentsline {subsection}{\numberline {3.1}项目背景}{30}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}技术方案与实现步骤}{30}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Step 1: 数据集采集与标注}{30}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Step 2: MaixHub云端模型训练}{31}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Step 3: MaixPy IDE串口调试与测试}{31}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Step 4: 串口通信与舵机执行机构}{33}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Step 5: TF卡烧录独立运行}{33}{subsubsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.3}迭代优化历程}{34}{subsection.3.3}%
+\contentsline {section}{\numberline {4}电机驱动综合系统}{35}{section.4}%
+\contentsline {subsection}{\numberline {4.1}项目背景}{35}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}系统功能总览}{35}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}有刷电机综合PCB——硬件方案}{36}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}ADC双通道电压电流检测}{36}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}H桥交叉控制正反转}{37}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}按键扫描与交互控制}{38}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}OLED软件I2C显示}{39}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}PI闭环控制器}{40}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}无刷电机综合PCB——FOC矢量控制}{40}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}PCB设计迭代}{41}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}主循环控制逻辑}{41}{subsection.4.11}%
+\contentsline {section}{\numberline {5}PCA + SVM 人脸识别系统}{43}{section.5}%
+\contentsline {subsection}{\numberline {5.1}项目背景}{43}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}算法流程}{43}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}核心代码实现}{43}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}数据读取与预处理}{43}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}PCA主成分分析}{44}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}Min-Max特征归一化}{45}{subsubsection.5.3.3}%
+\contentsline {subsubsection}{\numberline {5.3.4}One-vs-All多分类SVM训练}{45}{subsubsection.5.3.4}%
+\contentsline {subsubsection}{\numberline {5.3.5}Bagging概率投票预测}{46}{subsubsection.5.3.5}%
+\contentsline {subsubsection}{\numberline {5.3.6}单图预测接口}{46}{subsubsection.5.3.6}%
+\contentsline {subsection}{\numberline {5.4}MATLAB App界面}{47}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}迭代优化历程}{47}{subsection.5.5}%
+\contentsline {section}{\numberline {6}VHDL数字逻辑电路设计}{49}{section.6}%
+\contentsline {subsection}{\numberline {6.1}核心VHDL模块实现}{49}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}四位同步二进制可逆计数器}{49}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}四位双向移位寄存器}{50}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}同步八进制可逆计数器}{51}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}五种触发器实现}{52}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}延伸项目：FPGA自动循迹小车}{53}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}系统架构与供电设计}{53}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}自研8路红外传感器模块}{54}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}循迹算法与丢线恢复策略}{54}{subsubsection.6.3.3}%
+\contentsline {subsubsection}{\numberline {6.3.4}电机驱动模块}{55}{subsubsection.6.3.4}%
+\contentsline {subsection}{\numberline {6.4}配套设计}{55}{subsection.6.4}%
+\contentsline {section}{\numberline {7}2020电赛C题——ADS1292R心电图检测仪}{56}{section.7}%
+\contentsline {subsection}{\numberline {7.1}项目背景与需求}{56}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}硬件系统——ADS1292R SPI通信}{56}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}SPI通信协议}{56}{subsubsection.7.2.1}%
+\contentsline {subsubsection}{\numberline {7.2.2}ADS1292R硬件连接}{57}{subsubsection.7.2.2}%
+\contentsline {subsubsection}{\numberline {7.2.3}ADS1292R数据读取}{57}{subsubsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.3}MATLAB算法验证}{58}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}原始信号与频谱分析}{58}{subsubsection.7.3.1}%
+\contentsline {subsubsection}{\numberline {7.3.2}直流陷波处理}{59}{subsubsection.7.3.2}%
+\contentsline {subsubsection}{\numberline {7.3.3}FIR低通滤波器设计}{59}{subsubsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.4}STM32嵌入式实现}{60}{subsection.7.4}%
+\contentsline {subsubsection}{\numberline {7.4.1}CMSIS-DSP FFT频谱计算}{60}{subsubsection.7.4.1}%
+\contentsline {subsubsection}{\numberline {7.4.2}FIR滤波器嵌入式部署}{60}{subsubsection.7.4.2}%
+\contentsline {subsubsection}{\numberline {7.4.3}LCD实时心电波形绘制}{61}{subsubsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.5}信号处理链}{61}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Pan-Tompkins算法数学表达}{62}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}自适应阈值策略}{62}{subsection.7.7}%
+\contentsline {section}{\numberline {8}仿生多模态智能台灯}{64}{section.8}%
+\contentsline {subsection}{\numberline {8.1}设计灵感与外观造型}{64}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}系统总体架构}{65}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}机械结构设计与迭代}{65}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}3-DOF逆运动学解算}{67}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}有限状态机与多模态交互}{68}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}语音识别与亮度控制通信}{68}{subsection.8.6}%
+\contentsline {section}{\numberline {9}机器人色块识别与抓取}{70}{section.9}%
+\contentsline {subsection}{\numberline {9.1}视觉系统——多色HSV识别}{70}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}视觉伺服闭环控制}{71}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}六步抓取流程}{72}{subsection.9.3}%
+\contentsline {section}{\numberline {10}FSBB尖峰补能系统}{73}{section.10}%
+\contentsline {subsection}{\numberline {10.1}项目背景}{73}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}FSBB拓扑结构}{73}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}系统架构与模块化设计}{74}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}``三环并联''增量式PID协同控制}{74}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}毫秒级高速供电切换模块}{75}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}趋势感知动态限幅滤波}{75}{subsection.10.6}%
+\contentsline {section}{\numberline {11}挑战杯·青年养老赋能计划}{76}{section.11}%
+\contentsline {subsection}{\numberline {11.1}项目背景}{76}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}核心创新——突破四重壁垒}{76}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}实践成果}{76}{subsection.11.3}%
+\contentsline {section}{\numberline {12}QEA电动船设计与稳性分析}{78}{section.12}%
+\contentsline {subsection}{\numberline {12.1}项目概述}{78}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}船体结构设计}{78}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}MATLAB稳性分析}{79}{subsection.12.3}%
+\contentsline {subsubsection}{\numberline {12.3.1}船体几何参数化}{79}{subsubsection.12.3.1}%
+\contentsline {subsubsection}{\numberline {12.3.2}吃水线迭代与浮心计算}{80}{subsubsection.12.3.2}%
+\contentsline {subsubsection}{\numberline {12.3.3}复原力臂与稳性曲线}{80}{subsubsection.12.3.3}%
+\contentsline {subsection}{\numberline {12.4}实船制造与下水测试}{81}{subsection.12.4}%
+\contentsline {section}{\numberline {13}工程原理——激光雷达路径规划系统}{83}{section.13}%
+\contentsline {subsection}{\numberline {13.1}项目概述}{83}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}激光雷达数据采集与解析}{83}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}圆柱障碍物检测——类RANSAC算法}{84}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}电机驱动与舵机控制}{85}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}MATLAB上位机与路径可视化}{85}{subsection.13.5}%
+\contentsline {section}{\numberline {14}SRTP 学生科研训练项目——电磁炮}{86}{section.14}%
+\contentsline {subsection}{\numberline {14.1}研究背景与目标}{86}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}系统总体设计——模块化架构}{86}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}自研触发模块PCB设计}{87}{subsection.14.3}%
+\contentsline {subsection}{\numberline {14.4}IGBT关断特性实验分析}{87}{subsection.14.4}%
+\contentsline {subsection}{\numberline {14.5}多时基放电波形对比实验}{88}{subsection.14.5}%
+\contentsline {subsection}{\numberline {14.6}RLC放电理论模型与实验验证}{89}{subsection.14.6}%
+\contentsline {subsection}{\numberline {14.7}项目收获与科研素养}{89}{subsection.14.7}%
+\contentsline {section}{\numberline {15}圆形薄膜振动的理论分析与实验验证}{90}{section.15}%
+\contentsline {subsection}{\numberline {15.1}问题引入：单次敲击的时域瞬态分析}{90}{subsection.15.1}%
+\contentsline {subsubsection}{\numberline {15.1.1}分离变量法求解本征模态}{90}{subsubsection.15.1.1}%
+\contentsline {subsubsection}{\numberline {15.1.2}COMSOL仿真验证瞬态响应}{91}{subsubsection.15.1.2}%
+\contentsline {subsection}{\numberline {15.2}研究路线关键迭代：从时域到频域}{92}{subsection.15.2}%
+\contentsline {subsubsection}{\numberline {15.2.1}频域稳态理论：Helmholtz方程与共振筛选}{92}{subsubsection.15.2.1}%
+\contentsline {subsection}{\numberline {15.3}核心验证判据：频率比定律}{92}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}MATLAB仿真：本征模态节线可视化}{92}{subsection.15.4}%
+\contentsline {subsection}{\numberline {15.5}实验设计：扫频+Chladni盐粒法}{93}{subsection.15.5}%
+\contentsline {subsubsection}{\numberline {15.5.1}实验装置}{93}{subsubsection.15.5.1}%
+\contentsline {subsubsection}{\numberline {15.5.2}盐粒显影机理}{93}{subsubsection.15.5.2}%
+\contentsline {subsection}{\numberline {15.6}实验结果与理论对照}{94}{subsection.15.6}%
+\contentsline {subsubsection}{\numberline {15.6.1}锚点模态$(0,2)$ @ 525 Hz——同心双圈}{94}{subsubsection.15.6.1}%
+\contentsline {subsubsection}{\numberline {15.6.2}模态$(1,1)$ @ 365--370 Hz——直径节线}{94}{subsubsection.15.6.2}%
+\contentsline {subsubsection}{\numberline {15.6.3}模态$(0,1)$基频——空心圆环}{95}{subsubsection.15.6.3}%
+\contentsline {subsubsection}{\numberline {15.6.4}模态$(2,1)$的观测困难与原因分析}{95}{subsubsection.15.6.4}%
+\contentsline {subsection}{\numberline {15.7}定量验证汇总}{96}{subsection.15.7}%
+\contentsline {subsection}{\numberline {15.8}实验不足与反思}{96}{subsection.15.8}%
+\contentsline {section}{\numberline {16}救灾机器人人因分析}{97}{section.16}%
+\contentsline {subsection}{\numberline {16.1}研究背景：隧道洪涝的极端救援需求}{97}{subsection.16.1}%
+\contentsline {subsection}{\numberline {16.2}研究设计：用户需求分析与实验框架}{97}{subsection.16.2}%
+\contentsline {subsubsection}{\numberline {16.2.1}双角色需求挖掘}{97}{subsubsection.16.2.1}%
+\contentsline {subsubsection}{\numberline {16.2.2}界面复杂度渐进设计}{97}{subsubsection.16.2.2}%
+\contentsline {subsubsection}{\numberline {16.2.3}拟人化程度设计}{98}{subsubsection.16.2.3}%
+\contentsline {subsection}{\numberline {16.3}Unity仿真实验}{98}{subsection.16.3}%
+\contentsline {subsubsection}{\numberline {16.3.1}实验设计}{98}{subsubsection.16.3.1}%
+\contentsline {subsubsection}{\numberline {16.3.2}因变量测量}{98}{subsubsection.16.3.2}%
+\contentsline {subsection}{\numberline {16.4}核心实验发现}{99}{subsection.16.4}%
+\contentsline {subsubsection}{\numberline {16.4.1}发现1：机器人稳态是效率的"基座"}{99}{subsubsection.16.4.1}%
+\contentsline {subsubsection}{\numberline {16.4.2}发现2：AI辅助存在"情境适配区间"}{99}{subsubsection.16.4.2}%
+\contentsline {subsubsection}{\numberline {16.4.3}发现3：小地图作为"外部化认知支架"}{99}{subsubsection.16.4.3}%
+\contentsline {subsubsection}{\numberline {16.4.4}发现4：第三人称视角显著降低晕动症}{99}{subsubsection.16.4.4}%
+\contentsline {subsubsection}{\numberline {16.4.5}发现5：拟人化呈"倒U型"效应}{99}{subsubsection.16.4.5}%
+\contentsline {subsection}{\numberline {16.5}辅助研究：博物馆展签信息分层的人因分析}{99}{subsection.16.5}%
+\contentsline {subsection}{\numberline {16.6}设计优化建议}{100}{subsection.16.6}%
+\contentsline {section}{\numberline {17}工程设计课程项目——Gamma型斯特林发动机联合仿真}{101}{section.17}%
+\contentsline {subsection}{\numberline {17.1}斯特林循环热力学基础}{101}{subsection.17.1}%
+\contentsline {subsection}{\numberline {17.2}史密特理论建模}{102}{subsection.17.2}%
+\contentsline {subsubsection}{\numberline {17.2.1}容积与压力的解析表达}{102}{subsubsection.17.2.1}%
+\contentsline {subsection}{\numberline {17.3}结构参数设计}{102}{subsection.17.3}%
+\contentsline {subsection}{\numberline {17.4}MATLAB曲线计算}{102}{subsection.17.4}%
+\contentsline {subsection}{\numberline {17.5}SolidWorks三维建模与ADAMS仿真}{103}{subsection.17.5}%
+\contentsline {subsubsection}{\numberline {17.5.1}三维结构模型}{103}{subsubsection.17.5.1}%
+\contentsline {subsubsection}{\numberline {17.5.2}ADAMS运动副与约束设置}{103}{subsubsection.17.5.2}%
+\contentsline {subsection}{\numberline {17.6}ADAMS-MATLAB联合仿真}{104}{subsection.17.6}%
+\contentsline {subsubsection}{\numberline {17.6.1}Simulink热力模型}{104}{subsubsection.17.6.1}%
+\contentsline {subsubsection}{\numberline {17.6.2}仿真结果与分析}{105}{subsubsection.17.6.2}%
+\contentsline {subsubsection}{\numberline {17.6.3}参数敏感性分析与优化}{105}{subsubsection.17.6.3}%
+\contentsline {section}{\numberline {18}2025 CUPT/IYPT/CYPT 8.悬浮液体}{107}{section.18}%
+\contentsline {subsection}{\numberline {18.1}研究背景与课题分析}{107}{subsection.18.1}%
+\contentsline {subsection}{\numberline {18.2}理论分析}{107}{subsection.18.2}%
+\contentsline {subsubsection}{\numberline {18.2.1}Rayleigh--Taylor不稳定性与静态分析}{107}{subsubsection.18.2.1}%
+\contentsline {subsubsection}{\numberline {18.2.2}Kapitza效应与动态稳定化}{108}{subsubsection.18.2.2}%
+\contentsline {subsubsection}{\numberline {18.2.3}气泡临界下沉深度}{109}{subsubsection.18.2.3}%
+\contentsline {subsubsection}{\numberline {18.2.4}负重力效应与倒置浮力}{109}{subsubsection.18.2.4}%
+\contentsline {subsection}{\numberline {18.3}预实验}{109}{subsection.18.3}%
+\contentsline {subsection}{\numberline {18.4}实验验证}{110}{subsection.18.4}%
+\contentsline {subsubsection}{\numberline {18.4.1}实验器材与方法}{110}{subsubsection.18.4.1}%
+\contentsline {subsubsection}{\numberline {18.4.2}频率影响实验}{110}{subsubsection.18.4.2}%
+\contentsline {subsubsection}{\numberline {18.4.3}横截面积影响实验}{110}{subsubsection.18.4.3}%
+\contentsline {subsubsection}{\numberline {18.4.4}注射深度与临界深度}{111}{subsubsection.18.4.4}%
+\contentsline {subsection}{\numberline {18.5}COMSOL多相流仿真}{111}{subsection.18.5}%
+\contentsline {subsubsection}{\numberline {18.5.1}仿真建模}{111}{subsubsection.18.5.1}%
+\contentsline {subsubsection}{\numberline {18.5.2}频率对比验证}{112}{subsubsection.18.5.2}%
+\contentsline {subsubsection}{\numberline {18.5.3}横截面积对比验证}{112}{subsubsection.18.5.3}%
+\contentsline {subsubsection}{\numberline {18.5.4}注射深度对比验证}{112}{subsubsection.18.5.4}%
+\contentsline {subsubsection}{\numberline {18.5.5}界面特征深入分析}{112}{subsubsection.18.5.5}%
+\contentsline {subsection}{\numberline {18.6}气泡行为观察}{113}{subsection.18.6}%
+\contentsline {subsection}{\numberline {18.7}误差分析与不足}{113}{subsection.18.7}%
+\contentsline {section}{\numberline {19}总结与技术栈全景}{115}{section.19}%
+\contentsline {subsection}{\numberline {19.1}技术栈总览}{115}{subsection.19.1}%
+\contentsline {subsection}{\numberline {19.2}能力成长路径}{115}{subsection.19.2}%
+\contentsline {subsection}{\numberline {19.3}核心荣誉}{116}{subsection.19.3}%
