@@ -26,6 +26,20 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景</a></li>
+        <li><a href="#sec-2">2 &nbsp; 技术方案与实现步骤</a></li>
+            <li class="toc-sub"><a href="#sec-2-1">2.1 &nbsp; Step 1: 数据集采集与标注</a></li>
+            <li class="toc-sub"><a href="#sec-2-2">2.2 &nbsp; Step 2: MaixHub云端模型训练</a></li>
+            <li class="toc-sub"><a href="#sec-2-3">2.3 &nbsp; Step 3: MaixPy IDE串口调试与测试</a></li>
+            <li class="toc-sub"><a href="#sec-2-4">2.4 &nbsp; Step 4: 串口通信与舵机执行机构</a></li>
+            <li class="toc-sub"><a href="#sec-2-5">2.5 &nbsp; Step 5: TF卡烧录独立运行</a></li>
+        <li><a href="#sec-3">3 &nbsp; 迭代优化历程</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -37,14 +51,14 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景</h2>
     <p>
         中国大学生工程实践与创新能力大赛（工创赛）要求在边缘设备上实现智能垃圾分类。本项目基于<strong>Sipeed K210</strong>边缘AI芯片，通过数据采集、云端训练、本地部署的完整流程，实现了四类垃圾的实时识别分类。
         </p>
 
-    <h2>2 &nbsp; 技术方案与实现步骤</h2>
+    <h2 id="sec-2">2 &nbsp; 技术方案与实现步骤</h2>
 
-    <h3>2.1 &nbsp; Step 1: 数据集采集与标注</h3>
+    <h3 id="sec-2-1">2.1 &nbsp; Step 1: 数据集采集与标注</h3>
     <p>
         收集四种类型垃圾的数据集：
         </p>
@@ -63,7 +77,7 @@
         <div class="figure-caption">Fig. 1 &nbsp; 垃圾分类数据集样本示例</div>
     </div>
 
-    <h3>2.2 &nbsp; Step 2: MaixHub云端模型训练</h3>
+    <h3 id="sec-2-2">2.2 &nbsp; Step 2: MaixHub云端模型训练</h3>
     <p>
         将标注完成的数据集上传至<strong>MaixHub</strong>平台进行云端训练：
         </p>
@@ -78,7 +92,7 @@
         <div class="figure-caption">Fig. 2 &nbsp; MaixHub模型训练准确率曲线</div>
     </div>
 
-    <h3>2.3 &nbsp; Step 3: MaixPy IDE串口调试与测试</h3>
+    <h3 id="sec-2-3">2.3 &nbsp; Step 3: MaixPy IDE串口调试与测试</h3>
     <p>
         使用<strong>MaixPy IDE</strong>连接K210开发板进行调试：
         </p>
@@ -123,7 +137,7 @@ while True:
     lcd.display(img)</pre>
     </div>
 
-    <h3>2.4 &nbsp; Step 4: 串口通信与舵机执行机构</h3>
+    <h3 id="sec-2-4">2.4 &nbsp; Step 4: 串口通信与舵机执行机构</h3>
     <p>
         K210识别出垃圾类别后，通过串口将分类编号（0–3）发送给STM32主控MCU。MCU接收分类数字后，驱动舵机旋转到对应角度，控制分类挡板将垃圾导入对应的收集桶：
         </p>
@@ -162,7 +176,7 @@ void Servo_SetAngle(uint16_t angle) {
 }</pre>
     </div>
 
-    <h3>2.5 &nbsp; Step 5: TF卡烧录独立运行</h3>
+    <h3 id="sec-2-5">2.5 &nbsp; Step 5: TF卡烧录独立运行</h3>
     <p>
         调试完成后将程序与模型烧录至TF卡，实现K210开机自启动独立运行，脱离PC调试环境。完整系统工作流程：K210视觉识别<em class="math">→</em>串口发送class\<sub>i</sub>d<em class="math">→</em>MCU接收<em class="math">→</em>舵机旋转到对应角度<em class="math">→</em>垃圾分类投放。
         </p>
@@ -171,7 +185,7 @@ void Servo_SetAngle(uint16_t angle) {
         <div class="figure-caption">Fig. 3 &nbsp; K210垃圾分类识别系统运行效果</div>
     </div>
 
-    <h2>3 &nbsp; 迭代优化历程</h2>
+    <h2 id="sec-3">3 &nbsp; 迭代优化历程</h2>
     <div class="info-box">
         <div class="info-box-title">版本迭代</div>
         <ol>

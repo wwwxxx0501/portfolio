@@ -26,6 +26,23 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 核心VHDL模块实现</a></li>
+            <li class="toc-sub"><a href="#sec-1-1">1.1 &nbsp; 四位同步二进制可逆计数器</a></li>
+            <li class="toc-sub"><a href="#sec-1-2">1.2 &nbsp; 四位双向移位寄存器</a></li>
+            <li class="toc-sub"><a href="#sec-1-3">1.3 &nbsp; 同步八进制可逆计数器</a></li>
+        <li><a href="#sec-2">2 &nbsp; 五种触发器实现</a></li>
+        <li><a href="#sec-3">3 &nbsp; 延伸项目：FPGA自动循迹小车</a></li>
+            <li class="toc-sub"><a href="#sec-3-1">3.1 &nbsp; 系统架构与供电设计</a></li>
+            <li class="toc-sub"><a href="#sec-3-2">3.2 &nbsp; 自研8路红外传感器模块</a></li>
+            <li class="toc-sub"><a href="#sec-3-3">3.3 &nbsp; 循迹算法与丢线恢复策略</a></li>
+            <li class="toc-sub"><a href="#sec-3-4">3.4 &nbsp; 电机驱动模块</a></li>
+        <li><a href="#sec-4">4 &nbsp; 配套设计</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -35,9 +52,9 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 核心VHDL模块实现</h2>
+    <h2 id="sec-1">1 &nbsp; 核心VHDL模块实现</h2>
 
-    <h3>1.1 &nbsp; 四位同步二进制可逆计数器</h3>
+    <h3 id="sec-1-1">1.1 &nbsp; 四位同步二进制可逆计数器</h3>
     <p>
         支持异步清零、并行加载、上升/下降计数、进位输出四种功能：
         </p>
@@ -86,7 +103,7 @@ begin
 end Behavioral;</pre>
     </div>
 
-    <h3>1.2 &nbsp; 四位双向移位寄存器</h3>
+    <h3 id="sec-1-2">1.2 &nbsp; 四位双向移位寄存器</h3>
     <div class="code-block">
         <div class="code-block-header">四位双向移位寄存器（shift\<sub>4</sub>.vhd）</div>
         <pre>entity shift_4 is
@@ -123,7 +140,7 @@ begin
 end Behavioral;</pre>
     </div>
 
-    <h3>1.3 &nbsp; 同步八进制可逆计数器</h3>
+    <h3 id="sec-1-3">1.3 &nbsp; 同步八进制可逆计数器</h3>
     <div class="code-block">
         <div class="code-block-header">同步八进制可逆计数器（counter.vhd）</div>
         <pre>entity counter is
@@ -158,7 +175,7 @@ begin
 end Behavioral;</pre>
     </div>
 
-    <h2>2 &nbsp; 五种触发器实现</h2>
+    <h2 id="sec-2">2 &nbsp; 五种触发器实现</h2>
     <table>
         <tr><th><strong>序号</strong></th><th><strong>触发器类型</strong></th><th><strong>触发方式</strong></th><th><strong>核心行为</strong></th></tr>
         <tr><td>1</td><td>边沿触发D触发器</td><td>时钟上升沿</td><td><em class="math">Q ← D</em></td></tr>
@@ -191,12 +208,12 @@ end Behavioral;</pre>
         </div>
     </div>
 
-    <h2>3 &nbsp; 延伸项目：FPGA自动循迹小车</h2>
+    <h2 id="sec-3">3 &nbsp; 延伸项目：FPGA自动循迹小车</h2>
     <p>
         将数字逻辑设计延伸至实际工程应用——基于FPGA的自动循迹小车。系统采用三路独立供电架构，支持51单片机与FPGA双控制核心切换。
         </p>
 
-    <h3>3.1 &nbsp; 系统架构与供电设计</h3>
+    <h3 id="sec-3-1">3.1 &nbsp; 系统架构与供电设计</h3>
     <p>
         系统分为三路独立供电通道（共地连接），各模块功能互不干扰：
         </p>
@@ -211,7 +228,7 @@ end Behavioral;</pre>
         <tr><td>通道3</td><td>5V充电宝</td><td>STC89C52RC / EP4CE10F17C8N FPGA</td><td>逻辑控制+红外采集</td></tr>
     </table>
 
-    <h3>3.2 &nbsp; 自研8路红外传感器模块</h3>
+    <h3 id="sec-3-2">3.2 &nbsp; 自研8路红外传感器模块</h3>
     <p>
         采用Altium Designer设计8路红外传感器PCB，每路采用反射式红外对管+ LM393比较器构成独立检测通道，可独立调节检测阈值。板载8路LED实时指示各通道检测状态。
         </p>
@@ -226,7 +243,7 @@ end Behavioral;</pre>
         </div>
     </div>
 
-    <h3>3.3 &nbsp; 循迹算法与丢线恢复策略</h3>
+    <h3 id="sec-3-3">3.3 &nbsp; 循迹算法与丢线恢复策略</h3>
     <p>
         循迹算法核心为8路红外加权中心法：根据各传感器位置赋予加权系数，计算黑线偏移量，生成差速转向信号。当所有传感器均未检测到黑线时，进入丢线恢复模式——累计丢线次数，若超过阈值则按上次偏转方向反向倒车搜索，否则保持原状态等待重新捕获。
         </p>
@@ -235,7 +252,7 @@ end Behavioral;</pre>
         <div class="figure-caption">Fig. 8 &nbsp; 循迹算法流程图（含丢线恢复策略）</div>
     </div>
 
-    <h3>3.4 &nbsp; 电机驱动模块</h3>
+    <h3 id="sec-3-4">3.4 &nbsp; 电机驱动模块</h3>
     <p>
         电机驱动模块同样为自研PCB，采用A4950双H桥驱动芯片，支持正转/反转/刹车/滑行四种工作模式。通过FPGA输出的PWM信号控制电机转速，实现差速转向。
         </p>
@@ -244,7 +261,7 @@ end Behavioral;</pre>
         <div class="figure-caption">Fig. 9 &nbsp; L298N电机驱动真值表</div>
     </div>
 
-    <h2>4 &nbsp; 配套设计</h2>
+    <h2 id="sec-4">4 &nbsp; 配套设计</h2>
     <ol>
         <li><strong>硬件流水灯</strong>：Multisim仿真，555定时器+CD4017十进制计数器级联，实现8路LED顺序点亮</li>
         <li><strong>直流稳压电源</strong>：Multisim设计，变压<em class="math">→</em>整流<em class="math">→</em>滤波<em class="math">→</em>稳压（7805），输出5V/1A稳定直流</li>

@@ -26,6 +26,19 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目概述</a></li>
+        <li><a href="#sec-2">2 &nbsp; 船体结构设计</a></li>
+        <li><a href="#sec-3">3 &nbsp; MATLAB稳性分析</a></li>
+            <li class="toc-sub"><a href="#sec-3-1">3.1 &nbsp; 船体几何参数化</a></li>
+            <li class="toc-sub"><a href="#sec-3-2">3.2 &nbsp; 吃水线迭代与浮心计算</a></li>
+            <li class="toc-sub"><a href="#sec-3-3">3.3 &nbsp; 复原力臂与稳性曲线</a></li>
+        <li><a href="#sec-4">4 &nbsp; 实船制造与下水测试</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -35,12 +48,12 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目概述</h2>
+    <h2 id="sec-1">1 &nbsp; 项目概述</h2>
     <p>
         本项目为QEA课程综合设计，要求从零设计并制造一艘电动船，完成水面自主航行。项目涵盖船体结构设计（SolidWorks三维建模）、流体力学稳性分析（MATLAB数值计算）、供电与驱动系统设计、以及实船制造与下水测试。
         </p>
 
-    <h2>2 &nbsp; 船体结构设计</h2>
+    <h2 id="sec-2">2 &nbsp; 船体结构设计</h2>
     <p>
         采用SolidWorks进行船体三维建模，船体结构由以下零部件组成：
         </p>
@@ -71,12 +84,12 @@
         </div>
     </div>
 
-    <h2>3 &nbsp; MATLAB稳性分析</h2>
+    <h2 id="sec-3">3 &nbsp; MATLAB稳性分析</h2>
     <p>
         船舶稳性是安全航行的核心指标。本项目采用MATLAB进行数值化稳性分析，核心思路为：通过离散化船体网格，在不同横倾角下迭代求解吃水线位置，进而计算浮心坐标与复原力臂（GZ值）。
         </p>
 
-    <h3>3.1 &nbsp; 船体几何参数化</h3>
+    <h3 id="sec-3-1">3.1 &nbsp; 船体几何参数化</h3>
     <p>
         采用幂函数截面描述船体横截面形状，通过参数 <code>hull.width</code>、<code>hull.deep</code>、<code>hull.n</code> 控制切片宽度、深度与曲线形状：
         </p>
@@ -92,7 +105,7 @@
         <div class="figure-caption">Fig. 6 &nbsp; getHull()函数——船体几何网格化</div>
     </div>
 
-    <h3>3.2 &nbsp; 吃水线迭代与浮心计算</h3>
+    <h3 id="sec-3-2">3.2 &nbsp; 吃水线迭代与浮心计算</h3>
     <p>
         对于给定横倾角，需找到满足重力=浮力的吃水线位置。<code>getwaterline2()</code> 函数通过 while 循环逐步抬升吃水线，直到浸没体积产生的浮力等于船重：
         </p>
@@ -114,7 +127,7 @@
         </div>
     </div>
 
-    <h3>3.3 &nbsp; 复原力臂与稳性曲线</h3>
+    <h3 id="sec-3-3">3.3 &nbsp; 复原力臂与稳性曲线</h3>
     <p>
         复原力臂 <em class="math">GZ</em> 是衡量船舶稳性的关键指标，定义为浮心相对重心的横向力臂。对不同横倾角 <em class="math">θ ∈ [0°, 180°]</em> 扫描，计算各角度的 <em class="math">GZ</em> 值绘制稳性曲线。航向角修正通过以下公式实现：
         </p>
@@ -130,7 +143,7 @@
         <div class="figure-caption">Fig. 11 &nbsp; GZ稳性曲线（不同重心高度对比）</div>
     </div>
 
-    <h2>4 &nbsp; 实船制造与下水测试</h2>
+    <h2 id="sec-4">4 &nbsp; 实船制造与下水测试</h2>
     <p>
         根据SolidWorks三维模型，采用激光切割木板+蓝色防水胶带外蒙皮方案制造实船。实测结果验证了稳性分析的有效性。
         </p>

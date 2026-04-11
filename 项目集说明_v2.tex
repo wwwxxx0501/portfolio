@@ -661,21 +661,21 @@ IK求解           & $<$0.01 & $<$0.1\% \\
 % 第二章：SmartRobot 智能扫地机器人
 % ========================================================================
 \newpage
-\section{SmartRobot 智能扫地机器人}
+\section{SpeedyBot 智能扫地机器人}
 
 \begin{infobox}[项目概况]
 \begin{tabular}{ll}
 \textbf{项目角色} & 核心开发 \\
 \textbf{课程}     & 微电路设计课程项目 \\
 \textbf{时间}     & 2024.09 --- 2025.01 \\
-\textbf{技术栈}   & STM32F4, A4950, JY901S IMU, HC-05蓝牙, PyQt5 \\
-\textbf{核心功能} & 全屋建图、自主路径规划、遥控模式、碰撞安全响应
+\textbf{技术栈}   & ESP32-S3, RZ7899, CoinD6激光雷达, MPU6500 IMU, WiFi UDP, ROS2, Nav2 \\
+\textbf{核心功能} & 激光SLAM建图、AMCL定位、Nav2自主导航、Boustrophedon覆盖清扫、Web远程控制
 \end{tabular}
 \end{infobox}
 
 \subsection{项目背景}
 
-本项目设计并实现了一套\textbf{完整的智能扫地机器人系统}，涵盖自研PCB硬件设计、嵌入式底层驱动、PID闭环控制、航迹推算位姿解算以及上位机实时可视化。
+本项目设计并实现了一套基于ESP32-S3和ROS2的\textbf{完整智能扫地机器人系统}，采用上下位机分离架构：ESP32-S3作为下位机负责底层传感器采集与电机控制，ROS2作为上位机负责SLAM建图、AMCL定位、Nav2路径规划与自主导航。两者通过\textbf{自定义轻量级WiFi UDP协议}通信，替代资源占用较大的micro-ROS方案，在保持ROS2导航栈完整兼容的前提下大幅降低嵌入式端资源开销。
 
 \subsection{硬件设计——自研PCB}
 
@@ -686,36 +686,34 @@ IK求解           & $<$0.01 & $<$0.1\% \\
 \toprule
 \textbf{模块} & \textbf{器件} & \textbf{功能} \\
 \midrule
-电源管理 & SLM6900 DC-DC + AMS1117-3.3V LDO & 锂电池充放电管理 \\
-电机驱动 & A4950 $\times$ 2（双H桥配置） & 正反转PWM调速 \\
-主控     & STM32F407 & Cortex-M4核心控制器 \\
-IMU      & JY901S九轴 & USART2, 11字节帧解析 \\
-蓝牙     & HC-05     & 上位机通信 \\
-传感器   & 4路悬崖红外ADC + 2路碰撞开关 & 安全防护 \\
-辅助     & 74HC14 施密特触发器 & 编码器信号整形 \\
+PD快充   & CH224K PD诱骗芯片 & 20V USB-PD输入 \\
+充电管理 & SLM6900 & 锂电池充电管理IC \\
+DC-DC    & TPS54331 & 高效降压转换 5V/3A \\
+LDO      & TPS73733 & 低噪声线性稳压 3.3V \\
+电机驱动 & RZ7899 $\times$ 2 & 双路H桥驱动 1.5A \\
+主控     & ESP32-S3-N8R8 & 双核Xtensa LX7, 8MB Flash, 8MB PSRAM \\
+IMU      & MPU6500 & I2C 400kHz, 6轴惯性测量 \\
+激光雷达 & CoinD6 & UART 230400bps, 360°扫描 \\
+安全防护 & LESD5D5.0CT1G + BSC030P03NS3G & ESD防护 + PMOS反接保护 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\subsection{编码器与航迹推算}
+\subsection{下位机固件——FreeRTOS多任务架构}
 
-通过TIM2/TIM5编码器模式采集轮速，实现航迹推算（Dead Reckoning）：
+ESP32-S3固件基于FreeRTOS构建，核心任务包括：
 
-\begin{equation}
-    \Delta s = \frac{\Delta s_L + \Delta s_R}{2}, \quad
-    \Delta\theta = \frac{\Delta s_R - \Delta s_L}{D}
-\end{equation}
-
-\begin{equation}
-    x_{k+1} = x_k + \Delta s \cdot \cos\!\left(\theta_k + \frac{\Delta\theta}{2}\right), \quad
-    y_{k+1} = y_k + \Delta s \cdot \sin\!\left(\theta_k + \frac{\Delta\theta}{2}\right)
-\end{equation}
-
-其中 $D$ 为两轮轴距，$\Delta s_L$、$\Delta s_R$ 分别为左右轮弧长增量。结合JY901S IMU的航向角进行\textbf{加权融合}修正累积漂移。
+\begin{itemize}
+    \item \textbf{电机控制任务}：PCNT硬件编码器计数采集轮速，增量式PID闭环控制（50Hz采样），双路RZ7899 PWM驱动
+    \item \textbf{激光雷达任务}：CoinD6串口数据采集（UART 230400bps），原始扫描数据打包转发至上位机
+    \item \textbf{IMU采集任务}：MPU6500 I2C数据读取与发布
+    \item \textbf{UDP通信任务}：WiFi连接管理，线程安全的数据帧收发
+    \item \textbf{安全监控任务}：电机堵转检测、过流保护、异常制动
+\end{itemize}
 
 \subsection{PID闭环速度控制}
 
-\begin{lstlisting}[style=cstyle, caption={增量式PID速度控制器（50ms采样周期）}]
+\begin{lstlisting}[style=cstyle, caption={增量式PID速度控制器（50Hz采样周期）}]
 typedef struct {
     float Kp, Ki, Kd;       // Kp=0.1, Ki=0.1, Kd=0.001
     float error, last_error, prev_error;
@@ -745,126 +743,55 @@ float PID_Incremental(PID_TypeDef *pid, float target, float actual) {
 }
 \end{lstlisting}
 
-\subsection{JY901S IMU数据解析}
+\subsection{WiFi UDP通信协议}
 
-\begin{lstlisting}[style=cstyle, caption={JY901S串口数据帧解析（11字节帧）}]
-// JY901S 数据帧格式: 0x55 + TYPE + 8字节数据 + SUM
-void IMU_ParseFrame(uint8_t *buf) {
-    if (buf[0] != 0x55) return;
-
-    uint8_t type = buf[1];
-    switch (type) {
-        case 0x53:  // 欧拉角数据帧
-            // Roll/Pitch/Yaw = raw * (180.0 / 32768.0)
-            imu_data.roll  = ((int16_t)(buf[3]<<8|buf[2]))
-                             / 32768.0f * 180.0f;
-            imu_data.pitch = ((int16_t)(buf[5]<<8|buf[4]))
-                             / 32768.0f * 180.0f;
-            imu_data.yaw   = ((int16_t)(buf[7]<<8|buf[6]))
-                             / 32768.0f * 180.0f;
-            break;
-        case 0x51:  // 加速度数据帧
-            imu_data.ax = ((int16_t)(buf[3]<<8|buf[2]))
-                          / 32768.0f * 16.0f * 9.8f;
-            imu_data.ay = ((int16_t)(buf[5]<<8|buf[4]))
-                          / 32768.0f * 16.0f * 9.8f;
-            break;
-    }
-}
-\end{lstlisting}
-
-\subsection{系统状态机与安全响应}
-
-\begin{center}
-\begin{tabular}{clll}
-\toprule
-\textbf{状态} & \textbf{模式} & \textbf{触发条件} & \textbf{行为} \\
-\midrule
-0 & 关机     & 上电默认/遥控关机 & 电机停止，系统待机 \\
-1 & 遥控模式 & 蓝牙指令切换      & 接收上位机速度指令 \\
-2 & 自主建图 & 蓝牙指令切换      & 牛耕式路径规划清扫 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-碰撞/悬崖传感器触发时执行\textbf{50ms紧急制动}策略：立即停止$\to$后退200ms$\to$旋转90°$\to$继续清扫。
-
-\subsection{蓝牙通信协议}
+采用自定义轻量级UDP协议替代micro-ROS，定义5种帧类型：
 
 \begin{center}
 \begin{tabular}{cllll}
 \toprule
-\textbf{方向} & \textbf{帧长} & \textbf{帧头} & \textbf{内容} & \textbf{校验} \\
+\textbf{方向} & \textbf{帧头} & \textbf{内容} & \textbf{频率} & \textbf{校验} \\
 \midrule
-上行（遥控$\to$下位机） & 6字节 & 0xAA & 模式+左右轮速度 & 校验和 \\
-下行（下位机$\to$上位机） & 14字节 & 0xBB & 编码器+IMU+传感器 & 校验和 \\
+上行（ESP32$\to$PC） & 0xFD 0xEA & 左右轮速度+时间戳 & 50Hz & XOR \\
+上行（ESP32$\to$PC） & 0xEB 0xBE & CoinD6激光雷达原始数据 & 10Hz & XOR \\
+上行（ESP32$\to$PC） & 0xEF 0xFE & ESP32本机IP广播 & 1Hz & XOR \\
+下行（PC$\to$ESP32） & 0xEE 0xFF & 线速度+角速度指令 & 50Hz & XOR \\
+下行（PC$\to$ESP32） & 0xEA 0xAE & 清扫电机控制指令 & 按需 & XOR \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\begin{lstlisting}[style=cstyle, caption={下行状态反馈帧封装}]
-// 14字节下行帧: 0xBB + 编码器(4B) + IMU(4B) + 传感器(4B) + SUM
-void SendStatusFrame(void) {
-    uint8_t frame[14];
-    frame[0] = 0xBB;  // 帧头
-    // 编码器脉冲数 (左/右)
-    frame[1] = (encoder_left >> 8) & 0xFF;
-    frame[2] = encoder_left & 0xFF;
-    frame[3] = (encoder_right >> 8) & 0xFF;
-    frame[4] = encoder_right & 0xFF;
-    // IMU 航向角
-    int16_t yaw_raw = (int16_t)(imu_data.yaw * 100);
-    frame[5] = (yaw_raw >> 8) & 0xFF;
-    frame[6] = yaw_raw & 0xFF;
-    // 传感器状态 (碰撞+悬崖)
-    frame[7] = collision_left | (collision_right << 1);
-    frame[8] = cliff_sensor[0] | (cliff_sensor[1] << 1)
-             | (cliff_sensor[2] << 2) | (cliff_sensor[3] << 3);
-    // 校验和
-    uint8_t sum = 0;
-    for (int i = 0; i < 13; i++) sum += frame[i];
-    frame[13] = sum;
-    HAL_UART_Transmit(&huart_bt, frame, 14, 100);
-}
-\end{lstlisting}
+\textbf{NTP风格时间同步}：设计时间同步请求帧（0xFC 0xCF）和应答帧，借鉴NTP协议实现ESP32与PC间毫秒级时钟同步，解决分布式系统中激光雷达数据（10Hz）与电机里程计数据（50Hz）的时间戳对齐问题。
 
-\subsection{上位机——PyQt5实时可视化}
+\subsection{ROS2上位机架构}
 
-\begin{lstlisting}[style=pythonstyle, caption={PyQt5上位机轨迹可视化核心}]
-class TrajectoryWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.fig, self.ax = plt.subplots(figsize=(6, 6))
-        self.canvas = FigureCanvas(self.fig)
-        self.trajectory_x = []
-        self.trajectory_y = []
+上位机基于ROS2 Jazzy/Humble构建完整导航栈，功能包括：
 
-    def update_position(self, x, y, theta):
-        """接收下位机解算的位姿，实时绘制轨迹"""
-        self.trajectory_x.append(x)
-        self.trajectory_y.append(y)
-        self.ax.clear()
-        self.ax.plot(self.trajectory_x, self.trajectory_y,
-                     'b-', linewidth=1.5, label='轨迹')
-        # 绘制当前朝向箭头
-        dx = 0.05 * math.cos(math.radians(theta))
-        dy = 0.05 * math.sin(math.radians(theta))
-        self.ax.arrow(x, y, dx, dy, head_width=0.02,
-                      color='red')
-        self.ax.set_aspect('equal')
-        self.ax.legend()
-        self.canvas.draw()
-\end{lstlisting}
+\begin{itemize}
+    \item \textbf{UDP桥接节点}：接收ESP32上行数据，转换为ROS2标准话题（/odom, /scan），发布里程计与激光雷达数据
+    \item \textbf{Cartographer SLAM建图}：融合激光雷达扫描数据与轮式里程计，实时构建2D栅格地图
+    \item \textbf{AMCL粒子滤波定位}：在已知地图中实现机器人精确定位（$<$5cm精度）
+    \item \textbf{Nav2导航栈}：全局规划（NavFn）+ 局部规划（MPPI控制器），实现自主路径规划与避障
+    \item \textbf{Frontier-Based自主探索}：自动检测地图边界未探索区域，驱动机器人完成全屋建图
+    \item \textbf{Boustrophedon覆盖路径规划}：Zig-Zag弓字形全覆盖清扫，上位机统计覆盖率
+    \item \textbf{Web控制界面}：FastAPI + Vue.js，提供远程遥控、建图模式切换、状态监控，无需安装客户端
+\end{itemize}
 
-\subsection{路径规划——Boustrophedon牛耕式全覆盖}
+\subsection{差速运动学与里程计}
 
-\begin{enumerate}
-    \item \textbf{贴墙建图阶段}：启动后沿墙壁行驶，通过碰撞传感器检测墙体，编码器+IMU融合记录轮廓
-    \item \textbf{边界构建}：贴墙行驶一圈后闭合轮廓，生成环境边界多边形
-    \item \textbf{牛耕模式}：沿直线前进至碰墙$\to$横移一个清扫宽度$\to$反向行驶，形成``弓''字形覆盖
-    \item \textbf{航向修正}：IMU实时监测航向偏差，PID闭环修正保持直线精度
-    \item \textbf{覆盖率统计}：上位机计算已清扫面积占比
-\end{enumerate}
+采用差速驱动运动学模型，PCNT硬件编码器采集轮速后进行里程计积分：
+
+\begin{equation}
+    \Delta s = \frac{\Delta s_L + \Delta s_R}{2}, \quad
+    \Delta\theta = \frac{\Delta s_R - \Delta s_L}{D}
+\end{equation}
+
+\begin{equation}
+    x_{k+1} = x_k + \Delta s \cdot \cos\!\left(\theta_k + \frac{\Delta\theta}{2}\right), \quad
+    y_{k+1} = y_k + \Delta s \cdot \sin\!\left(\theta_k + \frac{\Delta\theta}{2}\right)
+\end{equation}
+
+其中 $D$ 为两轮轴距，$\Delta s_L$、$\Delta s_R$ 分别为左右轮弧长增量。里程计数据通过UDP桥接节点发布为ROS2标准Odometry消息，供Cartographer和AMCL融合使用。
 
 \subsection{测试结果}
 
@@ -874,11 +801,14 @@ class TrajectoryWidget(QWidget):
 \toprule
 \textbf{指标} & \textbf{数值} \\
 \midrule
-直线100cm偏角     & $<5°$ \\
-直线距离偏差      & $<2$ cm \\
-90°旋转误差       & $<2°$ \\
-碰撞响应延迟      & $<50$ ms \\
-贴墙建图完整度    & 完整闭合 \\
+最大线速度        & 0.5 m/s \\
+最大角速度        & 1.9 rad/s \\
+定位精度（AMCL）  & $<$5 cm \\
+建图精度          & $<$3 cm \\
+通信延迟（WiFi UDP） & $<$20 ms \\
+控制频率（PID闭环） & 50 Hz \\
+续航时间          & $\sim$2小时（3000mAh） \\
+充电时间          & $\sim$1.5小时（PD 20V快充） \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -886,11 +816,11 @@ class TrajectoryWidget(QWidget):
 
 \begin{iterbox}[版本迭代]
 \begin{enumerate}[label=\textbf{V\arabic*}:, leftmargin=3em]
-    \item \textbf{面包板原型}：Arduino + L298N验证电机驱动基本功能
-    \item \textbf{自研PCB V1}：Altium Designer绘制PCB，集成SLM6900电源+A4950驱动，嘉立创打样
-    \item \textbf{闭环控制}：引入编码器反馈+增量式PID，直线偏差从$>$10cm收敛至$<$2cm
-    \item \textbf{IMU融合}：集成JY901S，编码器+IMU加权融合，旋转精度从$\pm$8°提升至$\pm$2°
-    \item \textbf{自主建图}：实现贴墙建图+牛耕路径规划+PyQt5上位机实时可视化
+    \item \textbf{硬件平台}：Altium Designer自研ESP32-S3控制板，集成CH224K PD快充+SLM6900充电管理+TPS54331 DC-DC+双路RZ7899电机驱动+ESD/反接保护
+    \item \textbf{下位机固件}：FreeRTOS多任务架构，PCNT编码器+增量式PID闭环，CoinD6激光雷达驱动，MPU6500 IMU采集
+    \item \textbf{通信协议}：设计5种帧类型的轻量级UDP协议替代micro-ROS，实现NTP风格毫秒级时间同步
+    \item \textbf{导航系统}：ROS2 UDP桥接节点 + Cartographer SLAM建图 + AMCL定位 + Nav2+MPPI路径规划
+    \item \textbf{自主清扫}：Frontier-Based自主探索 + Boustrophedon覆盖路径规划 + FastAPI+Vue.js Web控制界面
 \end{enumerate}
 \end{iterbox}
 

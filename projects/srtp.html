@@ -26,6 +26,19 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 研究背景与目标</a></li>
+        <li><a href="#sec-2">2 &nbsp; 系统总体设计——模块化架构</a></li>
+        <li><a href="#sec-3">3 &nbsp; 自研触发模块PCB设计</a></li>
+        <li><a href="#sec-4">4 &nbsp; IGBT关断特性实验分析</a></li>
+        <li><a href="#sec-5">5 &nbsp; 多时基放电波形对比实验</a></li>
+        <li><a href="#sec-6">6 &nbsp; RLC放电理论模型与实验验证</a></li>
+        <li><a href="#sec-7">7 &nbsp; 项目收获与科研素养</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -40,7 +53,7 @@
         SRTP是本人在大学期间初次系统参与的科研训练项目。项目以电容储能式电磁炮为载体，从理论建模到电路设计、PCB绘制、IGBT功率管特性实测、多级线圈放电时序控制，经历了完整的"提出问题<em class="math">→</em>方案设计<em class="math">→</em>硬件实现<em class="math">→</em>实验验证<em class="math">→</em>迭代优化"科研闭环。
         </p>
 
-    <h2>1 &nbsp; 研究背景与目标</h2>
+    <h2 id="sec-1">1 &nbsp; 研究背景与目标</h2>
     <p>
         电磁发射技术（Electromagnetic Launch, EML）利用安培力取代传统化学发射，具有可控性强、能量转换效率可优化等优势。项目以多级电磁线圈炮（Coilgun）为研究对象，核心目标包括：
         </p>
@@ -51,7 +64,7 @@
         <li>验证理论模型与实际放电曲线的一致性，优化能量转换效率</li>
     </ol>
 
-    <h2>2 &nbsp; 系统总体设计——模块化架构</h2>
+    <h2 id="sec-2">2 &nbsp; 系统总体设计——模块化架构</h2>
     <p>
         整个电磁炮系统采用模块化设计思路，将复杂系统拆分为三大功能模块：
         </p>
@@ -65,7 +78,7 @@
         <p><strong>为何选择IGBT而非MOSFET？</strong>——电磁炮放电瞬间电流可达数十安培，电压可达数百伏。IGBT在高压大电流工况下导通压降低、开关损耗可控，比MOSFET更适合脉冲功率应用。但IGBT关断速度相对较慢（<em class="math">μ</em>s级拖尾电流），需要通过实验精确表征关断特性以优化时序。</p>
     </div>
 
-    <h2>3 &nbsp; 自研触发模块PCB设计</h2>
+    <h2 id="sec-3">3 &nbsp; 自研触发模块PCB设计</h2>
     <p>
         触发模块PCB是本项目硬件设计的核心。在Altium Designer中完成原理图与PCB布局，通过嘉立创生产。
         </p>
@@ -86,7 +99,7 @@
         在PCB布局中，大电流回路（储能电容<em class="math">→</em>IGBT<em class="math">→</em>线圈）的走线宽度<em class="math">≥</em>2mm并覆铜加强，控制信号走线与功率走线物理隔离，减少电磁干扰对控制电路的影响。
         </p>
 
-    <h2>4 &nbsp; IGBT关断特性实验分析</h2>
+    <h2 id="sec-4">4 &nbsp; IGBT关断特性实验分析</h2>
     <p>
         IGBT在关断瞬间存在"拖尾电流"现象——栅极信号撤除后，集电极电流并非立即降为零，而是经历一段衰减过程。拖尾电流的持续时间直接影响多级线圈的最小触发间隔。为此，项目进行了系统的IGBT关断波形采集与分析。
         </p>
@@ -110,7 +123,7 @@
         <li>关断总时间<em class="math">≈ 6</em>–<em class="math">8 μ</em>s，为多级触发间隔设定提供了下限约束</li>
     </ul>
 
-    <h2>5 &nbsp; 多时基放电波形对比实验</h2>
+    <h2 id="sec-5">5 &nbsp; 多时基放电波形对比实验</h2>
     <p>
         为全面表征放电过程的不同时间尺度特征，项目在5<em class="math">μ</em>s/div与100<em class="math">μ</em>s/div两种时基下分别采集波形：
         </p>
@@ -129,7 +142,7 @@
         <li><strong>ms尺度</strong>：可观察完整的RLC放电振荡过程——电容放电<em class="math">→</em>线圈储能<em class="math">→</em>续流衰减的全周期波形，验证了欠阻尼二阶放电模型</li>
     </ul>
 
-    <h2>6 &nbsp; RLC放电理论模型与实验验证</h2>
+    <h2 id="sec-6">6 &nbsp; RLC放电理论模型与实验验证</h2>
     <p>
         单级线圈放电过程可等效为RLC串联二阶电路。电容初始电压<em class="math">V<sub>0</sub></em>，放电方程为：
         </p>
@@ -150,7 +163,7 @@
         实验中100<em class="math">μ</em>s/div时基下观察到的衰减振荡波形与上述欠阻尼解对应，电流峰值在第一个半周期达到最大，随后指数衰减，验证了理论模型的正确性。
         </p>
 
-    <h2>7 &nbsp; 项目收获与科研素养</h2>
+    <h2 id="sec-7">7 &nbsp; 项目收获与科研素养</h2>
     <div class="info-box">
         <div class="info-box-title">项目成果</div>
         <ul>

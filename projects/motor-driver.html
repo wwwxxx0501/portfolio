@@ -26,6 +26,23 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景</a></li>
+        <li><a href="#sec-2">2 &nbsp; 系统功能总览</a></li>
+        <li><a href="#sec-3">3 &nbsp; 有刷电机综合PCB——硬件方案</a></li>
+        <li><a href="#sec-4">4 &nbsp; ADC双通道电压电流检测</a></li>
+        <li><a href="#sec-5">5 &nbsp; H桥交叉控制正反转</a></li>
+        <li><a href="#sec-6">6 &nbsp; 按键扫描与交互控制</a></li>
+        <li><a href="#sec-7">7 &nbsp; OLED软件I2C显示</a></li>
+        <li><a href="#sec-8">8 &nbsp; PI闭环控制器</a></li>
+        <li><a href="#sec-9">9 &nbsp; 无刷电机综合PCB——FOC矢量控制</a></li>
+        <li><a href="#sec-10">10 &nbsp; PCB设计迭代</a></li>
+        <li><a href="#sec-11">11 &nbsp; 主循环控制逻辑</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -36,12 +53,12 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景</h2>
     <p>
         本项目从零构建了两套<strong>完整的电机控制综合系统</strong>，分别对应有刷直流电机和无刷电机。与扫地机器人项目中使用A4950作为主控板上的电机控制模块不同，本项目的两块自研PCB均为<strong>独立完整的电机驱动综合系统</strong>，每块板不仅实现电机驱动功能，还集成了电压检测、电流检测、OLED实时显示、按键交互、PI闭环控制等多项功能，形成了一个自包含的电机测试与控制平台。项目经历了从面包板原型到多版PCB迭代的完整工程化过程。
         </p>
 
-    <h2>2 &nbsp; 系统功能总览</h2>
+    <h2 id="sec-2">2 &nbsp; 系统功能总览</h2>
     <p>
         <strong>有刷电机综合系统</strong>和<strong>无刷电机综合系统</strong>各为一块独立PCB，功能对比如下：
         </p>
@@ -58,7 +75,7 @@
         <tr><td>闭环控制</td><td>PI控制器</td><td>双环PI（速度+电流）</td></tr>
     </table>
 
-    <h2>3 &nbsp; 有刷电机综合PCB——硬件方案</h2>
+    <h2 id="sec-3">3 &nbsp; 有刷电机综合PCB——硬件方案</h2>
     <table>
         <tr><th><strong>模块</strong></th><th><strong>规格</strong></th><th><strong>引脚</strong></th></tr>
         <tr><td>MCU</td><td>STM32F103C8T6 (72 MHz, Cortex-M3)</td><td>—</td></tr>
@@ -73,7 +90,7 @@
         <tr><td>LED指示</td><td>2路运行状态指示</td><td>PA15, PB3</td></tr>
     </table>
 
-    <h2>4 &nbsp; ADC双通道电压电流检测</h2>
+    <h2 id="sec-4">4 &nbsp; ADC双通道电压电流检测</h2>
     <p>
         原理图参数：电压分压 <em class="math">R<sub>16</sub>=33kΩ</em>, <em class="math">R<sub>22</sub>=10kΩ</em>；电流检测 <em class="math">R<sub>shunt</sub>=0.01Ω</em>, 放大倍数<em class="math">×</em>20：
         </p>
@@ -116,7 +133,7 @@ static void Measure_Update(void) {
 }</pre>
     </div>
 
-    <h2>5 &nbsp; H桥交叉控制正反转</h2>
+    <h2 id="sec-5">5 &nbsp; H桥交叉控制正反转</h2>
     <p>
         采用两路PWM通道交叉控制H桥MOSFET，实现正反转切换：
         </p>
@@ -159,7 +176,7 @@ void Motor_Stop(void) {
 }</pre>
     </div>
 
-    <h2>6 &nbsp; 按键扫描与交互控制</h2>
+    <h2 id="sec-6">6 &nbsp; 按键扫描与交互控制</h2>
     <p>
         4路独立按键实现人机交互控制：
         </p>
@@ -190,7 +207,7 @@ void Motor_Stop(void) {
 }</pre>
     </div>
 
-    <h2>7 &nbsp; OLED软件I2C显示</h2>
+    <h2 id="sec-7">7 &nbsp; OLED软件I2C显示</h2>
     <p>
         自实现<strong>软件I2C协议</strong>驱动SSD1306，包含6<em class="math">×</em>8最小字库、帧缓冲区刷新机制：
         </p>
@@ -225,7 +242,7 @@ static void OLED_ShowMeas(uint16_t speed, uint8_t dir,
 }</pre>
     </div>
 
-    <h2>8 &nbsp; PI闭环控制器</h2>
+    <h2 id="sec-8">8 &nbsp; PI闭环控制器</h2>
     <p>
         PI控制器基于离散化实现，采样周期 <em class="math">T = 2</em> ms（500 Hz）：
         </p>
@@ -248,7 +265,7 @@ void PI_Control_Update(float Vin, float Vref) {
 }</pre>
     </div>
 
-    <h2>9 &nbsp; 无刷电机综合PCB——FOC矢量控制</h2>
+    <h2 id="sec-9">9 &nbsp; 无刷电机综合PCB——FOC矢量控制</h2>
     <p>
         在有刷电机综合系统基础上，进一步开发了<strong>无刷电机综合PCB</strong>，该板集成了以下功能模块：
         </p>
@@ -264,7 +281,7 @@ void PI_Control_Update(float Vin, float Vref) {
         <li><strong>按键交互</strong>：4路按键控制启停、调速、模式切换</li>
     </ul>
 
-    <h2>10 &nbsp; PCB设计迭代</h2>
+    <h2 id="sec-10">10 &nbsp; PCB设计迭代</h2>
     <div class="info-box">
         <div class="info-box-title">PCB版本迭代</div>
         <ol>
@@ -284,7 +301,7 @@ void PI_Control_Update(float Vin, float Vref) {
         </div>
     </div>
 
-    <h2>11 &nbsp; 主循环控制逻辑</h2>
+    <h2 id="sec-11">11 &nbsp; 主循环控制逻辑</h2>
     <div class="code-block">
         <div class="code-block-header">主循环：按键响应 + 100ms周期测量刷新</div>
         <pre>int main(void) {

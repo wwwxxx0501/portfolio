@@ -18,10 +18,10 @@ CHAPTERS = {
         "meta": ["薛雅文（工程组视觉第一负责人）", "重庆大学 RoboMaster 战队", "2024.09 – 2025.08"],
         "videos": [("robomaster.mp4", "机械臂视觉伺服系统实际运行演示")],
     },
-    "SmartRobot": {
+    "SpeedyBot": {
         "id": "sweeping-robot", "file": "sweeping-robot.html",
-        "title_override": "SmartRobot 智能扫地机器人",
-        "meta": ["薛雅文", "2025 – 2026"],
+        "title_override": "SpeedyBot 智能扫地机器人",
+        "meta": ["薛雅文", "2024 – 2025"],
         "videos": [
             ("speedybot-slam.mp4", "全屋 SLAM 建图过程"),
             ("speedybot-nav.mp4", "自主导航与避障演示"),
@@ -427,6 +427,7 @@ def convert_chapter(title, body, cfg):
     
     chapter_id = cfg["id"]
     result = []
+    toc_entries = []  # [(level, number, title, anchor_id), ...]
     
     # Section numbering
     sec_num = 0
@@ -468,7 +469,9 @@ def convert_chapter(title, body, cfg):
             subsec_num = 0
             subsubsec_num = 0
             title_text = tex_to_html_inline(m.group(1))
-            result.append(f'\n    <h2>{sec_num} &nbsp; {title_text}</h2>\n')
+            anchor_id = f'sec-{sec_num}'
+            toc_entries.append((2, str(sec_num), title_text, anchor_id))
+            result.append(f'\n    <h2 id="{anchor_id}">{sec_num} &nbsp; {title_text}</h2>\n')
             i += 1
             continue
         
@@ -483,7 +486,9 @@ def convert_chapter(title, body, cfg):
                 in_list = None
             subsec_num += 1
             title_text = tex_to_html_inline(m.group(1))
-            result.append(f'\n    <h3>{sec_num}.{subsec_num} &nbsp; {title_text}</h3>\n')
+            anchor_id = f'sec-{sec_num}-{subsec_num}'
+            toc_entries.append((3, f'{sec_num}.{subsec_num}', title_text, anchor_id))
+            result.append(f'\n    <h3 id="{anchor_id}">{sec_num}.{subsec_num} &nbsp; {title_text}</h3>\n')
             i += 1
             continue
         
@@ -782,9 +787,22 @@ def convert_chapter(title, body, cfg):
     if in_list:
         result.append(f'    </{in_list}>\n')
     
-    return ''.join(result)
+    return ''.join(result), toc_entries
 
-def generate_html(cfg, content_html):
+def build_toc_html(toc_entries):
+    """Build a table-of-contents HTML block from heading entries."""
+    if not toc_entries:
+        return ''
+    lines = ['    <nav class="toc">\n', '        <div class="toc-title">目录</div>\n', '        <ul>\n']
+    for level, number, text, anchor in toc_entries:
+        indent = '            ' if level == 3 else '        '
+        cls = ' class="toc-sub"' if level == 3 else ''
+        lines.append(f'{indent}<li{cls}><a href="#{anchor}">{number} &nbsp; {text}</a></li>\n')
+    lines.append('        </ul>\n')
+    lines.append('    </nav>\n')
+    return ''.join(lines)
+
+def generate_html(cfg, content_html, toc_entries=None):
     """Generate full HTML page"""
     title = cfg.get("title_override", "Project")
     meta_spans = ''.join(f'<span>{m}</span>' for m in cfg.get("meta", []))
@@ -800,6 +818,8 @@ def generate_html(cfg, content_html):
         <div class="figure-caption">Video &nbsp; {vcap}</div>
     </div>\n'''
     
+    toc_html = build_toc_html(toc_entries or [])
+
     return f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -828,6 +848,7 @@ def generate_html(cfg, content_html):
         </div>
     </div>
 
+{toc_html}
 {content_html}
 {video_section}
     <p style="margin-top:2rem; text-align:center;">
@@ -868,8 +889,8 @@ def main():
             continue
         
         print(f"\n=== {cfg['id']}: {title} ===")
-        content_html = convert_chapter(title, body, cfg)
-        full_html = generate_html(cfg, content_html)
+        content_html, toc_entries = convert_chapter(title, body, cfg)
+        full_html = generate_html(cfg, content_html, toc_entries)
         
         out_path = os.path.join(PROJECTS_DIR, cfg["file"])
         with open(out_path, 'w', encoding='utf-8') as f:

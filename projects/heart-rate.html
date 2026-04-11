@@ -26,6 +26,28 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景与需求</a></li>
+        <li><a href="#sec-2">2 &nbsp; 硬件系统——ADS1292R SPI通信</a></li>
+            <li class="toc-sub"><a href="#sec-2-1">2.1 &nbsp; SPI通信协议</a></li>
+            <li class="toc-sub"><a href="#sec-2-2">2.2 &nbsp; ADS1292R硬件连接</a></li>
+            <li class="toc-sub"><a href="#sec-2-3">2.3 &nbsp; ADS1292R数据读取</a></li>
+        <li><a href="#sec-3">3 &nbsp; MATLAB算法验证</a></li>
+            <li class="toc-sub"><a href="#sec-3-1">3.1 &nbsp; 原始信号与频谱分析</a></li>
+            <li class="toc-sub"><a href="#sec-3-2">3.2 &nbsp; 直流陷波处理</a></li>
+            <li class="toc-sub"><a href="#sec-3-3">3.3 &nbsp; FIR低通滤波器设计</a></li>
+        <li><a href="#sec-4">4 &nbsp; STM32嵌入式实现</a></li>
+            <li class="toc-sub"><a href="#sec-4-1">4.1 &nbsp; CMSIS-DSP FFT频谱计算</a></li>
+            <li class="toc-sub"><a href="#sec-4-2">4.2 &nbsp; FIR滤波器嵌入式部署</a></li>
+            <li class="toc-sub"><a href="#sec-4-3">4.3 &nbsp; LCD实时心电波形绘制</a></li>
+        <li><a href="#sec-5">5 &nbsp; 信号处理链</a></li>
+        <li><a href="#sec-6">6 &nbsp; Pan-Tompkins算法数学表达</a></li>
+        <li><a href="#sec-7">7 &nbsp; 自适应阈值策略</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -38,7 +60,7 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景与需求</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景与需求</h2>
     <p>
         本项目设计并实现了一套<strong>完整的心电信号采集与处理系统</strong>，从硬件层的ADS1292R芯片SPI通信、到信号处理层的多级数字滤波、再到应用层的心率计算与LCD实时显示。项目要求：
         </p>
@@ -50,9 +72,9 @@
         <li>能够采集人体真实ECG信号并显示</li>
     </ol>
 
-    <h2>2 &nbsp; 硬件系统——ADS1292R SPI通信</h2>
+    <h2 id="sec-2">2 &nbsp; 硬件系统——ADS1292R SPI通信</h2>
 
-    <h3>2.1 &nbsp; SPI通信协议</h3>
+    <h3 id="sec-2-1">2.1 &nbsp; SPI通信协议</h3>
     <p>
         ADS1292R采用<strong>SPI全双工通信</strong>，STM32作为主设备，ADS1292R作为从设备。SPI接口使用4根信号线：MOSI、MISO、SCLK、CS。
         </p>
@@ -65,7 +87,7 @@
         <div class="figure-caption">Fig. 2 &nbsp; SPI主从设备移位寄存器数据交换原理</div>
     </div>
 
-    <h3>2.2 &nbsp; ADS1292R硬件连接</h3>
+    <h3 id="sec-2-2">2.2 &nbsp; ADS1292R硬件连接</h3>
     <p>
         ADS1292R传感器模块共12个输出引脚，关键连接如下：
         </p>
@@ -84,7 +106,7 @@
         
         </p>
 
-    <h3>2.3 &nbsp; ADS1292R数据读取</h3>
+    <h3 id="sec-2-3">2.3 &nbsp; ADS1292R数据读取</h3>
     <p>
         SPI读取ADS1292R的原始数据帧格式为：3字节状态 + 3字节通道1数据 + 3字节通道2数据，共9字节。24位有符号数需要扩展为32位：
         </p>
@@ -116,12 +138,12 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         
         </p>
 
-    <h2>3 &nbsp; MATLAB算法验证</h2>
+    <h2 id="sec-3">3 &nbsp; MATLAB算法验证</h2>
     <p>
         在部署到嵌入式平台之前，先在MATLAB环境中完成算法验证。
         </p>
 
-    <h3>3.1 &nbsp; 原始信号与频谱分析</h3>
+    <h3 id="sec-3-1">3.1 &nbsp; 原始信号与频谱分析</h3>
     <p>
         将ADS1292R采集的原始信号通过串口导出为CH1.txt文件，在MATLAB中进行FFT频谱分析：
         </p>
@@ -130,7 +152,7 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         <div class="figure-caption">Fig. 3 &nbsp; 原始ECG信号频谱图——可见0Hz直流分量、50Hz工频干扰及高频噪声</div>
     </div>
 
-    <h3>3.2 &nbsp; 直流陷波处理</h3>
+    <h3 id="sec-3-2">3.2 &nbsp; 直流陷波处理</h3>
     <p>
         设计0Hz陷波器滤除直流分量：
         </p>
@@ -139,7 +161,7 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         <div class="figure-caption">Fig. 4 &nbsp; 直流陷波前后频谱对比——左：陷波后（红），右：原始频谱（蓝），0Hz处直流分量被有效滤除</div>
     </div>
 
-    <h3>3.3 &nbsp; FIR低通滤波器设计</h3>
+    <h3 id="sec-3-3">3.3 &nbsp; FIR低通滤波器设计</h3>
     <p>
         根据设计指标（通带40Hz/3dB、阻带50Hz/40dB、采样500Hz），使用MATLAB <code>filterDesigner</code>工具设计FIR数字低通滤波器：
         </p>
@@ -153,9 +175,9 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         <div class="figure-caption">Fig. 5 &nbsp; FIR低通滤波前后频谱对比——左：滤波前（红），右：FIR滤波后（蓝），50Hz以上全部有效抑制</div>
     </div>
 
-    <h2>4 &nbsp; STM32嵌入式实现</h2>
+    <h2 id="sec-4">4 &nbsp; STM32嵌入式实现</h2>
 
-    <h3>4.1 &nbsp; CMSIS-DSP FFT频谱计算</h3>
+    <h3 id="sec-4-1">4.1 &nbsp; CMSIS-DSP FFT频谱计算</h3>
     <p>
         利用ARM CMSIS-DSP库实现1024点FFT频谱计算，在LCD上实时显示频谱：
         </p>
@@ -170,7 +192,7 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         </div>
     </div>
 
-    <h3>4.2 &nbsp; FIR滤波器嵌入式部署</h3>
+    <h3 id="sec-4-2">4.2 &nbsp; FIR滤波器嵌入式部署</h3>
     <p>
         将MATLAB设计的81阶FIR滤波器系数导出为C数组，部署到STM32：
         </p>
@@ -179,13 +201,13 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         <div class="figure-caption">Fig. 8 &nbsp; FIR滤波器系数数组（81阶Chebyshev窗）与FFT实例定义</div>
     </div>
 
-    <h3>4.3 &nbsp; LCD实时心电波形绘制</h3>
+    <h3 id="sec-4-3">4.3 &nbsp; LCD实时心电波形绘制</h3>
     <div class="figure">
         <img src="../assets/images/heart-rate/heart_9.png" alt="LCD实时波形绘制函数——textttdrawCurve" onclick="openLightbox(this)">
         <div class="figure-caption">Fig. 9 &nbsp; LCD实时波形绘制函数——textttdrawCurve</div>
     </div>
 
-    <h2>5 &nbsp; 信号处理链</h2>
+    <h2 id="sec-5">5 &nbsp; 信号处理链</h2>
     <p>
         ECG心电信号从原始采集到BPM输出的完整处理流程：
         </p>
@@ -203,7 +225,7 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         <li><strong>LCD显示</strong>：实时绘制滤波后心电波形、频谱图、心率数值</li>
     </ol>
 
-    <h2>6 &nbsp; Pan-Tompkins算法数学表达</h2>
+    <h2 id="sec-6">6 &nbsp; Pan-Tompkins算法数学表达</h2>
     <p>
         <strong>五点差分</strong>（突出QRS斜率）：
         </p>
@@ -224,7 +246,7 @@ void ADS1292_ReadData(int32_t *ch1_data) {
         其中 <em class="math">overlineRR</em> 为平均R-R间期采样点数，<em class="math">f<sub>s</sub></em> 为采样频率。
         </p>
 
-    <h2>7 &nbsp; 自适应阈值策略</h2>
+    <h2 id="sec-7">7 &nbsp; 自适应阈值策略</h2>
     <p>
         Pan-Tompkins算法的关键在于<strong>自适应双阈值</strong>机制：
         </p>

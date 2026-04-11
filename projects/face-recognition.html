@@ -26,6 +26,23 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景</a></li>
+        <li><a href="#sec-2">2 &nbsp; 算法流程</a></li>
+        <li><a href="#sec-3">3 &nbsp; 核心代码实现</a></li>
+            <li class="toc-sub"><a href="#sec-3-1">3.1 &nbsp; 数据读取与预处理</a></li>
+            <li class="toc-sub"><a href="#sec-3-2">3.2 &nbsp; PCA主成分分析</a></li>
+            <li class="toc-sub"><a href="#sec-3-3">3.3 &nbsp; Min-Max特征归一化</a></li>
+            <li class="toc-sub"><a href="#sec-3-4">3.4 &nbsp; One-vs-All多分类SVM训练</a></li>
+            <li class="toc-sub"><a href="#sec-3-5">3.5 &nbsp; Bagging概率投票预测</a></li>
+            <li class="toc-sub"><a href="#sec-3-6">3.6 &nbsp; 单图预测接口</a></li>
+        <li><a href="#sec-4">4 &nbsp; MATLAB App界面</a></li>
+        <li><a href="#sec-5">5 &nbsp; 迭代优化历程</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -36,12 +53,12 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景</h2>
     <p>
         本项目在MATLAB环境下构建了一套完整的<strong>PCA降维 + One-vs-All多分类SVM</strong>人脸识别系统，支持27人识别分类，并通过MATLAB App Designer开发了图形化应用界面，支持摄像头实时采集和马赛克特效。
         </p>
 
-    <h2>2 &nbsp; 算法流程</h2>
+    <h2 id="sec-2">2 &nbsp; 算法流程</h2>
     <ol>
         <li><strong>数据读取</strong>（ReadFace.m）：读取56<em class="math">×</em>46灰度图，展平为2576维行向量，标注类别标签</li>
         <li><strong>PCA降维</strong>（PCA.m）：中心化<em class="math">→</em>协方差矩阵<em class="math">→</em>特征分解<em class="math">→</em>投影至<em class="math">k</em>维子空间</li>
@@ -51,9 +68,9 @@
         <li><strong>GUI应用</strong>（xtw.mlapp）：MATLAB App Designer界面，集成拍照+预测</li>
     </ol>
 
-    <h2>3 &nbsp; 核心代码实现</h2>
+    <h2 id="sec-3">3 &nbsp; 核心代码实现</h2>
 
-    <h3>3.1 &nbsp; 数据读取与预处理</h3>
+    <h3 id="sec-3-1">3.1 &nbsp; 数据读取与预处理</h3>
     <div class="code-block">
         <div class="code-block-header">ReadFace.m – 批量读取人脸样本并展平</div>
         <pre>function [trainData, trainLabel, testData, testLabel] = ReadFace()
@@ -83,7 +100,7 @@
 end</pre>
     </div>
 
-    <h3>3.2 &nbsp; PCA主成分分析</h3>
+    <h3 id="sec-3-2">3.2 &nbsp; PCA主成分分析</h3>
     <div class="code-block">
         <div class="code-block-header">PCA.m – 协方差矩阵特征分解降维</div>
         <pre>function [pcaA, V, conVec] = PCA(A, k)
@@ -119,7 +136,7 @@ pcaA = meanVec * V;</pre>
         </p>
     <div class="formula"><strong>Y</strong> = bar<strong>X</strong> · <strong>V</strong> ∈ mathbbR<sup>N × k</sup></div>
 
-    <h3>3.3 &nbsp; Min-Max特征归一化</h3>
+    <h3 id="sec-3-3">3.3 &nbsp; Min-Max特征归一化</h3>
     <div class="code-block">
         <div class="code-block-header">scaling.m – Min-Max归一化至[-1,1]</div>
         <pre>function [scaledData, minVals, maxVals] = scaling(data)
@@ -131,7 +148,7 @@ pcaA = meanVec * V;</pre>
 end</pre>
     </div>
 
-    <h3>3.4 &nbsp; One-vs-All多分类SVM训练</h3>
+    <h3 id="sec-3-4">3.4 &nbsp; One-vs-All多分类SVM训练</h3>
     <div class="code-block">
         <div class="code-block-header">multiSVMtrain.m – 27个二分类SVM训练</div>
         <pre>function models = multiSVMtrain(X_train, y_train)
@@ -154,7 +171,7 @@ end</pre>
 end</pre>
     </div>
 
-    <h3>3.5 &nbsp; Bagging概率投票预测</h3>
+    <h3 id="sec-3-5">3.5 &nbsp; Bagging概率投票预测</h3>
     <div class="code-block">
         <div class="code-block-header">multiSVM.m – Bagging后验概率投票</div>
         <pre>function [pred, acc] = multiSVM(X_test, testlabel, y_train, models)
@@ -181,7 +198,7 @@ end</pre>
 end</pre>
     </div>
 
-    <h3>3.6 &nbsp; 单图预测接口</h3>
+    <h3 id="sec-3-6">3.6 &nbsp; 单图预测接口</h3>
     <div class="code-block">
         <div class="code-block-header">PredictImg.m – 新图像预测</div>
         <pre>function name = PredictImg(img_path, V, meanA, models, y_train)
@@ -204,7 +221,7 @@ end</pre>
 end</pre>
     </div>
 
-    <h2>4 &nbsp; MATLAB App界面</h2>
+    <h2 id="sec-4">4 &nbsp; MATLAB App界面</h2>
     <p>
         通过<strong>MATLAB App Designer</strong>开发GUI应用（xtw.mlapp），功能包括：
         </p>
@@ -215,7 +232,7 @@ end</pre>
         <li>识别结果显示27人姓名</li>
     </ul>
 
-    <h2>5 &nbsp; 迭代优化历程</h2>
+    <h2 id="sec-5">5 &nbsp; 迭代优化历程</h2>
     <div class="info-box">
         <div class="info-box-title">版本迭代</div>
         <ol>

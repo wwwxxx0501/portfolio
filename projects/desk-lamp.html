@@ -26,6 +26,18 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 设计灵感与外观造型</a></li>
+        <li><a href="#sec-2">2 &nbsp; 系统总体架构</a></li>
+        <li><a href="#sec-3">3 &nbsp; 机械结构设计与迭代</a></li>
+        <li><a href="#sec-4">4 &nbsp; 3-DOF逆运动学解算</a></li>
+        <li><a href="#sec-5">5 &nbsp; 有限状态机与多模态交互</a></li>
+        <li><a href="#sec-6">6 &nbsp; 语音识别与亮度控制通信</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -37,7 +49,7 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 设计灵感与外观造型</h2>
+    <h2 id="sec-1">1 &nbsp; 设计灵感与外观造型</h2>
     <p>
         本项目的设计灵感来源于Apple Elegant情感交互台灯概念——将传统台灯重新定义为具有情感感知和表达能力的"桌面伴侣"，通过流畅的机械运动和智能交互实现人与物之间的情感连接。
         </p>
@@ -53,7 +65,7 @@
         <div class="figure-caption">Fig. 2 &nbsp; 《死亡搁浅》奥德拉德克外观灵感来源</div>
     </div>
 
-    <h2>2 &nbsp; 系统总体架构</h2>
+    <h2 id="sec-2">2 &nbsp; 系统总体架构</h2>
     <p>
         系统基于树莓派CM5计算模块为核心处理器，集成视觉识别、语音交互、机械臂控制和智能照明等多个子系统，采用分层模块化软件架构：
         </p>
@@ -78,7 +90,7 @@
         <li><strong>驱动层</strong>：语音识别模块（讯飞API）、舵机控制线程、逆运动学工具</li>
     </ul>
 
-    <h2>3 &nbsp; 机械结构设计与迭代</h2>
+    <h2 id="sec-3">3 &nbsp; 机械结构设计与迭代</h2>
     <p>
         台灯主体分为底座与机械臂两部分。底座设计为长方体盒子，容纳全部电气元器件与接线，摄像头置于斜侧面，符合日常使用台灯时斜向摆放的习惯。半圆形底座内部设计镂空可放入配重，增强稳定性。
         </p>
@@ -101,7 +113,7 @@
         <div class="figure-caption">Fig. 5 &nbsp; 第二版机械臂——融入奥德拉德克设计语言</div>
     </div>
 
-    <h2>4 &nbsp; 3-DOF逆运动学解算</h2>
+    <h2 id="sec-4">4 &nbsp; 3-DOF逆运动学解算</h2>
     <p>
         台灯采用3自由度串联连杆机构，连杆长度<em class="math">L<sub>1</sub> = L<sub>2</sub> = 145mm</em>。系统采用几何法进行逆运动学解算，将目标位置表示为等腰三角形参数：
         </p>
@@ -129,7 +141,7 @@
         <tr><td>1</td><td>顶端</td><td>475</td><td><em class="math">-1</em></td><td><em class="math">0° ~ 88°</em></td></tr>
     </table>
 
-    <h2>5 &nbsp; 有限状态机与多模态交互</h2>
+    <h2 id="sec-5">5 &nbsp; 有限状态机与多模态交互</h2>
     <p>
         系统采用有限状态机（FSM）管理运行状态，状态包括：STANDBY（待机）、LISTENING（监听）、HAND\<sub>F</sub>OLLOW（手部跟随）、PET\<sub>M</sub>ODE（桌宠互动）、BRIGHTNESS\<sub>M</sub>ODE（亮度调节）。状态转移规则如下：
         </p>
@@ -150,7 +162,7 @@
         <strong>亮度调节模式</strong>：通过手势控制LED亮度，手掌张开程度与亮度成正比（握拳<em class="math">→</em>0%，半握<em class="math">→</em>50%，张开<em class="math">→</em>100%）。
         </p>
 
-    <h2>6 &nbsp; 语音识别与亮度控制通信</h2>
+    <h2 id="sec-6">6 &nbsp; 语音识别与亮度控制通信</h2>
     <p>
         语音系统采用讯飞实时语音转写API，USB麦克风原生48kHz采样率经<code>audioop.ratecv</code>实时重采样至16kHz后送入API识别。语音合成采用Edge-TTS（<code>zh-CN-XiaoxiaoNeural</code>声音），通过<code>mpg123</code>播放。
         </p>

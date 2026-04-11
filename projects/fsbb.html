@@ -26,6 +26,18 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景</a></li>
+        <li><a href="#sec-2">2 &nbsp; FSBB拓扑结构</a></li>
+        <li><a href="#sec-3">3 &nbsp; 系统架构与模块化设计</a></li>
+        <li><a href="#sec-4">4 &nbsp; "三环并联"增量式PID协同控制</a></li>
+        <li><a href="#sec-5">5 &nbsp; 毫秒级高速供电切换模块</a></li>
+        <li><a href="#sec-6">6 &nbsp; 趋势感知动态限幅滤波</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -35,12 +47,12 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景</h2>
     <p>
         针对储能系统中负载突变引起的<strong>尖峰功率需求</strong>，设计了一套基于<strong>四开关Buck-Boost（FSBB）</strong>拓扑的DC-DC变换器，实现升降压无缝切换与双闭环数字控制。
         </p>
 
-    <h2>2 &nbsp; FSBB拓扑结构</h2>
+    <h2 id="sec-2">2 &nbsp; FSBB拓扑结构</h2>
     <p>
         FSBB拓扑由四个功率MOSFET构成（<em class="math">Q<sub>1</sub></em>–<em class="math">Q<sub>4</sub></em>），根据输入/输出电压关系自动切换工作模式：
         </p>
@@ -55,7 +67,7 @@
         <div class="figure-caption">Fig. 1 &nbsp; FSBB逻辑控制框图</div>
     </div>
 
-    <h2>3 &nbsp; 系统架构与模块化设计</h2>
+    <h2 id="sec-3">3 &nbsp; 系统架构与模块化设计</h2>
     <p>
         系统采用模块化设计，分为电池模块、尖峰补能模块（FSBB+超级电容）与控制模块三部分。各模块通过标准化接口连接（如XT30电源接口、GH1.25通信接口等），支持热插拔与并联扩展。整体能量流为：锂电池提供基础能量，超级电容承担尖峰功率，FSBB负责双向能量调度与升降压匹配。
         </p>
@@ -70,7 +82,7 @@
         </div>
     </div>
 
-    <h2>4 &nbsp; "三环并联"增量式PID协同控制</h2>
+    <h2 id="sec-4">4 &nbsp; "三环并联"增量式PID协同控制</h2>
     <p>
         为同时满足"电池安全功率约束"与"超级电容SOC（电压）边界约束"，系统采用<strong>"三环并联"协同控制结构</strong>：
         </p>
@@ -87,7 +99,7 @@
         <div class="figure-caption">Fig. 4 &nbsp; 尖峰补能装置三环并联控制框图</div>
     </div>
 
-    <h2>5 &nbsp; 毫秒级高速供电切换模块</h2>
+    <h2 id="sec-5">5 &nbsp; 毫秒级高速供电切换模块</h2>
     <p>
         系统采用"STM32 + 高速比较器（Comparator）"协同架构：STM32负责上层状态机、能量管理策略与参数更新；高速比较器实时监控关键节点阈值。当检测到突变信号时，比较器可纳秒级触发硬件中断，实现硬件级快速响应。
         </p>
@@ -99,7 +111,7 @@
         <div class="figure-caption">Fig. 5 &nbsp; 防倒灌模块原理图与PCB设计</div>
     </div>
 
-    <h2>6 &nbsp; 趋势感知动态限幅滤波</h2>
+    <h2 id="sec-6">6 &nbsp; 趋势感知动态限幅滤波</h2>
     <p>
         户外复杂工况下，电流采样信号常呈现"噪声与真实突变叠加"的特点。系统采用<strong>趋势感知的动态限幅滤波</strong>：通过历史状态累积判断电流变化趋势，被判定为趋势性变化时提高限幅阈值加速跟踪，被判定为噪声时收紧限幅阈值加强平滑，实现滤噪与动态响应的平衡。
         </p>

@@ -26,6 +26,15 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 视觉系统——多色HSV识别</a></li>
+        <li><a href="#sec-2">2 &nbsp; 视觉伺服闭环控制</a></li>
+        <li><a href="#sec-3">3 &nbsp; 六步抓取流程</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -35,7 +44,7 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 视觉系统——多色HSV识别</h2>
+    <h2 id="sec-1">1 &nbsp; 视觉系统——多色HSV识别</h2>
     <div class="code-block">
         <div class="code-block-header">OpenCV多色HSV空间色块检测</div>
         <pre>import cv2
@@ -81,7 +90,7 @@ def detect_blocks(frame):
     return results</pre>
     </div>
 
-    <h2>2 &nbsp; 视觉伺服闭环控制</h2>
+    <h2 id="sec-2">2 &nbsp; 视觉伺服闭环控制</h2>
     <p>
         将色块中心偏差作为PID输入，控制底盘运动趋近目标：
         </p>
@@ -106,7 +115,7 @@ def detect_blocks(frame):
         return velocity, omega</pre>
     </div>
 
-    <h2>3 &nbsp; 六步抓取流程</h2>
+    <h2 id="sec-3">3 &nbsp; 六步抓取流程</h2>
     <table>
         <tr><th><strong>步骤</strong></th><th><strong>动作</strong></th><th><strong>控制方式</strong></th></tr>
         <tr><td>1</td><td>视觉检测目标色块</td><td>OpenCV HSV分割+轮廓检测</td></tr>

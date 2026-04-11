@@ -72,6 +72,43 @@ body {
 }
 
 /* ===== Article Header ===== */
+/* ===== Table of Contents ===== */
+.toc {
+    margin: 0 0 2rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+}
+.toc-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+}
+.toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.toc li {
+    margin: 0.2rem 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+.toc li.toc-sub {
+    padding-left: 1.5em;
+    font-size: 0.84rem;
+}
+.toc a {
+    color: var(--accent);
+    text-decoration: none;
+}
+.toc a:hover {
+    text-decoration: underline;
+}
+
 .article-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--text); }
 .article-title {
     font-size: 1.65rem;

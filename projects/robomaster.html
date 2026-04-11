@@ -26,10 +26,33 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目背景与目标</a></li>
+        <li><a href="#sec-2">2 &nbsp; 硬件平台配置</a></li>
+        <li><a href="#sec-3">3 &nbsp; rm-engine 跨平台引擎框架</a></li>
+            <li class="toc-sub"><a href="#sec-3-1">3.1 &nbsp; 引擎架构分层</a></li>
+            <li class="toc-sub"><a href="#sec-3-2">3.2 &nbsp; Premake5 跨平台构建系统</a></li>
+            <li class="toc-sub"><a href="#sec-3-3">3.3 &nbsp; 多线程模块化运行</a></li>
+        <li><a href="#sec-4">4 &nbsp; 完整视觉伺服流水线</a></li>
+            <li class="toc-sub"><a href="#sec-4-1">4.1 &nbsp; Stage 1–2：鱼眼采集与双色彩空间分割</a></li>
+            <li class="toc-sub"><a href="#sec-4-2">4.2 &nbsp; Stage 3–4：边缘增强与多准则轮廓过滤</a></li>
+            <li class="toc-sub"><a href="#sec-4-3">4.3 &nbsp; Stage 5：最小包围圆(MEC)关键点提取</a></li>
+            <li class="toc-sub"><a href="#sec-4-4">4.4 &nbsp; Stage 6：PnP位姿估计与手眼坐标变换</a></li>
+        <li><a href="#sec-5">5 &nbsp; 解析逆运动学求解器</a></li>
+            <li class="toc-sub"><a href="#sec-5-1">5.1 &nbsp; 求解算法</a></li>
+        <li><a href="#sec-6">6 &nbsp; 轨迹插值与串口闭环控制</a></li>
+        <li><a href="#sec-7">7 &nbsp; 深度学习方案对比分析：为什么回退到传统视觉</a></li>
+        <li><a href="#sec-8">8 &nbsp; 迭代优化历程</a></li>
+        <li><a href="#sec-9">9 &nbsp; 端到端性能指标</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
-        <tr><td><strong>项目角色</strong></td><td>工程组视觉第一负责人</td></tr>
+        <tr><td><strong>项目角色</strong></td><td>第一负责人 · 视觉算法与引擎架构开发</td></tr>
         <tr><td><strong>技术栈</strong></td><td>C++17, OpenCV 4.11, OpenGL, Dear ImGui, PyBind11, Eigen</td></tr>
         <tr><td><strong>硬件平台</strong></td><td>Intel NUC i5-1135G7（无独立GPU，纯CPU边缘计算）</td></tr>
         <tr><td><strong>竞赛成果</strong></td><td>RoboMaster 2025全国赛三等奖、区域赛二等奖</td></tr>
@@ -37,7 +60,7 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目背景与目标</h2>
+    <h2 id="sec-1">1 &nbsp; 项目背景与目标</h2>
     <p>
         RoboMaster机甲大师赛要求工程机器人在高速对抗环境下实现自主"取矿–兑换"操作。核心挑战在于：机械臂末端需精准对准兑换站上的4个L形蓝色LED标记（30<em class="math">×</em>30cm正方形四角），完成6-DoF位姿估计后驱动4连杆机械臂执行抓取，整个闭环延迟须低于20ms才能满足实时性要求。
         </p>
@@ -49,7 +72,7 @@
         <div class="figure-caption">Fig. 1 &nbsp; 工程机器人全貌——标注鱼眼相机（Eye-in-hand构型）与4连杆机械臂</div>
     </div>
 
-    <h2>2 &nbsp; 硬件平台配置</h2>
+    <h2 id="sec-2">2 &nbsp; 硬件平台配置</h2>
     <table>
         <caption>系统硬件规格</caption>
         <tr><th><strong>组件</strong></th><th><strong>型号/规格</strong></th><th><strong>说明</strong></th></tr>
@@ -65,7 +88,7 @@
         <div class="figure-caption">Fig. 2 &nbsp; 迈德威视工业相机——3.37mm F2.8鱼眼镜头</div>
     </div>
 
-    <h2>3 &nbsp; rm-engine 跨平台引擎框架</h2>
+    <h2 id="sec-3">3 &nbsp; rm-engine 跨平台引擎框架</h2>
     <p>
         rm-engine是本项目的核心软件产出，设计为一个<strong>分层模块化、跨平台</strong>的C++17引擎框架，借鉴游戏引擎架构思想，将视觉伺服系统组织为可复用的模块化组件：
         </p>
@@ -100,7 +123,7 @@
 #include &quot;imgui/imgui-layer.h&quot;       // Dear ImGui调参界面</pre>
     </div>
 
-    <h3>3.1 &nbsp; 引擎架构分层</h3>
+    <h3 id="sec-3-1">3.1 &nbsp; 引擎架构分层</h3>
     <p>
         引擎源码组织为以下分层架构，所有代码位于<code>Mechax</code>命名空间：
         </p>
@@ -117,7 +140,7 @@
         <tr><td><strong>平台层</strong></td><td><code>platform/</code></td><td>Windows（<code>win-window.h</code>）、Linux（GLFW窗口系统）平台适配</td></tr>
     </table>
 
-    <h3>3.2 &nbsp; Premake5 跨平台构建系统</h3>
+    <h3 id="sec-3-2">3.2 &nbsp; Premake5 跨平台构建系统</h3>
     <p>
         构建系统采用<strong>Premake5</strong>（Lua脚本驱动），通过一套配置文件生成Windows（VS2022 <code>.sln</code>）和Linux（<code>gmake2 Makefile</code>）工程，实现<strong>跨平台一键编译</strong>：
         </p>
@@ -160,7 +183,7 @@ premake5 --python=&quot;/home/user/miniconda3/envs/rm&quot; \
 sudo docker exec -it &lt;container_id&gt; /bin/bash</pre>
     </div>
 
-    <h3>3.3 &nbsp; 多线程模块化运行</h3>
+    <h3 id="sec-3-3">3.3 &nbsp; 多线程模块化运行</h3>
     <p>
         引擎采用<strong>多线程流水线</strong>运行模型，每个功能模块继承自<code>modules</code>基类，可选择独立线程或主线程运行：
         </p>
@@ -185,7 +208,7 @@ app.PushMultiThreadToCurrent(new IKSolverModule());
         性能分析采用Chrome Tracing格式，通过<code>ROBOT\<sub>P</sub>ROFILE\<sub>F</sub>UNCTION()</code>和<code>ROBOT\<sub>P</sub>ROFILE\<sub>S</sub>COPE("name")</code>宏标注热点，输出JSON时序数据供<code>chrome://tracing</code>可视化分析。
         </p>
 
-    <h2>4 &nbsp; 完整视觉伺服流水线</h2>
+    <h2 id="sec-4">4 &nbsp; 完整视觉伺服流水线</h2>
     <div class="figure">
         <img src="../assets/images/robomaster/fig_pipeline.png" alt="视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取" onclick="openLightbox(this)">
         <div class="figure-caption">Fig. 3 &nbsp; 视觉伺服流水线——从鱼眼图像到L形轮廓检测与边缘提取</div>
@@ -194,7 +217,7 @@ app.PushMultiThreadToCurrent(new IKSolverModule());
         端到端流水线分为以下阶段，每帧总延迟仅<strong>13.5ms</strong>：
         </p>
 
-    <h3>4.1 &nbsp; Stage 1–2：鱼眼采集与双色彩空间分割</h3>
+    <h3 id="sec-4-1">4.1 &nbsp; Stage 1–2：鱼眼采集与双色彩空间分割</h3>
     <p>
         采用HSV与灰度<strong>联合过滤</strong>隔离蓝色LED区域，有效抑制镜面反射与彩色背景干扰：
         </p>
@@ -206,7 +229,7 @@ app.PushMultiThreadToCurrent(new IKSolverModule());
     <div class="formula"><strong>K</strong> =  501.36 & 0 & 635.69 <br> 0 & 501.26 & 488.57 <br> 0 & 0 & 1 ,   
 <strong>d</strong> = [-0.339,  0.152,  -1.14×10<sup>-5</sup>,  -3.30×10<sup>-5</sup>,  -0.036]</div>
 
-    <h3>4.2 &nbsp; Stage 3–4：边缘增强与多准则轮廓过滤</h3>
+    <h3 id="sec-4-2">4.2 &nbsp; Stage 3–4：边缘增强与多准则轮廓过滤</h3>
     <div class="formula"><strong>E</strong> = Dilate<sub>5×5</sub>CannyGaussBlur<sub>7×7,σ=5</sub>(<strong>M</strong>),  50,  100</div>
     <p>
         通过<strong>四个几何准则</strong>筛选有效的L形轮廓：
@@ -247,7 +270,7 @@ for (const auto&amp; c : contours) {
 }</pre>
     </div>
 
-    <h3>4.3 &nbsp; Stage 5：最小包围圆(MEC)关键点提取</h3>
+    <h3 id="sec-4-3">4.3 &nbsp; Stage 5：最小包围圆(MEC)关键点提取</h3>
     <p>
         对通过过滤的<em class="math">N</em>个轮廓，枚举所有<em class="math">binomN4</em>个四元组，选择全局包围圆面积最小的组合，从4个选中圆的边界提取最远点作为关键点：
         </p>
@@ -260,7 +283,7 @@ for (const auto&amp; c : contours) {
         <div class="figure-caption">Fig. 4 &nbsp; MEC关键点提取成功——极角排序标注A/B/C/D，Extent值与包围圆可视化</div>
     </div>
 
-    <h3>4.4 &nbsp; Stage 6：PnP位姿估计与手眼坐标变换</h3>
+    <h3 id="sec-4-4">4.4 &nbsp; Stage 6：PnP位姿估计与手眼坐标变换</h3>
     <p>
         使用<code>cv::solvePnP</code>（ITERATIVE模式）在求解过程中内联处理Brown-Conrady畸变校正，恢复6-DoF位姿后，通过<strong>手眼标定外参偏移</strong>将相机坐标系转换到机械臂基座坐标系：
         </p>
@@ -269,12 +292,12 @@ for (const auto&amp; c : contours) {
         姿态角直接传递：<em class="math">a<sub>pitch</sub> = r<sub>x</sub></em>，<em class="math">a<sub>yaw</sub> = -r<sub>y</sub></em>，<em class="math">a<sub>roll</sub> = r<sub>z</sub></em>。
         </p>
 
-    <h2>5 &nbsp; 解析逆运动学求解器</h2>
+    <h2 id="sec-5">5 &nbsp; 解析逆运动学求解器</h2>
     <p>
         4连杆机械臂（<em class="math">l<sub>1</sub> = l<sub>2</sub> = 28</em>cm，<em class="math">l<sub>3</sub> = 7</em>cm，<em class="math">l<sub>4</sub> = 12</em>cm）的自由度分配为：大臂<em class="math">θ<sub>1</sub></em>（X方向）、小臂<em class="math">θ<sub>2</sub></em>（Y方向）、底座升降（Z轴）、腕部3-DoF（<em class="math">ψ, φ, ρ</em>）。
         </p>
 
-    <h3>5.1 &nbsp; 求解算法</h3>
+    <h3 id="sec-5-1">5.1 &nbsp; 求解算法</h3>
     <p>
         <strong>Step 1：腕部中心解耦</strong>
         </p>
@@ -302,7 +325,7 @@ z<sub>w</sub> = a<sub>z</sub> - l<sub>4</sub>sinφ</div>
         <tr><td><em class="math">></em>80(含底盘)</td><td>0.28</td><td>0.47</td><td>91.8%</td><td>2.1</td></tr>
     </table>
 
-    <h2>6 &nbsp; 轨迹插值与串口闭环控制</h2>
+    <h2 id="sec-6">6 &nbsp; 轨迹插值与串口闭环控制</h2>
     <p>
         解出目标关节角后，在笛卡尔空间（而非关节空间）进行<em class="math">N=10</em>步线性插值，保证末端轨迹平滑。逼近距离<em class="math">d = -40</em>cm，每个航点均进行IK求解，<strong>仅当全部航点有效时才执行轨迹</strong>。
         </p>
@@ -326,7 +349,7 @@ z<sub>w</sub> = a<sub>z</sub> - l<sub>4</sub>sinφ</div>
         闭环反馈控制（最多100次迭代）：发送关节命令<em class="math">→</em>读取反馈角度<em class="math">→</em>检查收敛条件<em class="math">|θ<sub>i</sub><sup>fb</sup> - θ<sub>i</sub><sup>cmd</sup>| < 0.1</em> rad<em class="math">→</em>收敛后前进至下一航点。
         </p>
 
-    <h2>7 &nbsp; 深度学习方案对比分析：为什么回退到传统视觉</h2>
+    <h2 id="sec-7">7 &nbsp; 深度学习方案对比分析：为什么回退到传统视觉</h2>
     <p>
         项目前期尝试了YOLOv11n-Pose关键点检测方案，在OpenVINO INT8量化后实际部署中遇到了三个核心问题，最终决策回退至传统视觉：
         </p>
@@ -348,7 +371,7 @@ z<sub>w</sub> = a<sub>z</sub> - l<sub>4</sub>sinφ</div>
         <strong>核心结论</strong>：在数据有限、场景结构化的RoboMaster赛场条件下，传统视觉方法是更稳健的工程选择。深度学习方案受限于训练数据多样性不足（竞赛场地光照、视角变化难以充分覆盖），模型泛化能力有限。
         </p>
 
-    <h2>8 &nbsp; 迭代优化历程</h2>
+    <h2 id="sec-8">8 &nbsp; 迭代优化历程</h2>
     <div class="info-box">
         <div class="info-box-title">版本迭代</div>
         <ol>
@@ -363,7 +386,7 @@ z<sub>w</sub> = a<sub>z</sub> - l<sub>4</sub>sinφ</div>
         </ol>
     </div>
 
-    <h2>9 &nbsp; 端到端性能指标</h2>
+    <h2 id="sec-9">9 &nbsp; 端到端性能指标</h2>
     <div class="info-box">
         <div class="info-box-title">测试结果（Intel NUC i5-1135G7，无GPU）</div>
     <table>

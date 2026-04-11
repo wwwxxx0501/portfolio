@@ -26,6 +26,24 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 斯特林循环热力学基础</a></li>
+        <li><a href="#sec-2">2 &nbsp; 史密特理论建模</a></li>
+            <li class="toc-sub"><a href="#sec-2-1">2.1 &nbsp; 容积与压力的解析表达</a></li>
+        <li><a href="#sec-3">3 &nbsp; 结构参数设计</a></li>
+        <li><a href="#sec-4">4 &nbsp; MATLAB曲线计算</a></li>
+        <li><a href="#sec-5">5 &nbsp; SolidWorks三维建模与ADAMS仿真</a></li>
+            <li class="toc-sub"><a href="#sec-5-1">5.1 &nbsp; 三维结构模型</a></li>
+            <li class="toc-sub"><a href="#sec-5-2">5.2 &nbsp; ADAMS运动副与约束设置</a></li>
+        <li><a href="#sec-6">6 &nbsp; ADAMS-MATLAB联合仿真</a></li>
+            <li class="toc-sub"><a href="#sec-6-1">6.1 &nbsp; Simulink热力模型</a></li>
+            <li class="toc-sub"><a href="#sec-6-2">6.2 &nbsp; 仿真结果与分析</a></li>
+            <li class="toc-sub"><a href="#sec-6-3">6.3 &nbsp; 参数敏感性分析与优化</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -39,7 +57,7 @@
         本项目以Gamma型斯特林发动机为研究对象，从热力学理论出发，经历结构参数设计<em class="math">→</em>三维建模<em class="math">→</em>多体动力学仿真<em class="math">→</em>联合仿真平台搭建的完整工程流程，实现了热力学计算与机械动力学的跨域耦合仿真。
         </p>
 
-    <h2>1 &nbsp; 斯特林循环热力学基础</h2>
+    <h2 id="sec-1">1 &nbsp; 斯特林循环热力学基础</h2>
     <p>
         斯特林循环由四个基本过程组成，是一种外燃式闭式循环：
         </p>
@@ -66,12 +84,12 @@
         \]
         </p>
 
-    <h2>2 &nbsp; 史密特理论建模</h2>
+    <h2 id="sec-2">2 &nbsp; 史密特理论建模</h2>
     <p>
         项目采用<strong>史密特（Schmidt）理论</strong>对Gamma型发动机进行准稳态热力学分析。核心假设包括：等温压缩/膨胀、理想气体、完全再生热交换、正弦容积变化。
         </p>
 
-    <h3>2.1 &nbsp; 容积与压力的解析表达</h3>
+    <h3 id="sec-2-1">2.1 &nbsp; 容积与压力的解析表达</h3>
     <p>
         以排气器活塞上止点为曲柄角<em class="math">θ = 0^°</em>，膨胀空间与压缩空间瞬时容积为：
         </p>
@@ -92,7 +110,7 @@
         其中<em class="math">δ = B/S</em>，<em class="math">B</em>、<em class="math">S</em>为由温度比<em class="math">tau = T<sub>C</sub>/T<sub>E</sub></em>、行程容积比<em class="math">kappa</em>和死容积比<em class="math">chi</em>确定的参数。
         </p>
 
-    <h2>3 &nbsp; 结构参数设计</h2>
+    <h2 id="sec-3">3 &nbsp; 结构参数设计</h2>
     <table>
         <tr><th><strong>参数</strong></th><th><strong>数值</strong></th></tr>
         <tr><td>活塞直径<em class="math">D<sub>P</sub></em></td><td>12 mm</td></tr>
@@ -103,7 +121,7 @@
         <tr><td>温度比<em class="math">tau = T<sub>C</sub>/T<sub>E</sub></em></td><td>0.48</td></tr>
     </table>
 
-    <h2>4 &nbsp; MATLAB曲线计算</h2>
+    <h2 id="sec-4">4 &nbsp; MATLAB曲线计算</h2>
     <p>
         利用史密特理论公式，通过MATLAB计算气压-曲柄角曲线与<em class="math">p</em>-<em class="math">V</em>图：
         </p>
@@ -118,9 +136,9 @@
         </div>
     </div>
 
-    <h2>5 &nbsp; SolidWorks三维建模与ADAMS仿真</h2>
+    <h2 id="sec-5">5 &nbsp; SolidWorks三维建模与ADAMS仿真</h2>
 
-    <h3>5.1 &nbsp; 三维结构模型</h3>
+    <h3 id="sec-5-1">5.1 &nbsp; 三维结构模型</h3>
     <p>
         在SolidWorks中精确构建Gamma型斯特林发动机的连杆、飞轮、活塞等关键部件，将Parasolid格式导入ADAMS进行动力学仿真。
         </p>
@@ -135,7 +153,7 @@
         </div>
     </div>
 
-    <h3>5.2 &nbsp; ADAMS运动副与约束设置</h3>
+    <h3 id="sec-5-2">5.2 &nbsp; ADAMS运动副与约束设置</h3>
     <p>
         在ADAMS中定义多种运动副实现真实的机械运动关系：
         </p>
@@ -149,9 +167,9 @@
         定义4个状态变量：<code>torque1</code>（输入力矩，从Simulink获取）、<code>angle1</code>（轴转角）、<code>velocity1</code>（连杆转速）、<code>force1</code>（输入力），实现ADAMS与MATLAB的数据交互。
         </p>
 
-    <h2>6 &nbsp; ADAMS-MATLAB联合仿真</h2>
+    <h2 id="sec-6">6 &nbsp; ADAMS-MATLAB联合仿真</h2>
 
-    <h3>6.1 &nbsp; Simulink热力模型</h3>
+    <h3 id="sec-6-1">6.1 &nbsp; Simulink热力模型</h3>
     <p>
         在MATLAB/Simulink中编写<code>plant.m</code> S-Function，实现史密特理论的实时计算：转角<em class="math">θ</em>作为输入，根据史密特公式计算瞬时气缸压力<em class="math">p</em>、活塞作用力<em class="math">F<sub>p</sub> = (p - p<sub>air</sub>)A<sub>p</sub></em>、曲柄转矩<em class="math">T<sub>q</sub> = F<sub>p</sub> r(sinθ - cosθ)</em>，输出转矩反馈至ADAMS驱动机械系统运动。
         </p>
@@ -160,7 +178,7 @@
         <div class="figure-caption">Fig. 5 &nbsp; Simulink联合仿真模型：textttplant</div>
     </div>
 
-    <h3>6.2 &nbsp; 仿真结果与分析</h3>
+    <h3 id="sec-6-2">6.2 &nbsp; 仿真结果与分析</h3>
     <div class="figure-row">
         <div class="figure">
             <img src="../assets/images/stirling/stirling_20.png" alt="转矩随时间变化曲线" onclick="openLightbox(this)">
@@ -180,7 +198,7 @@
         <li>飞轮转动惯量设定影响转速稳定性</li>
     </ul>
 
-    <h3>6.3 &nbsp; 参数敏感性分析与优化</h3>
+    <h3 id="sec-6-3">6.3 &nbsp; 参数敏感性分析与优化</h3>
     <p>
         通过调整关键参数实现目标转速：
         </p>

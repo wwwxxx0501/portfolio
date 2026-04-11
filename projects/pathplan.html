@@ -26,6 +26,17 @@
         </div>
     </div>
 
+    <nav class="toc">
+        <div class="toc-title">目录</div>
+        <ul>
+        <li><a href="#sec-1">1 &nbsp; 项目概述</a></li>
+        <li><a href="#sec-2">2 &nbsp; 激光雷达数据采集与解析</a></li>
+        <li><a href="#sec-3">3 &nbsp; 圆柱障碍物检测——类RANSAC算法</a></li>
+        <li><a href="#sec-4">4 &nbsp; 电机驱动与舵机控制</a></li>
+        <li><a href="#sec-5">5 &nbsp; MATLAB上位机与路径可视化</a></li>
+        </ul>
+    </nav>
+
     <div class="info-box">
         <div class="info-box-title">项目概况</div>
     <table>
@@ -36,7 +47,7 @@
     </table>
     </div>
 
-    <h2>1 &nbsp; 项目概述</h2>
+    <h2 id="sec-1">1 &nbsp; 项目概述</h2>
     <p>
         本项目基于STM32与激光雷达，实现室内环境下的障碍物检测、地图构建与路径规划。系统由STM32采集雷达数据，MATLAB端进行可视化与路径优化，最终规划最优路径引导小车自主导航。
         </p>
@@ -45,7 +56,7 @@
         <div class="figure-caption">Fig. 1 &nbsp; 路径规划系统功能框图</div>
     </div>
 
-    <h2>2 &nbsp; 激光雷达数据采集与解析</h2>
+    <h2 id="sec-2">2 &nbsp; 激光雷达数据采集与解析</h2>
     <p>
         系统采用360°激光雷达，每圈输出1440个极坐标点（角度+距离）。雷达通过串口向STM32发送数据包，帧格式如下：
         </p>
@@ -57,7 +68,7 @@
         STM32通过UART接收并解析帧头（0xA5 0x5A）、起止角度、距离数组与CRC校验，将数据传输至上位机。
         </p>
 
-    <h2>3 &nbsp; 圆柱障碍物检测——类RANSAC算法</h2>
+    <h2 id="sec-3">3 &nbsp; 圆柱障碍物检测——类RANSAC算法</h2>
     <p>
         为从稀疏点云中识别圆柱形障碍物，采用类RANSAC（Random Sample Consensus）方法：
         </p>
@@ -72,7 +83,7 @@
         <div class="figure-caption">Fig. 3 &nbsp; 类RANSAC圆柱检测算法流程</div>
     </div>
 
-    <h2>4 &nbsp; 电机驱动与舵机控制</h2>
+    <h2 id="sec-4">4 &nbsp; 电机驱动与舵机控制</h2>
     <p>
         驱动模块采用AT8236双H桥芯片，通过STM32 PWM控制电机转速，支持正反转与制动。舵机用于前轮转向控制。
         </p>
@@ -87,7 +98,7 @@
         </div>
     </div>
 
-    <h2>5 &nbsp; MATLAB上位机与路径可视化</h2>
+    <h2 id="sec-5">5 &nbsp; MATLAB上位机与路径可视化</h2>
     <p>
         STM32将处理后的雷达数据通过串口导出至MATLAB，上位机负责：
         </p>
