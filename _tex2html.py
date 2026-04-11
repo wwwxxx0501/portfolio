@@ -52,9 +52,9 @@ CHAPTERS = {
         "meta": ["薛雅文", "2024"],
         "videos": [],
     },
-    "心电": {
+    "ADS1292R": {
         "id": "heart-rate", "file": "heart-rate.html",
-        "title_override": "心电信号采集与处理系统",
+        "title_override": "2020电赛C题——ADS1292R心电图检测仪",
         "meta": ["薛雅文", "2025"],
         "videos": [
             ("heart-rate-1.mp4", "心电信号采集演示 1"),
@@ -103,15 +103,15 @@ CHAPTERS = {
         "meta": ["薛雅文", "2024 – 2025"],
         "videos": [],
     },
-    "数学物理": {
+    "圆形薄膜": {
         "id": "math-physics-method", "file": "math-physics-method.html",
-        "title_override": "数学物理方法课程项目——圆形薄膜振动的理论分析与实验验证",
+        "title_override": "圆形薄膜振动的理论分析与实验验证",
         "meta": ["薛雅文", "2025"],
         "videos": [],
     },
-    "工效学": {
+    "救灾机器人": {
         "id": "ergonomics", "file": "ergonomics.html",
-        "title_override": "工效学课程项目——隧道洪涝救灾机器人人机交互界面设计",
+        "title_override": "救灾机器人人因分析",
         "meta": ["薛雅文", "2025"],
         "videos": [],
     },
@@ -121,9 +121,9 @@ CHAPTERS = {
         "meta": ["薛雅文", "2025"],
         "videos": [],
     },
-    "数理综合": {
+    "CUPT": {
         "id": "fluid-levitation", "file": "fluid-levitation.html",
-        "title_override": "数理综合课程项目——振荡容器中流体悬浮现象的实验与仿真研究",
+        "title_override": "2025 CUPT/IYPT/CYPT 8.悬浮液体",
         "meta": ["薛雅文", "2025"],
         "videos": [
             ("fluid-levitation/experiment-process.mp4", "实验流程"),
